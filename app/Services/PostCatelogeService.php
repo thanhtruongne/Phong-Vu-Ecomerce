@@ -1,0 +1,224 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\PostCataloges;
+use App\Repositories\LanguageRepositories;
+use App\Repositories\PostCatelogeRepositories;
+use App\Repositories\RouterRepositories;
+use App\Services\Interfaces\PostCatalogeServiceInterfaces;
+use App\Trait\UploadImage;
+use Carbon\Carbon;
+use Exception;
+use GuzzleHttp\Psr7\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+/**
+ * Class UserService.
+ */
+class PostCatelogeService extends BaseService implements PostCatalogeServiceInterfaces
+{
+    protected $postCatalogeRepositories,$routerRepositories , $languageRepositories;
+
+    public function __construct(
+        PostCatelogeRepositories $postCatalogeRepositories ,
+        RouterRepositories $routerRepositories,
+        LanguageRepositories $languageRepositories
+        ) {
+        $this->postCatalogeRepositories = $postCatalogeRepositories;
+        $this->languageRepositories = $languageRepositories;
+        parent::__construct($routerRepositories);
+    }
+    public function paginate($request) 
+    {
+        $condition = [];
+        $record = $request->input('record') ?: 6;
+        $condition['where'] = [
+            ['status' ,'=', $request->status ?? 1]
+        ];
+        $postCataloge = $this->postCatalogeRepositories->paganation(
+        $this->getPaginateIndex(),
+        $condition,
+        //sử dụng mảng 4 để load join vào table
+        [
+           [ 'post_cateloge_translate as pct' , 'pct.post_cateloge_id','=','post_cateloge.id']
+        ],
+        $record,[],[],[],[]
+        
+        );
+       return $postCataloge;
+    }
+    
+
+    public function create($request) {
+        DB::beginTransaction();
+        try {
+            $postCataloge = $this->createPostCatalogeIndex($request);
+            //đồng thời tạo phân quyền role cho nhóm người dùng mới
+            
+            if($postCataloge->id > 0) {
+                $this->createTranslatePostCatalogePivot($request,$postCataloge); 
+                $this->createRouter(
+                    $request->input('meta_link'),$postCataloge,
+                    'PostCatalogeController',
+                    $this->languageRepositories->getCurrentLanguage()->id
+                );
+            }      
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            echo new Exception($e->getMessage());die();
+            return false;
+        }
+    }
+
+    public function update(int $id ,$request) {
+        DB::beginTransaction();
+        try {
+            $postCataloge = $this->postCatalogeRepositories->findByid($id); 
+            $check = $this->updatePostCataloge($request,$postCataloge);
+            if($check == true) {
+                $this->updateTranslatePostCatalogePivot($id,$postCataloge,$request); 
+                $this->updateRouter(
+                    $request->input('meta_link'),
+                    $postCataloge,
+                    'PostCatalogeController',
+                    $this->languageRepositories->getCurrentLanguage()->id
+                );
+            }        
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            echo new Exception($e->getMessage());die();
+            return false;
+        }
+    }
+
+    public function changeStatus($request) {
+        DB::beginTransaction();
+        try {
+            $status = [
+                'status' => $request['status'] 
+            ];
+            $this->postCatalogeRepositories->update($request['id'], $status );  
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            // echo new Exception($e->getMessage());
+            return false;
+        }
+    }
+
+    public function ChangeStatusAll(array $data) {
+        DB::beginTransaction();
+        try {
+            $status = [
+                'status' => $data['value']
+            ];
+          $this->postCatalogeRepositories->UpdateByWhereIn($data['id'],'id',$status) ;
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            echo new Exception($e->getMessage());
+            // return false;
+        }
+    }
+
+    public function destroy($id) {
+        DB::beginTransaction();
+        try {
+            $this->postCatalogeRepositories->deleteSoft($id);  
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function restore(int $id) {
+        DB::beginTransaction();
+        try {
+            $this->postCatalogeRepositories->restore($id);  
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    public function deleteForce(int $id) {
+        DB::beginTransaction();
+        try {
+            $this->postCatalogeRepositories->deleteForce($id);  
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return false;
+        }
+    }
+
+    private function requestOnlyPostCataloge() {
+        return ['follow','status','image','album'];
+    }
+
+    private function createPostCatalogeIndex($request) {
+        $data = $request->only($this->requestOnlyPostCataloge());
+        //tạo nested set
+  
+        $data['album'] = !empty($request->input('album')) ? json_encode($request->input('album')) : '' ;
+        $data['user_id'] = Auth::user()->id;
+        $postCataloge = $this->postCatalogeRepositories->create($data); 
+        $this->postCatalogeRepositories->createCategoriesByNode($request->only($this->createCategoriesNode()),$postCataloge);
+        return $postCataloge;
+    }
+    
+
+    private function createTranslatePostCatalogePivot($request,$postCataloge) {
+        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
+        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
+        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id ?? 1;
+        $payloadTranslate['post_cateloge_id'] = $postCataloge->id;
+        $this->postCatalogeRepositories->createTranslatePivot($postCataloge,$payloadTranslate,'languages'); 
+    }
+
+    private function updatePostCataloge($request,$postCataloge) {
+        $data = $request->only($this->requestOnlyPostCataloge());
+        $data['user_id'] = Auth::user()->id;
+        $data['album'] = json_encode($request->input('album')) ?? $postCataloge->album;
+        $check = $this->postCatalogeRepositories->update($postCataloge->id,$data);
+        return $check;
+    }
+
+    private function updateTranslatePostCatalogePivot($id,$postCataloge,$request) {
+        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
+        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
+        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id ?? 1;
+        $payloadTranslate['post_cateloge_id'] = $id;
+        // tách ra khỏi bảng trung gian
+        $detach = $postCataloge->languages()->detach([ $payloadTranslate['languages_id'],$id]);
+        // tạo bảng mới trug gian ghi đè 
+        $translate = $this->postCatalogeRepositories->createTranslatePivot($postCataloge,$payloadTranslate,'languages'); 
+    }
+
+    private function createCategoriesNode() {
+        return ['categories_id'];
+    }
+    private function requestOnlyPostCatalogeTranslate() {
+        return ['name','description','content','meta_title','meta_desc','meta_keyword','meta_link'];
+    }
+
+    private function getPaginateIndex() {
+        // return ['status','image','pct.name','id','pcp.post_id','pcp.post_catelogues_id'];
+        return ['pct.name','post_cateloge.image','post_cateloge.status','post_cateloge.id'];
+    }
+}

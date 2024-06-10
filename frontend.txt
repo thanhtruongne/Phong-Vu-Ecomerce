@@ -1,0 +1,7 @@
+Phần category và widget
+
+Render ra danh mục cha
+  -- Bao gồm phần danh mục con
+  -- Và các sản phẩm của danh mục Cha và danh mục con 
+  -- Render theo widget của sản phẩm trang web
+  /..../

@@ -1,0 +1,137 @@
+//tạo product_variants
+các attribute
+product_variants
+--id
+--product_id
+--sku
+--price
+--title
+--barcode
+--code
+-album
+--user_id
+--qualnity
+--status
+--file_name : upload lên pdf
+--file_url
+
+product_variant_attribute
+--product_variant_id
+--attribute_id
+
+product_variant_translate
+--product_variant_id
+--languages_id
+--name
+
+
+các attribute màu sắc
+
+gồm 3 bảng
+attribute_cateloge_attribute
+
+attribute_cateloge_language
+
+attribute_language
+
+//khi inser product sử dụng createMany theo các mảng để tạo ra nhiều bảng
+//cùng lúc xóa hết các product_variant cũ đi và tạo lại 
+
+attach để tạo bảng kép
+detach tách bảng giống với xóa
+
+
+update product 
+
+{{-- Tạo trong database cửa product 3 cột attribute(Text) , attributeCateloge(text) , variant(text) cột bảng data variant --}}
+{{-- Khi tạo sản phẩm lưu các trường hợp trên = json_decode sau đó khi edit render lại các data variant  --}}
+
+
+
+//Promotion
+Bảng data
+--Thông tin khuyến mãi
+++ tên khuyến mãi : name
+++ mã khuyến mãi : code
+++album
+++desc
+
+--Thông tin thời gian khuyến mãi
+++ Ngày bắt đầu
+++ Ngày kết thúc
+++Không giới hạn
+
+
+--Nguồn khách / nguồn đơn
+++ Áp dụng cho toàn bộ
+++ Áp dụng cho 1 Nguồn
+
+--Đối tượng áp dụng
+++ cho 1 nhóm khách hàng
+++Ngày sinh
+++ sex
+
+--Thông tin giảm giá
+++Hình thức :
+  -- Giam theo tống giá trị đơn hàng
+  -- Giam giá theo từng sản phẩm
+  -- Giam theo số lượng
+  -- Giam theo mua sản phẩm với diều kiện tổng giá trị dơn hàng
+  
+  --Promotion
+  ++ name
+  ++ code
+  ++ desc
+  ++ method
+  ++ neverEndDate
+  ++ StarDate
+  ++ EndDate
+  ++ DiscountInfoPromotion => JSON
+  ++ status
+  ++ MaxDiscountValue : string
+  ++ discountValue : string
+  ++ discountType : string
+
+  --Promotion_conditionable
+  ++ promotion_id
+  ++ condition_value -> int
+  ++ condition_type -> string
+
+    --Promotion_product_variant
+  ++ promotion_id
+  ++ product_id -> int
+  ++ product_variant_id -> int
+  ++ model -> string
+
+--Source nguồn khách hàng
+--name 
+--desc
+--keyword
+--status
+--softDelete
+
+--Customer 
+ --name 
+ --customer_cateloge_id
+ --email
+ --province , district , ward
+ --address
+ --birthday
+ --phone
+ --desc
+ --thumb
+ --fullname
+ --ip
+ --password
+ --status
+ --user_agent
+ --image
+
+--Customer_cateloge
+ --name 
+ --desc
+ --keyword
+ --status
+
+ promotion 
+ 

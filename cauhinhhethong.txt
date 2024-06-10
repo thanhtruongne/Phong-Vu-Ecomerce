@@ -1,0 +1,78 @@
+Cấu hình hệ thống 
+lưu các item bên frontend 
+
+Database
+Ta tạo một class lưu các dữ liệu truyền va viết theo dạng fuction app/Class/System.php
+sau đó truyền vào SystemController
+
+database 
+---user_id
+---languages_id
+---keyword
+---content
+render ra nhiều bảng
+
+
++++ tạo quản lí menu
+menu_cageloge giống với post_cateloge
+--id
+--name
+--keyword
+--status
+--user_id
+
+++menu
+--id
+--menu_cageloge_id
+--image
+--album
+--type
+--nestedset
+--status
+--follow
+--user_id
+--position
+
+++menu-translate
+--menu_cageloge_id
+--languages_id
+--name
+--canonical
+
+
+++ tạo slider
+-- name 
+-- keyword
+-- content
+-- desc
+--item longtext
+
+ex : item : {
+    'vn' => {
+        'name' : 'slide-name',
+        'desc' : desc , 
+        'content' : content,
+        'canonical' : canonical
+    },
+     'en' => {
+        'name' : 'slide-name',
+        'desc' : desc , 
+        'content' : content,
+        'canonical' : canonical
+    },
+}
+
+
+++ widget là phần có các phần banner và slide có sản phẩm trong đó sale off ...
+--name gồm các sản phẩm nổi bật , bài viết nổi bật ,....
+--keyword
+--model_id gồm các id của các sản phẩm .... lưu theo dạng JSON
+--model : POST , PRODUCT , SALE ..... lưu theo dạng JSON
+--album
+--short_code
+--desc
+
+
+++ Sản phẩm khuyến mãi , mã khuyến mãi ..... promotion
+
+

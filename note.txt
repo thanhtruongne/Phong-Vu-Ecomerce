@@ -1,0 +1,117 @@
+//set language global 
+--viết provider ex:LanguageProvider ra
+sau đó sử dụng Facade/View để làm global
+ex: 
+ public function register(): void
+{
+    // Khai báo LanguageRepositire vào lấy data qua Interfaces
+    $this->app->bind(LanguageRepositoriesInterfaces::class,LanguageRepositories::class);
+}
+public function boot(): void
+    {  
+        Facades\View::composer('*', function ( View $view) {
+            $languageRepositories = $this->app->make(LanguageRepositoriesInterfaces::class);
+            $languages = $languageRepositories->all();
+            return  $view->with('languages',$languages);
+        });      
+    }
+
+
+Sử dụn5g thuật chép ra module
+
+1-Tạo ra database migration
+2-Tạo Controller cho module
+3-Tạo Repositories và Services
+4-Tạo Request form
+5-Tạo View ra giao diện
+Tạo Provider ,RuLe, route , lang
+
+*-database
+--- tạo gán tên database rồi đưa vào hàm database_path('migrations\');
+--- HEREDOC
+ ---  ví dụ
+         $migrationTemplate = <<<MIGRATION
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        {$payload['schema']}
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('{$this->convertNameSchemaMigration($payload['name'])}');
+    }
+};
+MIGRATION;
+    Lấy giống phần migration        
+    gán schema vào chạy
+    sử dụng File::put() và lệnh Aritsan();
+    File::put()
+    Artisan::call('migrate')
+
+    Controller
+    Tạo TemplateController để push các compact vào thay các từ khóa slug
+    Sau đó tạo ra controller
+
+    //Tạo module tương tự như controller
+    modulePivotModel
+    moduletableTranslate
+    moduleForgeinKey
+    moduleTable
+    moduleTemplate
+
+
+    Tạo Provider
+
+    Tạo một file provider lưu các Repositories
+    file Appservice siu74 thg Services
+    sau đó bind thg respositories vào file appProdvider 
+    
+    
+
+
+
+
+// set phân quyền permssion
+-- tào 2 bảng database 
+--user_cateloge_permission
++ user_cateloge_id
++ permission_id
+
++permission
+-- name
+-- canonical
+
+--viết trong AuthServiceProvider
+ex : 
+ public function boot(): void
+    {
+        $this->registerPolicies();
+        //phẩn quyền
+        Gate::define('modules',function($user,$permissionName) {
+          if(!empty($user) && $user->status != 1) {
+            return false;
+          } 
+          $permission = $user->user_cataloge->permissions;
+          if($permission->contains('canonical',$permissionName)) {
+             return true;
+          }
+          return false;
+        });
+    }
+
+
+   
