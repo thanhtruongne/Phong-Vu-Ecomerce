@@ -337,6 +337,7 @@
         success : function(data) {
             let html  = '';
             if(data) {
+                console.log(data);
                 promotion = data;
                 html = `
                 <table class="table table-bordered">
@@ -501,6 +502,7 @@
      if(data.length > 0) {
         if(model == 'Product') {
             $.each(data , function(index,val) {
+                console.log(val);
                 html += `
                 <span 
                 data-checked="${val.checked}"
@@ -508,7 +510,7 @@
                 style="margin:12px 8px;font-size:15px;float: left;padding: 8px;" 
                 class="label label-success">
                     <input type="hidden" name="product_id[]" value="${val?.id}"/>
-                    <input type="hidden" name="product_variant_id[]" value="${val?.variant_id ?? 0}"/>
+                    <input type="hidden" name="product_variant_id[]" value="${val?.variant_id != 'null' ?val?.variant_id :  0}"/>
                     <input type="hidden" name="model[]" value="${model}"/>
                     ${val.name.slice(0, 20)}...
                     
@@ -524,7 +526,7 @@
                 style="margin:12px 8px;font-size:15px;float: left;padding: 8px;" 
                 class="label label-success">
                 <input type="hidden" name="product_id[]" value="${val?.id}"/>
-                <input type="hidden" name="product_variant_id[]" value="${val?.variant_id ?? 0}"/>
+                <input type="hidden" name="product_variant_id[]" value="${val?.variant_id != 'null' ?val?.variant_id : 0}"/>
                 <input type="hidden" name="model[]" value="${model}"/>
                     ${val.name.slice(0, 20)}...
                     <i style="margin-left:4px" class="fa-solid fa-xmark delete_promotion_product_cateloge"></i>

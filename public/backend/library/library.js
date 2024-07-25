@@ -277,6 +277,7 @@
     }
 
     Data.CreatingTheRowContent = (res = null) => {
+        console.log(res)
         let row = $('<div>').addClass('content_item '+ (res?.canonical ? res?.canonical : '') + '').attr('style','height: 40px;margin:12px 0');
         let option = [
             { 'name' : 'menu[name][]', 'class' : 'col-lg-3' , 'value' : res?.name ? res?.name : '','input_class' :'form-control' },
@@ -354,8 +355,8 @@
         let html  = '';
         html = `
             <div class="form-group" style="display: flex;align-items:center">
-                <input type="checkbox" ${subtring != null && subtring.includes(res?.meta_link) ? 'checked' : ' '} id='${res?.meta_link}' value="${res?.meta_link}" class="checkbox_content_data" style="margin:0">
-                <label for="${res?.meta_link}" style="margin:0 0 0 8px">${res?.name}</label>
+                <input type="checkbox" ${subtring != null && subtring.includes(res?.canonical) ? 'checked' : ' '} id='${res?.canonical}' value="${res?.canonical}" class="checkbox_content_data" style="margin:0">
+                <label for="${res?.canonical}" style="margin:0 0 0 8px">${res?.name}</label>
             </div>`;
         return html;
     }
@@ -384,14 +385,14 @@
                 .attr('data-id',prevTurnPage?.label)
                 .attr('rel','prev')
                 .attr('aria-label','pagination.previous')
-                .addClass('page-link')
+                .addClass('page-links')
                 .text('<');
                 li.append(span)
              }
              else if(val?.label == 'pagination.next') {
                 let span = $('<a>')
                             .attr('href',nextTurnPage?.url)
-                            .addClass('page-link')
+                            .addClass('page-links')
                             .attr('rel','next')
                             .attr('data-id',nextTurnPage?.label)
                             .attr('aria-label','pagination.next')
@@ -399,7 +400,7 @@
                 li.append(span)
              }
              else if(val?.url) {
-                let a = $('<a>').attr('href',val?.url).addClass('page-link').text(val?.label);
+                let a = $('<a>').attr('href',val?.url).addClass('page-links').text(val?.label);
                 li.append(a);
              }
              ul.append(li);
@@ -414,7 +415,7 @@
     Data.CheckboxClickChoose = () => {
         $(document).on('change','.checkbox_content_data',function(){
             let _this = $(this);
-           
+             
             let response = {
                 'name' : _this.next().text(),
                 'canonical' : _this.val()
@@ -431,7 +432,7 @@
     } 
 
     Data.getMenuPageAttribute = () => {
-       $(document).on('click','.page-link',function(e) {
+       $(document).on('click','.page-links',function(e) {
             e.preventDefault();
             let _this = $(this);
             let  page = (_this.text() == '>' || _this.text() == '<') ? _this.attr('data-id') : _this.text();

@@ -6,30 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SliderStore;
 use App\Http\Requests\UpdatePost;
 use App\Http\Requests\UpdateSlider;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\SliderRepositories;
 use App\Services\Interfaces\SliderServiceInterfaces as SliderService;
 use Illuminate\Http\Request;
 
 class SliderController extends Controller
 {
-    protected $sliderService , $sliderRepositories ,$languageRepositories;
+    protected $sliderService , $sliderRepositories ;
 
     public function __construct(
         SliderService $sliderService , 
         SliderRepositories $sliderRepositories,
-        LanguageRepositories $languageRepositories,
         ) {
         $this->sliderService = $sliderService;
         $this->sliderRepositories = $sliderRepositories;
-        $this->languageRepositories = $languageRepositories;
 
    }
   
     
     public function index(Request $request)
-    {  
-        $trashedCount = $this->sliderRepositories->trashed()->count();
+    { 
         $slider = $this->sliderService->paginate($request);
         $filter = config('apps.search');
         $config = [
@@ -40,7 +36,7 @@ class SliderController extends Controller
                 'https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.js'
             ]
         ];
-        return view('backend.Page.slider.index',compact('trashedCount','config','filter','slider'));
+        return view('backend.Page.slider.index',compact('config','filter','slider'));
     }
 
     /**
@@ -75,7 +71,7 @@ class SliderController extends Controller
      */
     public function store(SliderStore $request)
     {
-        if($this->sliderService->create($request,$this->languageRepositories->getCurrentLanguage()->canonical) == true) {
+        if($this->sliderService->create($request) == true) {
             return redirect()->route('private-system.management.slider.index')->with('success','Tạo slider thành công');
         }
         return redirect()->route('private-system.management.slider.indexx')->with('error','Có lỗi đã xảy ra');
@@ -122,7 +118,7 @@ class SliderController extends Controller
      */
     public function update(UpdateSlider $request, string $id)
     {
-        if($this->sliderService->update($id,$request,$this->languageRepositories->getCurrentLanguage()->canonical) == true) {
+        if($this->sliderService->update($id,$request) == true) {
             return redirect()->route('private-system.management.slider.index')->with('success','Cập nhật slider thành công');
         }
         return redirect()->route('private-system.management.slider.index')->with('error','Lỗi server.....');

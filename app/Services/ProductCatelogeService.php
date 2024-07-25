@@ -1,7 +1,8 @@
 <?php
 namespace App\Services;
 
-use App\Repositories\LanguageRepositories;
+use App\Repositories\AttributeCatelogeRepositories;
+use App\Repositories\AttributeRepositories;
 use App\Repositories\ProductCatelogeRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\ProductCatelogeServiceInterfaces;
@@ -14,33 +15,33 @@ use Illuminate\Support\Str;
  */
 class ProductCatelogeService extends BaseService implements ProductCatelogeServiceInterfaces
 {
-    protected $productCatelogeRepositories,$routerRepositories, $languageRepositories;
+    protected $productCatelogeRepositories,$attributeRepositories,$attributeCatelogeRepositories;
 
     public function __construct(
-        ProductCatelogeRepositories $productCatelogeRepositories , 
-        RouterRepositories $routerRepositories,
-        LanguageRepositories $languageRepositories
+        ProductCatelogeRepositories $productCatelogeRepositories, 
+        AttributeRepositories $attributeRepositories,
+        AttributeCatelogeRepositories $attributeCatelogeRepositories
         ) {
         $this->productCatelogeRepositories = $productCatelogeRepositories;
-        $this->routerRepositories = $routerRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+        $this->attributeRepositories = $attributeRepositories;
+        $this->attributeCatelogeRepositories = $attributeCatelogeRepositories;
+        parent::__construct();
         
     }
     public function paginate($request) 
     {
         $condition = [];
         $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-            ['status' ,'=', $request->status ?? 1]
-        ];
+        if($request->has('status')){
+            $condition['where'] = [
+                ['status' ,'=', $request->status]
+            ];
+        }
         $productCateloge = $this->productCatelogeRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
         //sử dụng mảng 4 để load join vào table
-        [
-           [ 'product_cateloge_translate as pct' , 'pct.product_cateloge_id','=','product.id']
-        ],
+        [],
         $record,[],[],[],[]
         
         );
@@ -55,12 +56,11 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
             //đồng thời tạo phân quyền role cho nhóm người dùng mới
            
             if($productCateloge->id > 0) {
-                $this->createTranslateProductCatelogePivot($request,$productCateloge); 
+                // $this->createTranslateProductCatelogePivot($request,$productCateloge); 
                 $this->createRouter(
-                    $request->input('meta_link'),
+                    $request->input('canonical'),
                     $productCateloge,
                     'ProductCatelogeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }      
             DB::commit();
@@ -78,19 +78,21 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
             $productCateloge = $this->productCatelogeRepositories->findByid($id); 
             $check = $this->updateProductCateloge($request,$productCateloge);
             if($check == true) {
-                $this->updateTranslateProductCatelogePivot($id,$productCateloge,$request);
+                if( $request->input('categories_id') != $productCateloge->id ) {
+                    $this->productCatelogeRepositories->UpdateCategoriesByNode($id,
+                    ['name' => $request->input('name'),'categories_id' => $request->input('categories_id')]);
+                }
                 $this->updateRouter(
-                    $request->input('meta_link'),
+                    $request->input('canonical'),
                     $productCateloge,
                     'ProductCatelogeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }         
             DB::commit();
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            echo new Exception($e->getMessage());
+            echo new Exception($e->getMessage());die();
             return false;
         }
     }
@@ -140,85 +142,100 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
         }
     }
 
-    public function restore(int $id) {
-        DB::beginTransaction();
-        try {
-            $this->productCatelogeRepositories->restore($id);  
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            return false;
-        }
-    }
-
-    public function deleteForce(int $id) {
-        DB::beginTransaction();
-        try {
-            $this->productCatelogeRepositories->deleteForce($id);  
-            $this->deleteRouter(
-                $this->productCatelogeRepositories->findByid($id),
-                'ProductCatelogeController',
-                $this->languageRepositories->getCurrentLanguage()->id
-            );
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            return false;
-        }
-    }
-
-    private function requestOnlyProductCateloge() {
-        return ['follow','status','image','album'];
-    }
 
     private function createProductCatelogeIndex($request) {
-        $data = $request->only($this->requestOnlyProductCateloge());
+        $data = $request->only($this->requestOnlyProductCatelogeTranslate());
+        $data['canonical'] = Str::slug($data['canonical']);
         $data['album'] = !empty($request->input('album')) ? json_encode($request->input('album')) : '' ;
-        $data['user_id'] = Auth::user()->id;
         $productCateloge = $this->productCatelogeRepositories->create($data);
         //tạo nested set
         $this->productCatelogeRepositories->createCategoriesByNode($request->only($this->createCategoriesNode()),$productCateloge);
         return $productCateloge;
     }
     
-
-    private function createTranslateProductCatelogePivot($request,$productCateloge) {
-        $payloadTranslate = $request->only($this->requestOnlyProductCatelogeTranslate());
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $payloadTranslate['languages_id'] = 1;
-        $payloadTranslate['product_cateloge_id'] = $productCateloge->id;
-        $this->productCatelogeRepositories->createTranslatePivot($productCateloge,$payloadTranslate,'languages'); 
-    }
-
+ 
     private function updateProductCateloge($request,$productCateloge) {
-        $data = $request->only($this->requestOnlyProductCateloge());
-        $data['user_id'] = Auth::user()->id;
+        $data = $request->only($this->requestOnlyProductCatelogeTranslate());
         $data['album'] = json_encode($request->input('album')) ?? $productCateloge->album;
+        $data['canonical'] = Str::slug( $data['canonical']);
         $check = $this->productCatelogeRepositories->update($productCateloge->id,$data);
         return $check;
     }
 
-    private function updateTranslateProductCatelogePivot($id,$productCateloge,$request) {
-        $payloadTranslate = $request->only($this->requestOnlyProductCatelogeTranslate());
-        $payloadTranslate['languages_id'] = 1;
-        $payloadTranslate['product_cateloge_id'] = $id;
-        // tách ra khỏi bảng trung gian
-        $detach = $productCateloge->languages()->detach([ $payloadTranslate['languages_id'],$id]);
-        // tạo bảng mới trug gian ghi đè 
-        $translate = $this->productCatelogeRepositories->createTranslatePivot($productCateloge,$payloadTranslate,'languages'); 
-    }
 
     private function createCategoriesNode() {
         return ['categories_id'];
     }
     private function requestOnlyProductCatelogeTranslate() {
-        return ['name','desc','content','meta_title','meta_desc','meta_keyword','meta_link'];
+        return ['name','desc','content','meta_title','meta_desc','meta_keyword','canonical','status','image','album'];
     }
 
     private function getPaginateIndex() {
         // return ['status','image','pct.name','id','pcp.post_id','pcp.post_catelogues_id'];
         return ['pct.name','product_cateloge.image','product_cateloge.status','product_cateloge.id'];
     }
+
+
+    public function OverrideAttribute($product) {
+       $attribute = $product->attribute;
+       $attributeCatelogeID = +$product->product_cateloge_id;
+       $productCateloge = $this->productCatelogeRepositories->findByid($attributeCatelogeID);
+
+       if(!is_array($productCateloge->attributes)){
+          $data['attributes'] = $attribute;
+       }
+       else {
+          $array = $productCateloge->attributes;
+          foreach(json_decode($attribute) as $key => $item){
+            if(!isset($array[$key])){
+                $array[$key] = $item;
+            }
+            else { 
+                $array[$key] = array_values(array_unique(array_merge($array[$key],$item)));
+            }
+          }
+           $flag = array_merge(...$array);
+ 
+           //lấy ra các attribute id tồn tại trong product và product cateloge
+          $attributePluck = $this->attributeRepositories->findAttributeProductVariantID($flag,$productCateloge->id);
+   
+          $data['attributes'] = array_map(function($array_list) use($attributePluck){
+            return array_intersect($array_list,$attributePluck->all());
+            
+          },$array); 
+       }
+       $this->productCatelogeRepositories->update($productCateloge->id,$data);
+       return $data;
+    }
+
+
+    public function filterList(array $attribute = []){
+        $attributeCatelogeId = array_keys($attribute);
+        $attributeID = array_unique(array_merge(...$attribute));
+        $attributeCateloge = $this->attributeCatelogeRepositories->findCondition([
+            ['status','=',1]
+        ],[
+            'whereIn' => 'id',
+            'whereValues' => $attributeCatelogeId
+        ],[],'multiple',[]);
+
+        $attributeField = $this->attributeRepositories->findCondition([
+            ['status','=',1]
+        ],[
+            'whereIn' => 'id',
+            'whereValues' => $attributeID
+        ],[],'multiple',[]);
+        // dd($attributeCateloge,$attributeField);
+        foreach($attributeCateloge as $key => $attributeCateloge_item){ 
+            $attributeItem = [];
+            foreach($attributeField as $index => $attributeField_value){
+                if($attributeField_value->attribute_cateloge_id === $attributeCateloge_item->id){
+                    $attributeItem[] = $attributeField_value;
+                    $attributeCateloge_item->attributes = $attributeItem;
+                }
+            }
+        }
+        return $attributeCateloge;
+    }
+    
 }

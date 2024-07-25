@@ -11,45 +11,41 @@ use Illuminate\Support\Str;
  */
 class BaseService implements BaseServiceInterfaces
 {
-    protected $routerRepositories;
+    public $routerRepositories;
 
-   public function __construct($routerRepo) {
-       
-       $this->routerRepositories = $routerRepo;
+   public function __construct() {
+       $this->routerRepositories = resolve(RouterRepositories::class);
    }
  
-    public function formatRouterPayload($canonical , $model , $controllerName , $language_id) {
+    public function formatRouterPayload($canonical , $model , $controllerName) {
         $router =  [
             'canonical' => Str::slug($canonical),
             'module_id' => $model->id,
-            'controller' => 'app\Http\Controllers\FrontEnd\\'.$controllerName,
-            'languages_id' => $language_id
+            'controller' => 'App\Http\Controllers\FrontEnd\\'.$controllerName,
         ];
         return $router;
     }
 
-    public function createRouter($canonical , $model , $controllerName , $language_id) {
-        $router = $this->formatRouterPayload($canonical , $model , $controllerName , $language_id);
+    public function createRouter($canonical , $model , $controllerName) {
+        $router = $this->formatRouterPayload($canonical , $model , $controllerName);
         return $this->routerRepositories->create($router);
     }
 
-    public function updateRouter($canonical , $model , $controllerName , $language_id) {
-        $payload = $this->formatRouterPayload($canonical , $model , $controllerName , $language_id);
+    public function updateRouter($canonical , $model , $controllerName ) {
+        $payload = $this->formatRouterPayload($canonical , $model , $controllerName);
         $condition = [
            [ 'module_id', '=' , $model->id],
-           [ 'languages_id', '=' , $language_id ],
-           [ 'controller', '=' , 'app\Http\Controllers\FrontEnd\\'.$controllerName],
+           [ 'controller', '=' ,'App\Http\Controllers\FrontEnd\\'.$controllerName],
         ];  
         $find = $this->routerRepositories->findCondition($condition);
         $response = $this->routerRepositories->update( $find->id , $payload );
         return $response;
     }
 
-    public function deleteRouter($model , $controllerName , $language_id) {
+    public function deleteRouter($model , $controllerName) {
         $condition = [
            [ 'module_id', '=' , $model->id],
-           [ 'languages_id', '=' , $language_id ],
-           [ 'controller', '=' , 'app\Http\Controllers\FrontEnd\\'.$controllerName],
+           [ 'controller', '=' , 'App\Http\Controllers\FrontEnd\\'.$controllerName],
         ];  
         return $this->routerRepositories->deleteByCondition($condition);   
     }

@@ -45,7 +45,7 @@ class UserCatalogeService implements UserCatalogeServiceInteface
         try {
             $data = $request->except(['_token']);
             $data['status'] = 1;
-            $this->userCatalogeRepositories->createRoles($data['name']);
+            // $this->userCatalogeRepositories->createRoles($data['name']);
             $this->userCatalogeRepositories->create($data);   
             DB::commit();
             return true;
@@ -61,7 +61,7 @@ class UserCatalogeService implements UserCatalogeServiceInteface
         try {
             $data = $request->except(['_token']);
             $userCataloge = $this->userCatalogeRepositories->findByid($id);
-            $this->userCatalogeRepositories->updateRoles($userCataloge->name,$data['name']);
+            // $this->userCatalogeRepositories->updateRoles($userCataloge->name,$data['name']);
             $this->userCatalogeRepositories->update($id,$data);   
             DB::commit();
             return true;

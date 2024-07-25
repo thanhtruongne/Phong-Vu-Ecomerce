@@ -10,7 +10,4 @@ interface AttributeServiceInterfaces {
 
     public function update(int $id ,$request);
 
-    public function restore(int $id);
-
-    public function deleteForce(int $id);
 }

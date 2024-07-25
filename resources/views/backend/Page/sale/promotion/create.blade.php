@@ -133,7 +133,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="margin: 20px 0">
+                                {{-- <div style="margin: 20px 0">
                                     <div class="ibox-title" style="min-height:60px">                          
                                         Nguôn khách áp dụng
                                     </div>                        
@@ -179,9 +179,9 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
-                                <div style="margin: 20px 0">
+                                {{-- <div style="margin: 20px 0">
                                     <div class="ibox-title" style="min-height:60px">                          
                                         Đối tượng áp dụng
                                     </div>                        
@@ -225,7 +225,7 @@
                                            
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                                 
                     </div>

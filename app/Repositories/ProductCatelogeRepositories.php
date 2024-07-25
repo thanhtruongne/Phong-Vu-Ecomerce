@@ -11,40 +11,30 @@ use App\Repositories\Interfaces\ProductCatelogeRepositoriesInterfaces;
         $this->model = $model;
     }
 
-    public function getProductCatelogeById($id , $language  = 1) {
+    public function getProductCatelogeById($id) {
         return $this->model->select([
-                            'product_cateloge.id',
-                            'product_cateloge.image',
-                            'product_cateloge.status',
-                            'product_cateloge.follow',
-                            'product_cateloge.album',
-                            'pct.name',
-                            'pct.content',
-                            'pct.desc',
-                            'pct.meta_title',
-                            'pct.meta_desc',
-                            'pct.meta_keyword',
-                            'pct.meta_link',
+                            'id',
+                            'image',
+                            'status',
+                            'album',
+                            'name',
+                            'content',
+                            'desc',
+                            'meta_title',
+                            'meta_desc',
+                            'meta_keyword',
+                            'canonical',
+                            'attributes'
                             ])
-                            ->join('product_cateloge_translate as pct','pct.product_cateloge_id','=','product_cateloge.id')
-                            ->where('pct.languages_id','=',$language)
                             ->with([
-                                'product_cateloge_translate'
+                                'products'
                             ])
                             ->find($id);
     }
 
     public function getProductCatelogePromotion(array $condition = [],array $relation = []) {
         $query =  $this->model->newQuery();
-        $query->select([
-                            'product_cateloge.id',
-                            'product_cateloge.image',
-                            'product_cateloge.status',
-                            'product_cateloge.follow',
-                            'product_cateloge.album',
-                            'pct.name'
-        ]);
-        $query->join('product_cateloge_translate as pct','pct.product_cateloge_id','=','product_cateloge.id');
+        $query->select(['id','image','status','follow','album', 'name']);
         if(!isset($condition['keyword']) && empty($condition['keyword'])) {
             foreach($condition['original'] as $key => $item) { 
                 $query->where($item[0],$item[1],$item[2]);
@@ -63,7 +53,23 @@ use App\Repositories\Interfaces\ProductCatelogeRepositoriesInterfaces;
         }
         return $query->paginate(12);
 
- }
+    }
+
+    // pul
+
+    public function getParentAncestorsOf($id){
+        return $this->model->select(['name','canonical','id','parent'])->ancestorsOf($id);
+    }
+     
+    public function getChildDencestorsOf($id){
+        return $this->model->descendantsAndSelf($id);
+    }
+    public function getChildrenDescendantsOf(int $id){
+        return $this->model->select([
+            'id','image','name','canonical','album'
+        ])
+        ->descendantsOf($id);
+    }
 
 
 }

@@ -1,15 +1,25 @@
+
+@php
+    $slider = json_decode($slider->item,true);
+
+@endphp
 <div style="flex: 1 1 0%;">
     <div class="css-1qt2w05">
        <div class="glide">
            <div class="glide__track" data-glide-el="track">
                <ul class="glide__slides">
-                   <li class="glide__slide" >
-                       <div style="height:566px" class="w-100 position-relative css-10ys7nl">
-                           <img src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1716978736/c2q01x0pwuskbbtullcg.webp" 
-                           alt="" style="width: 100%;height: 566px;object-fit: cover;">
-                       </div>
-                   </li>   
-                   <li class="glide__slide" >
+                   @if (!empty($slider))
+                       @foreach ($slider as $key =>  $slider_item)
+                            <li class="glide__slide" >
+                                <div style="height:566px" class="w-100 position-relative css-10ys7nl">
+                                    <img src="{{ $slider_item['thumbnail'] }}" 
+                                    alt="" style="width: 100%;height: 566px;object-fit: cover;">
+                                </div>
+                            </li>   
+                       @endforeach
+                   @endif
+                  
+                   {{-- <li class="glide__slide" >
                        <div style="height:566px" class="w-100 position-relative css-10ys7nl">
                            <img src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1716978936/nm6xhbgwydrjsajetmva.webp" 
                            alt="" style="width: 100%;height: 566px;object-fit: cover;">
@@ -32,7 +42,7 @@
                            <img src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1716978954/pjlm9pdsrwhcojrfksr7.webp" 
                            alt="" style="width: 100%;height: 566px;object-fit: cover;">
                        </div>
-                   </li>   
+                   </li>    --}}
                </ul>
            </div>
 

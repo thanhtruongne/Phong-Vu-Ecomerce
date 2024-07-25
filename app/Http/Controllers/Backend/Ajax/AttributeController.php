@@ -4,25 +4,23 @@ namespace App\Http\Controllers\Backend\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Repositories\Interfaces\AttributeRepositoriesInterfaces as AttributeRepositories;
-use App\Repositories\LanguageRepositories;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
   protected $attributeRepository , $language;
 
-  public function __construct(AttributeRepositories  $attributeRepository , LanguageRepositories $languageRepositories) {
+  public function __construct(AttributeRepositories  $attributeRepository ) {
     $this->attributeRepository = $attributeRepository;
-    $this->language = $languageRepositories;
   }
 
   public function getAttribute(Request $request) {
     $payload = $request->input();
-    $attributes = $this->attributeRepository->searchAttribute($payload['search'],$payload['id'],$this->language->getCurrentLanguage()->id);
+    $attributes = $this->attributeRepository->searchAttribute($payload['search'],$payload['id']);
     $attributeMap = $attributes->map(function($attribute) {
       return [
         'id' => $attribute->id,
-        'text' => $attribute->attribute_translate->first()->name
+        'text' => $attribute->name
       ];
     })->all();
     return response()->json(array('items' => $attributeMap ));
@@ -34,7 +32,7 @@ class AttributeController extends Controller
 
       $attribute = $payload['attribute'][$payload['attributeCatelogeId']];
       if(count($attribute)) {
-        $attributes = $this->attributeRepository->findAttributeByIdArray($attribute , $this->language->getCurrentLanguage()->id);
+        $attributes = $this->attributeRepository->findAttributeByIdArray($attribute);
       }
       $temp = [];
       if($attributes ) {

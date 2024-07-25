@@ -12,38 +12,31 @@ use Illuminate\Support\Facades\DB;
         $this->model = $model;
     }
 
-    public function getProductById($id , $language_id  = 1) {
+    public function getProductById($id) {
         return $this->model->select([
-                            'product.id',
-                            'product.image',
-                            'product.status',
-                            'product.follow',
-                            'product.album',
-                            'product.product_cateloge_id',
-                            'product.variant',
-                            'product.attribute',
-                            'product.attributeCateloge',
-                            'product.code_product',
-                            'product.form',
-                            'product.price',
-                            'pct.name',
-                            'pct.content',
-                            'pct.desc',
-                            'pct.meta_title',
-                            'pct.meta_desc',
-                            'pct.meta_keyword',
-                            'pct.meta_link',
+                            'id',
+                            'image',
+                            'status',
+                            'album',
+                            'product_cateloge_id',
+                            'variant',
+                            'attribute',
+                            'attributeCateloge',
+                            'code_product',
+                            'form',
+                            'price',
+                            'name',
+                            'content',
+                            'desc',
+                            'meta_title',
+                            'meta_desc',
+                            'meta_keyword',
+                            'canonical',
                             ])
-                            ->join('product_translate as pct','pct.product_id','=','product.id')
-                            ->where('pct.languages_id','=',$language_id)
                             ->with([
                                 'product_cataloge',
-                                'product_variant' => function($query) use($language_id) {
-                                    $query->with(['attributes' => function($query) use($language_id) {
-                                        $query->with(['attribute_translate' => function($query) use($language_id) {
-                                            return $query->where('languages_id',$language_id);
-                                        }]);
-                                    }]);
+                                'product_variant' => function($query) {
+                                   $query->with('attributes');
                                 }
                             ])
                             ->find($id);
@@ -59,12 +52,9 @@ use Illuminate\Support\Facades\DB;
             'pv2.sku',
             'pv2.price' ,
             'pv2.qualnity',  
-            DB::raw('CONCAT(prtrans.name,"-",COALESCE(pvtrans.name,"mặc định")) as variant_name_translate')
+            DB::raw('CONCAT(product.name,"-",COALESCE(pv2.name,"mặc định")) as variant_name_translate')
         ]);
-        $query->join('product_translate as prtrans','prtrans.product_id', '=' ,'product.id');
         $query->leftJoin('product_variant as pv2','pv2.product_id', '=' ,'product.id');
-        $query->leftJoin('product_variant_translate as pvtrans','pvtrans.product_variant_id', '=' ,'pv2.id');
-
         if(!isset($condition['keyword']) && empty($condition['keyword'])) {
             foreach($condition['original'] as $key => $item) { 
                 $query->where($item[0],$item[1],$item[2]);
@@ -86,5 +76,35 @@ use Illuminate\Support\Facades\DB;
             $query->with($relation);
         }
         return $query->paginate(4);
+    }
+
+
+    public function getProductVariantBySkuAndCode(string $sku = '',string $nameCode = '',int $id = 0,int $languages_id = 1) {
+    //     // $product = $this->model->select($this->selectVariantSku())->with(
+    //     //     [
+    //     //     'product_variant' => function($query) use($sku,$languages_id) {
+    //     //        $query->with(['languages' => function($query) use($languages_id) {
+    //     //          $query->where('languages_id',$languages_id);
+    //     //        }])->where('sku',$sku);
+               
+    //     //     }
+    //     //     ]
+    //     // )->find($id);
+
+
+
+    //     // dd($product);
+    //     return $this->model->select($this->selectVariantSku())
+    //     ->join('product_variant as pv','pv.product_id','=','product.id')
+    //     ->join('product_variant_translate as pvt','pvt.product_variant_id','=','product_variant.id')
+    //     ->where('product_variant.sku',$sku)->where('product_variant.status',1)->where('product.id',$id)
+    //     ->with(['languages' => function($query) use($languages_id) {
+    //             $query->where('languages_id','=',$languages_id);
+    //     }])
+    //     ->first();
+    }
+
+    public function getoutStandingProduct(int $record = 4){
+        return $this->model->orderBy('created_at','DESC')->paginate($record);
     }
  }

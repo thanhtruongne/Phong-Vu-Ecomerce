@@ -147,7 +147,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div style="margin: 20px 0">
+                                {{-- <div style="margin: 20px 0">
                                     <div class="ibox-title" style="min-height:60px">                          
                                         Nguôn khách áp dụng
                                     </div>                        
@@ -194,9 +194,9 @@
                                             @endif
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
 
-                                <div style="margin: 20px 0">
+                                {{-- <div style="margin: 20px 0">
                                     <div class="ibox-title" style="min-height:60px">                          
                                         Đối tượng áp dụng
                                     </div>                        
@@ -227,7 +227,7 @@
                                         </div>
                                         @if (!is_null($promotion->info['apply']['data']))
                                         <div class="form-group render_this_select2 {{ old('Customer',$promotion->info['apply']['status']) == 'Customer' ? '' : 'hidden' }}" style="margin-top: 8px;padding: 0 15px" >
-                                            {{-- @dd($promotion->info) --}}
+                                     
                                                 <select name="CustomerValue[]" id="" multiple="multiple" class="select2 form-control onchange_delicate_this">
                                                     @foreach (__('model.CustomerCateloge') as $index => $customerCateloge)
                                                       
@@ -246,9 +246,9 @@
                                         @endif
                                         
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
-                                
+                            {{-- @dd($promotion->products);   --}}
                     </div>
                 </div>  
                     <div class="hr-line-dashed"></div>
@@ -267,6 +267,7 @@
                             <input type="hidden" name="condition_input_{{ $item }}" value="{{ json_encode( old($item)) }}">
                         @endforeach
                     }          
+
                     @elseif (!empty( $promotion->info['apply']['data']))     
                         @foreach ( $promotion->info['apply']['data'] as $index =>  $val)
                             <input type="hidden" name="condition_input_{{ $val }}" value="{{ json_encode($promotion->info['apply']['condition'][$val]) }}">
@@ -275,7 +276,7 @@
                     {{-- preload_amount_method --}}
                     <input type="hidden" name="preload_promotionMethod" value="{{ old('promotionMethod',$promotion->promotionMethod) }}">
                     {{-- Choose discount_for_single_product --}}
-                    <input type="hidden" name="product_and_quanity" value="{{ old('discountMethodProduct',$promotion->products->first()->pivot->model ?? '') }}">
+                    <input type="hidden" name="product_and_quanity" value="{{ old('discountMethodProduct',$promotion->method ?? '') }}">
 
                     {{-- promotion_order_amount_range --}}
                     <input type="hidden" name="order_range_promotion_detail" value="{{ json_encode(old('promotion_order',$promotion->info['info'])) }}">

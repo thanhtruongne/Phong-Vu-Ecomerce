@@ -23,7 +23,7 @@ class UpdateProduct extends FormRequest
     {
         return [
             'name' => ['required',],
-            'meta_link' => ['required'],
+            'canonical' => ['required'],
         ];
     }
 
@@ -31,7 +31,7 @@ class UpdateProduct extends FormRequest
     { 
         return [
             'name.required' => 'Mục tên không được bỏ trống',
-            'meta_link.required' => 'Mục canonical không được bỏ trống',
+            'canonical.required' => 'Mục canonical không được bỏ trống',
         ];
     }
 }

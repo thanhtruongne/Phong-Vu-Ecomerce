@@ -11,27 +11,20 @@ use Kalnoy\Nestedset\NodeTrait;
 
 class Menu extends Model
 {
-    use HasFactory,SoftDeletes,QueryScopes,NodeTrait;
+    use HasFactory,QueryScopes,NodeTrait;
     protected $table = 'menu';
     protected $primaryKey = 'id';
-    protected $fillable = ['image','album','status','order','user_id','type','menu_cateloge_id','position','LEFT','RIGHT','parent'];
+    protected $fillable = ['image','album','status','order','user_id','type','menu_cateloge_id','position','LEFT','RIGHT','parent','name'
+,'canonical'];
     
     protected $casts = [
 
     ];
 
-    public function languages() {
-        return $this->belongsToMany(Languages::class,'menu_translate','menu_id','language_id')
-        ->withPivot(['name','canonical'])->withTimestamps();
-    }
     
 
     public function menu_cateloge() {
         return $this->belongsTo(MenuCateloge::class,'menu_cateloge_id','id');
-    }
-
-    public function menu_translate() {
-        return $this->hasMany(MenuTranslate::class,'menu_id','id');
     }
     public function getLftName()
 {

@@ -23,7 +23,7 @@ class StoreProduct extends FormRequest
     {
         return [
             'name' => ['required'],
-            'meta_link' => ['required','unique:routers,canonical'],
+            'canonical' => ['required','unique:router,canonical'],
         ];
     }
 
@@ -31,8 +31,8 @@ class StoreProduct extends FormRequest
     { 
         return [
             'name.required' => 'Mục tên không được bỏ trống',
-            'meta_link.required' => 'Mục canonical không được bỏ trống',
-            'meta_link.unique' => 'Mục canonical không được trùng',
+            'canonical.required' => 'Mục canonical không được bỏ trống',
+            'canonical.unique' => 'Mục canonical không được trùng',
         ];
     }
 }

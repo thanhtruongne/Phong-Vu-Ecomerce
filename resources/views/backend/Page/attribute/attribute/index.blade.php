@@ -8,32 +8,7 @@
         <div class="ibox float-e-margins">
             <div class="ibox-title" style="display: flex;justify-content:space-between;align-items:center">
                 {{ Breadcrumbs::render('attribute.index') }}
-                <div style="width:30%;display:flex;justify-content:space-between;align-items:center">
-                    <div class="text-right">
-                        <a href="{{ route('private-system.management.table-user.trashed') }}" class="btn btn-danger">
-                            <i class="fa-solid fa-trash" style="margin-right: 4px;"></i>
-                            Thùng rác ({{ $trashedCount }})
-                        </a>
-                    </div>
-                    <div class="ibox-tools">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-expanded="false">
-                            <i class="fa fa-wrench"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-user">
-                            <li><a href="#"
-                            data-model = 'Language' data-target="1" data-value="1"    
-                            class="status_all_config_option">Active hết các danh mục</a>
-                            </li>
-                            <li><a href="#" 
-                            data-model = 'Language' data-target="0" data-value="0"    
-                            class="status_all_config_option">Unactive hết các danh mục</a>
-                            </li>
-                            <li><a href="" >Xóa các danh mục theo chỉ định</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-               
+             
             </div>
             <div class="ibox-content">
                 <div class="" style="display: flex;justify-content: space-between;align-items:center">
@@ -59,19 +34,7 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr >
-                            <th>
-                                <input type="checkbox" name="check_box_all" class="check_box_all_user">
-                            </th>
-                            <th>Tên thuộc tính</th>
-                                @foreach ($languages as $language)
-                                
-                                    @if (App::currentLocale() === $language->canonical)
-                                        @continue 
-                                    @endif     
-                                    <th style="text-align: center" colspan="2">
-                                        <span><img src="{{ $language->image }}" width="60" alt=""></span>
-                                    </th>            
-                                @endforeach                     
+                            <th>Tên thuộc tính</th>               
                             <th>Tình trạng hoạt động</th>
                             <th>Action</th>
                         </tr>
@@ -89,19 +52,18 @@
                                         };
                                         if(!empty($arrayCategories)) {
                                             foreach ($arrayCategories as $sum) {
-                                                $arrayPush[] = \App\Models\AttributeCateloge::find($sum)->attribute_cateloge_translate->name;
+                                                $arrayPush[] = \App\Models\AttributeCateloge::find($sum)->name;
                                             }
                                         }
               
                                     @endphp
                              <tr >
-                                 <td><input type="checkbox" value="{{ $item->id }}"  class="check_item" name="input[]"></td>
                                 <td>
                                     <div style="display:flex;align-items:center">
                                         <div style="margin-left: 12px">
                                             <h3 style="font-style:italic;font-weight: bold;color:dodgerblue">{{ Str::limit($item->name,50) }}</h3>
                                             <div>
-                                              <strong style="font-size: 12px">Nhóm thuộc tính:</strong>
+                                              <strong style="font-size: 12px;">Nhóm thuộc tính: <span style="color:rgb(0, 101, 49)"> {{ $item->attribute_cataloge->name }}</span> </strong>
                                                @if (!empty($arrayPush))
                                                    @foreach ($arrayPush as $val)
                                                        <span style="color: rgb(136, 16, 16);font-size: 12px;font-style:italic">{{ $val }} - </span>
@@ -111,7 +73,6 @@
                                         </div>
                                     </div>
                                 </td>
-                                @include('backend.component.transllateLanguage',['model' => 'Attribute','languages' => $languages , 'item' => $item])
                                 <td class="js-switch-{{ $item->id }} text-center">
                                     @if ($item->status == 0)
                                     <input 
@@ -143,7 +104,7 @@
                         </tbody>
                     </table>
                 </div>
-                {{-- {{ $attribute->links('pagination::bootstrap-4'  ) }} --}}
+                {{ $attribute->links() }}
             </div>
         </div>
     </div>

@@ -4,36 +4,46 @@ namespace App\Http\Controllers\Backend\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backend\Authencate;
+use App\Repositories\UserRepositories;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthencateController extends Controller
 {
-    public function index(Request $request) {
-          if(Auth::id() !== null) {
-            return redirect()->back();  
-        }
+    protected $userRepositories;
+
+    public function __construct(UserRepositories $userRepositories)
+    {
+        $this->userRepositories = $userRepositories;
+    }
+
+    public function login(Request $request){
+       
+       if(auth('admin')->check()) return abort(403);
         return view('backend.auth.login');
     }
 
-    public function login(Authencate $request) {
-
-        if (Auth::attempt(['email' => $request->input('email'),'password' => $request->input('password')])) {
-            $request->session()->regenerate();
-            return redirect()->route('private-system.dashboard')->with('success','Đăng nhập thành công');
+    public function AdminStoreLogin(Authencate $request) {
+         $credentials = request(['email','password']);
+        if(!Auth::guard('admin')->attempt($credentials)){
+            return redirect()->route('private-system.login')->with('error','Email hoặc mật khẩu không hợp lệ');  
         }
-
-        return redirect()->back()->with('error','Email hoặc mật khẩu không đúng');
-    }
-
-    public function logout(Request $request) {
         
-        Auth::logout();
-        $request->session()->invalidate();
-    
-        $request->session()->regenerateToken();
-    
-        return redirect()->route('private.system.login');
+        $user = $request->user('admin');
+        $token = $user->createToken('token',['*'],now()->addMinutes(180))->plainTextToken;
+        return redirect()->route('private-system.dashboard')->withCookie('token',$token,null);
+        // ->withCookie('token',$token,null);  
+    }
+    public function logout(Request $request) {
+         $request->user('admin')->tokens()->delete();
+        
+         Auth::guard('admin')->logout();
+         Cookie::queue(Cookie::forget('token'));
+        return redirect()->route('private-system.login');
+        
     }
 }

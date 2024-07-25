@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserCataloge extends Model
 {
-    use HasFactory;
-    use SoftDeletes,QueryScopes;
+    use HasFactory,QueryScopes;
 
     protected $table = 'user_cataloges';
 

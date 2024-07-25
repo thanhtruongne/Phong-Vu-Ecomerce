@@ -34,20 +34,21 @@
                 }}"
                  method="POST" class="form-horizontal" enctype="multipart/form-data">
                @csrf
+
                 @foreach ($system as $key => $item)
                     <div class="ibox-content" style="margin-top: 20px">
                         <div>
                             <div class="row" style="display: flex;justify-content:space-between;width:100%;margin-top:20px">
                                 <div class="col-lg-3">
                                 <div>
-                                    <h2 class="text-success fw-bold" style="font-weight: bold;">{{ $item['label'] }}</h2>
-                                    <p>{{ $item['desc'] }}</p>
+                                    {{-- <h2 class="text-success fw-bold" style="font-weight: bold;">{{ $item['label'] }}</h2> --}}
+                                    {{-- <p>{{ $item['desc'] }}</p> --}}
                                 </div>
                                 </div>
                                 <div class="col-lg-10">
                                     <div >
                                         <div class="ibox-content" style="border: none">
-                                            @foreach ($item['value'] as $keyValue =>  $val)
+                                            {{-- @foreach ($item['value'] as $keyValue =>  $val)
                                                 <div class="" style="margin-top: 5px">
                                                     <div class="form-group">                               
                                                         @php
@@ -76,7 +77,7 @@
                                                         <div class="mt-3 text-left text-danger italic" style="position: relative;left:130px">{{ $errors->first($name) }}(*)</div>
                                                     @endif
                                             </div>
-                                            @endforeach
+                                            @endforeach --}}
                                                                
                                         </div>
                                     

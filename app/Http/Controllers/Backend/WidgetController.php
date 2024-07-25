@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateSlider;
 use App\Http\Requests\UpdateWidget;
 use App\Http\Requests\WidgetStore;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\WidgetRepositories;
 use App\Services\Interfaces\WidgetServiceInterfaces as WidgetService;
 use Illuminate\Http\Request;
@@ -18,18 +17,15 @@ class WidgetController extends Controller
     public function __construct(
         WidgetService $widgetService , 
         WidgetRepositories $widgetRepositories,
-        LanguageRepositories $languageRepositories,
         ) {
         $this->widgetService = $widgetService;
-        $this->widgetRepositories = $widgetRepositories;
-        $this->languageRepositories = $languageRepositories;
+        $this->widgetRepositories = $widgetRepositories; 
 
    }
   
     
     public function index(Request $request)
     {  
-        $trashedCount = $this->widgetRepositories->trashed()->count();
         $widget = $this->widgetService->paginate($request);
         $filter = config('apps.search');
         $config = [
@@ -46,7 +42,7 @@ class WidgetController extends Controller
                 'https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.js'
             ]
         ];
-        return view('backend.Page.widget.index',compact('trashedCount','config','filter','widget'));
+        return view('backend.Page.widget.index',compact('config','filter','widget'));
     }
 
     /**
@@ -106,9 +102,9 @@ class WidgetController extends Controller
     {
         $widget = $this->widgetRepositories->findByid($id);
         $instance = findClass('Repositories','Repositories',$widget->model);
-        $condition  = $this->conditionEdit($this->languageRepositories->getCurrentLanguage()->id,$widget->model_id);
+        $condition  = $this->conditionEdit($widget->model_id,[]);
         $findModel = $instance->findCondition(...array_values($condition));
-        $model_id = $this->combineArrayToUpdate($findModel,['name.languages','image','id','meta_link.languages']);
+        $model_id = $this->combineArrayToUpdate($findModel,['name','image','id','canonical']);
         $config = [
             'links_link' => [
                 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css',
@@ -141,30 +137,21 @@ class WidgetController extends Controller
                         $temp[$field][] = $item[$field];
                     }
                     else {
-                        $extra = explode('.',$field);
-                        if(count($extra) == 2) {
-                            $temp[$extra[0]][] = $item->{$extra[1]}->first()->pivot->{$extra[0]};
-                        }
-                        else {
-                            $temp[$field][] = $item->{$field};
-                        }
-                       
+                        $temp[$field][] = $item->{$field};
                     }
                 }
           }
           return $temp;
     }
 
-    private function conditionEdit($language_id,$whereFileds) {
+    private function conditionEdit($whereFileds,array $relations = []) {
         return [
             'condition' => [],
             [  
                 'whereIn' => 'id',
                 'whereValues' =>$whereFileds
             ],
-            'relation' => ['languages' => function($query) use($language_id) {
-                $query->where('languages_id',$language_id);
-            }],
+            'relation' => $relations,
             'multiple'
         ];
     }
@@ -180,28 +167,4 @@ class WidgetController extends Controller
         return redirect()->route('private-system.management.widget.index')->with('error','Lỗi server.....');
     }
 
-   
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function remove(string $id)
-    {   
-        
-    }
-
-    public function trashed() {
-        $trashedCount = $this->widgetRepositories->trashed();
-        $title = config('apps.post.post-cataloge');
-        $filter = config('apps.post.filter');
-        $config = [
-            'links_link' => [
-                'https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.css'
-            ],
-            'js_link' => [
-                'https://cdnjs.cloudflare.com/ajax/libs/switchery/0.8.2/switchery.js'
-            ]
-        ];
-        return view('backend.Page.Post.Trashed.index',compact('trashedCount','config','filter','title'));
-    }
 }

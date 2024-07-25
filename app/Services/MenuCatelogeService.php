@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Repositories\BaseRepositories;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\MenuCatelogeRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\MenuCatelogeServiceInterfaces ;
@@ -20,16 +19,13 @@ use Illuminate\Support\Facades\Hash;
  */
 class MenuCatelogeService extends BaseService implements MenuCatelogeServiceInterfaces
 {
-    protected $LanguageRepositories , $menuRepositories;
+    protected $menuRepositories;
 
     public function __construct(
-        LanguageRepositories $LanguageRepositories,
-        RouterRepositories $routerRepositories,
         MenuCatelogeRepositories $menuRepositories
         ) {
-        $this->LanguageRepositories = $LanguageRepositories;
         $this->menuRepositories = $menuRepositories;
-        parent::__construct($routerRepositories);   
+        parent::__construct();   
     }
     public function paginate($request) 
     {
@@ -54,7 +50,6 @@ class MenuCatelogeService extends BaseService implements MenuCatelogeServiceInte
         DB::beginTransaction();
         try {
             $data = $request->only(['name','keyword']);
-            $data['user_id'] = Auth::id();
             $menuCateloge =  $this->menuRepositories->create($data);
             DB::commit();
             return [
@@ -75,8 +70,11 @@ class MenuCatelogeService extends BaseService implements MenuCatelogeServiceInte
     public function update(int $id ,$request) {
         DB::beginTransaction();
         try {
-            $data = $request->except(['_token']);
-            $this->LanguageRepositories->update($id,$data);   
+            $data = $request->only(['name','keyword']);
+            $menuCateloge =  $this->menuRepositories->update($id,$data);
+            DB::commit();
+            return true;
+               
             DB::commit();
             return true;
         } catch (Exception $e) {

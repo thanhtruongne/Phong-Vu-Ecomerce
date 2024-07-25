@@ -8,7 +8,7 @@
         </form>
     </div>
         <ul class="nav navbar-top-links navbar-right">
-            <li >        
+            {{-- <li >        
                 <div style="display: flex">
                     @foreach ($languages as $item)
                         <a class="hover_time {{ $item->current == 1 ? 'active_language' : '' }}"  style="margin: 0 8px;" href="{{ route('private-system.management.configuration.language.change',$item->id) }}">
@@ -17,7 +17,7 @@
                     @endforeach   
                 </div>
                    
-            </li>
+            </li> --}}
             
             <li class="dropdown">
                 <a class="dropdown-toggle count-info" data-toggle="dropdown" href="#">

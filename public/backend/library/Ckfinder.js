@@ -4,8 +4,9 @@
    
     Data.UploadImageInput = () => {
        $('body').on('click','.ckfinder_2',function() {
-            let input = $(this).find('input');   
-            Data.setupCkfinder(input,null);
+            let input = $(this).find('input'); 
+            console.log(input);
+            Data.setupCkfinder(input,null,'image');
        })
     }
 
@@ -54,6 +55,7 @@
                 if(type == 'image') {
                     var file = evt.data.files.first();
                     input.val(file.getUrl());
+                    console.log( input.val(file.getUrl()),image)
                     if(image != null) {
                         image.attr("src",file.getUrl())
                     }

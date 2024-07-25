@@ -10,21 +10,16 @@ use Kalnoy\Nestedset\NodeTrait;
 
 class PostCataloge extends Model
 {
-    use SoftDeletes,QueryScopes,HasFactory,NodeTrait;
+    use QueryScopes,HasFactory,NodeTrait;
     
     protected $table = 'post_cateloge';
     protected $primaryKey = 'id';
-    protected $fillable = ['image','icon','album','status','order','user_id','follow','parent','LEFT','RIGHT'];
+    protected $fillable = ['image','icon','album','status','order','user_id','follow','parent','LEFT','RIGHT',
+'name','content','desc','meta_title','meta_desc','meta_keyword','canonical'
+];
     
 
-    public function languages() {
-        return $this->belongsToMany(Languages::class,'post_cateloge_translate','post_cateloge_id','languages_id')
-        ->withPivot(['name','content','description','meta_title','meta_keyword','meta_desc','meta_link'])->withTimestamps();
-    }
 
-    public function post_cateloge_translate() {
-        return $this->hasMany(PostCatelogeTranslate::class,'post_cateloge_id','id');
-    }
     public function posts() {
         return $this->belongsToMany(Post::class,'post_cateloge_post','post_cateloge_id','post_id');
     }

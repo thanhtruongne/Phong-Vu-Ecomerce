@@ -69,7 +69,7 @@
                </div>
            </div>
            
-           @include('Frontend.layout.component.slider')
+           @include('Frontend.layout.component.slider',['slider' => $slider])
 
            <div class="teko-col-2 position-relative css-1jqt7ap" style="display: block;flex: 0 0 16.66%;max-width: 16.66%;;">
               <div class="d-flex" style="flex-direction:column;gap:16px">
@@ -91,7 +91,7 @@
 
        <div class="banner_widget teko-row css-11whfm5" style="margin-top:18px;">
            <div style="display: flex;flex: 0 0 100%;max-width: 100%;">
-              <div class="teko-col-3 css-17ajfcv">
+              <div class="teko-col-3 css-17ajfcv" style="margin-left: -8px;margin-right: 14px;">
                  <a href="" class="css-1h3fn00 ">
                       <div class="css-egxwy8">
                          <img src="https://lh3.googleusercontent.com/OoEjNIjgicxooEQUI_4TN-phcocjkOfdR2TM9WuOp6jKQi4JUBk41VhnpQnvxBYGsAVFP80whsr25fZyGu5dcTT2iJqCE_yQ=w308-rw" loading="eager" hover="zoom" decoding="async" alt="Laptop - 6800" fetchpriority="high" name="Laptop - 6800" style="width: 100%; height: auto;">

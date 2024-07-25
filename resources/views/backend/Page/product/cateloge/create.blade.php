@@ -82,7 +82,7 @@
                                                       <option selected value="none">Root</option>
                                                   @foreach ($categories as $category)
                                                       <option  value="{{ $category->id }}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->product_cateloge_translate->first()->name }}
+                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->name }}
                                                       </option>
                                                   @endforeach
                                               </select>
@@ -92,7 +92,7 @@
                                           @endif
                                       </div>
                                       <div class="form-group" style="margin-top: 40px"><label class="control-label">Hình ảnh nhóm bài viết (*)</label>
-                                          <div class="ckfinder_2" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
+                                          <div class="ckfinder_12" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
                                               <input type="text" name="image" hidden value="{{  old('image') }}" >
                                               <img class="image_post_cataloge" style="width:100%" src={{ old('image') ?? "https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" }} alt="">
                                           </div>
@@ -119,19 +119,7 @@
                                               <div class="mt-3 text-left text-danger italic">{{ $errors->first('status') }}(*)</div>
                                           @endif
                                       </div>
-                                      <div class="form-group" style="margin-top: 8px"><label class="control-label">Chọn mục điều hướng (*)</label>
-                                          <div class="">
-                                              <select class="form-control select2" name="follow">
-                                                  @foreach ($filter['create']['follow'] as $key =>  $follow)
-                                                  
-                                                      <option {{ $key == 1 ? 'selected' : '' }} value="{{ $key }}">{{ $follow }}</option>
-                                                  @endforeach   
-                                              </select>
-                                          </div>
-                                           @if ($errors->has('follow'))
-                                              <div class="mt-3 text-left text-danger italic">{{ $errors->first('follow') }}(*)</div>
-                                          @endif
-                                      </div>
+                                    
                                   </div>
                               </div>
                                

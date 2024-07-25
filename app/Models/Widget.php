@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Widget extends Model
 {
-    use HasFactory,SoftDeletes,QueryScopes;
+    use HasFactory,QueryScopes;
     protected $table = 'widget';
     protected $primaryKey = 'id';
     protected $fillable = ['name','keyword','content','desc','model_id','album','model','short_code'];

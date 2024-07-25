@@ -57,7 +57,7 @@
                                         <select name="attributeCateloge[]" class="vartiant_choose niceSelect" style="width: 100%;margin-bottom:20px">
                                             <option value="0">Chọn thuộc tính</option>
                                             @foreach ($attributeCateloge as $attribute)
-                                                    <option {{ $OldItem  == $attribute->id  ? 'selected' : '' }} value="{{ $attribute->id }}">{{ $attribute->attribute_cateloge_translate->name }}</option>
+                                                    <option {{ $OldItem  == $attribute->id  ? 'selected' : '' }} value="{{ $attribute->id }}">{{ $attribute->name }}</option>
                                             @endforeach
                                         </select>      
                                     </div>
@@ -108,13 +108,12 @@
 <script>
     //xử lý bằng jquery
     let attributeCateloges = @json($attributeCateloge->map(function($item) {
-         $name = $item->attribute_cateloge_translate->name;
+         $name = $item->name;
          return [
             'name' => $name,
             'id' => $item->id
         ];
     })->values());
-
     let attribute = '{{ base64_encode(json_encode(old('attribute') ? old('attribute') : (!empty($product->attribute) ? json_decode($product->attribute) : [] ) )) }}';
     let variant = '{{ base64_encode(json_encode(old('variants')  ? old('variants') : (!empty($product->variant) ? json_decode($product->variant) : [] )  )) }}';
 </script>

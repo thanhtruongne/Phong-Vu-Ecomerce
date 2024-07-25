@@ -33,9 +33,6 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr >
-                            <th>
-                                <input type="checkbox" name="check_box_all" class="check_box_all_user">
-                            </th>
                             <th>Tên danh mục </th>
                             <th>Tình trạng hoạt động</th>
                             <th>Action</th>
@@ -45,11 +42,10 @@
                          @if (count($attributeCateloge) > 0)
                              @foreach ($attributeCateloge as $item)
                              <tr >
-                                 <td><input type="checkbox" value="{{ $item->id }}"  class="check_item" name="input[]"></td>
                                 <td>
                                     <span class="pie">
                                         {{ str_repeat('|---',($item->depth > 0) ? $item->depth : 0) }}
-                                        {{ $item->attribute_cateloge_translate->name }}
+                                        {{ $item->name }}
                                     </span>
                                 </td>
                                 <td class="js-switch-{{ $item->id }} text-center">

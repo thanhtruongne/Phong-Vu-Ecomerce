@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\PostCataloges;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\PostCatelogeRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\PostCatalogeServiceInterfaces;
@@ -20,16 +19,13 @@ use Illuminate\Support\Str;
  */
 class PostCatelogeService extends BaseService implements PostCatalogeServiceInterfaces
 {
-    protected $postCatalogeRepositories,$routerRepositories , $languageRepositories;
+    protected $postCatalogeRepositories;
 
     public function __construct(
-        PostCatelogeRepositories $postCatalogeRepositories ,
-        RouterRepositories $routerRepositories,
-        LanguageRepositories $languageRepositories
+        PostCatelogeRepositories $postCatalogeRepositories
         ) {
         $this->postCatalogeRepositories = $postCatalogeRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function paginate($request) 
     {
@@ -59,11 +55,9 @@ class PostCatelogeService extends BaseService implements PostCatalogeServiceInte
             //đồng thời tạo phân quyền role cho nhóm người dùng mới
             
             if($postCataloge->id > 0) {
-                $this->createTranslatePostCatalogePivot($request,$postCataloge); 
                 $this->createRouter(
                     $request->input('meta_link'),$postCataloge,
                     'PostCatalogeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }      
             DB::commit();
@@ -81,12 +75,10 @@ class PostCatelogeService extends BaseService implements PostCatalogeServiceInte
             $postCataloge = $this->postCatalogeRepositories->findByid($id); 
             $check = $this->updatePostCataloge($request,$postCataloge);
             if($check == true) {
-                $this->updateTranslatePostCatalogePivot($id,$postCataloge,$request); 
                 $this->updateRouter(
                     $request->input('meta_link'),
                     $postCataloge,
                     'PostCatalogeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }        
             DB::commit();
@@ -176,38 +168,20 @@ class PostCatelogeService extends BaseService implements PostCatalogeServiceInte
         //tạo nested set
   
         $data['album'] = !empty($request->input('album')) ? json_encode($request->input('album')) : '' ;
-        $data['user_id'] = Auth::user()->id;
+        $data['canonical'] = Str::slug($data['canonical']);
         $postCataloge = $this->postCatalogeRepositories->create($data); 
         $this->postCatalogeRepositories->createCategoriesByNode($request->only($this->createCategoriesNode()),$postCataloge);
         return $postCataloge;
     }
     
 
-    private function createTranslatePostCatalogePivot($request,$postCataloge) {
-        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id ?? 1;
-        $payloadTranslate['post_cateloge_id'] = $postCataloge->id;
-        $this->postCatalogeRepositories->createTranslatePivot($postCataloge,$payloadTranslate,'languages'); 
-    }
 
     private function updatePostCataloge($request,$postCataloge) {
         $data = $request->only($this->requestOnlyPostCataloge());
-        $data['user_id'] = Auth::user()->id;
         $data['album'] = json_encode($request->input('album')) ?? $postCataloge->album;
+        $data['canonical'] = Str::slug($data['canonical']);
         $check = $this->postCatalogeRepositories->update($postCataloge->id,$data);
         return $check;
-    }
-
-    private function updateTranslatePostCatalogePivot($id,$postCataloge,$request) {
-        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id ?? 1;
-        $payloadTranslate['post_cateloge_id'] = $id;
-        // tách ra khỏi bảng trung gian
-        $detach = $postCataloge->languages()->detach([ $payloadTranslate['languages_id'],$id]);
-        // tạo bảng mới trug gian ghi đè 
-        $translate = $this->postCatalogeRepositories->createTranslatePivot($postCataloge,$payloadTranslate,'languages'); 
     }
 
     private function createCategoriesNode() {

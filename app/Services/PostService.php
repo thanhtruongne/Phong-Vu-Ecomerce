@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\PostCataloges;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\PostRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\PostServiceInterfaces;
@@ -17,33 +16,29 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class PostService extends BaseService implements PostServiceInterfaces
 {
-    protected $postRepositories,$languageRepositories;
+    protected $postRepositories;
 
     public function __construct(
          PostRepositories $postRepositories,
-         LanguageRepositories $languageRepositories,
-         RouterRepositories $routerRepositories
          ) {
         $this->postRepositories = $postRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function paginate($request) 
     {
         $condition = [];
         $condition['search'] = $request->search ?? '';
         $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-          ['pct.language_id' ,'=',$this->languageRepositories->getCurrentLanguage()->id], 
-          ['status','=',$request->status ?? 1],
-        ];
+        if($request->has('status')){
+            $condition['where'] = [
+                ['status','=',$request->status ?? 1],
+            ];
+        }
 
         $post = $this->postRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
-        //sử dụng mảng 4 để load join vào table
         [
-            ['post_translate as pct' , 'pct.post_id','=','post.id'],
             ['post_cateloge_post as pcsp','post.id','=','pcsp.post_id'],
            
         ],
@@ -61,8 +56,10 @@ class PostService extends BaseService implements PostServiceInterfaces
         try {
             $post = $this->createPostService($request);
             if($post->id > 0) {
-                $this->createTranslatePivotPostService($request,$post);
-                $this->createRouter($request->input('meta_link'),$post,'PostController',$this->languageRepositories->getCurrentLanguage()->id);
+                // tạo bảng mới trug gian ghi đè 
+                $catalogeSublist = $this->handlePostCataloge($request);
+                $post->post_cateloge_post()->sync($catalogeSublist);
+                $this->createRouter($request->input('canonical'),$post,'PostController');
              
             }
             DB::commit();
@@ -81,7 +78,7 @@ class PostService extends BaseService implements PostServiceInterfaces
             $check = $this->updatePostService($request,$post);
             if($check == true)  {
                 $this->updatePostCatalogePostService($request,$post);
-                $this->updateRouter($request->input('meta_link'),$post,'PostController',$this->languageRepositories->getCurrentLanguage()->id);
+                $this->updateRouter($request->input('meta_link'),$post,'PostController');
             }
             DB::commit();
             return true;
@@ -157,7 +154,6 @@ class PostService extends BaseService implements PostServiceInterfaces
             $this->deleteRouter(
                 $this->postRepositories->findByid($id),
                 'PostController',
-                $this->languageRepositories->getCurrentLanguage()->id
             );
             DB::commit();
             return true;
@@ -172,15 +168,17 @@ class PostService extends BaseService implements PostServiceInterfaces
     }
 
     private function requestOnlyPostCataloge() {
-        return ['follow','status','image','post_cateloge_id','album'];
+        return ['follow','status','image','post_cateloge_id','album',
+    'name','desc','content','meta_title','meta_desc','meta_keyword','canonical'
+    ];
     }
     private function requestOnlyPostCatalogeTranslate() {
-        return ['language_id','name','desc','content','meta_title','meta_desc','meta_keyword','meta_link'];
+        return ['name','desc','content','meta_title','meta_desc','meta_keyword','canonical'];
     }
 
     private function getPaginateIndex() {
         // return ['status','image','pct.name','id','pcp.post_id','pcp.post_catelogues_id'];
-        return ['pct.name','post.image','post.status','post.id','post.post_cateloge_id'];
+        return ['post.name','image','status','id','post.post_cateloge_id'];
     }
 
     private function whereRawCondition($request) {
@@ -188,9 +186,9 @@ class PostService extends BaseService implements PostServiceInterfaces
             return [
                 [
                     'pcsp.post_cateloge_id IN (
-                        SELECT post_cateloges.id  FROM post_cateloges 
-                        WHERE `LEFT` >= (SELECT `LEFT` from post_cateloges as cat  where cat.id = ?)
-                        AND `RIGHT` <= (SELECT `RIGHT` from post_cateloges as cat  where cat.id = ?)
+                        SELECT post_cateloge.id  FROM post_cateloge 
+                        WHERE `LEFT` >= (SELECT `LEFT` from post_cateloge as cat  where cat.id = ?)
+                        AND `RIGHT` <= (SELECT `RIGHT` from post_cateloge as cat  where cat.id = ?)
                     )',
                     [$request->integer('categories'),$request->integer('categories')]
                 ]
@@ -200,22 +198,13 @@ class PostService extends BaseService implements PostServiceInterfaces
 
     private function createPostService($request) {
         $data = $request->only($this->requestOnlyPostCataloge());
+        $data['canonical'] = Str::slug($data['canonical']);
         $data['album'] = json_encode($data['album']);
-        $data['user_id'] = Auth::user()->id;
+        $data['user_id'] = auth('admin')->user()->id;
         $post = $this->postRepositories->create($data);  
-        
         return $post;
     }
 
-    private function createTranslatePivotPostService($request,$post) {
-        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $payloadTranslate['language_id'] = $this->languageRepositories->getCurrentLanguage()->id  ?? 1;
-        $payloadTranslate['post_id'] = $post->id;
-        $translate = $this->postRepositories->createTranslatePivot($post,$payloadTranslate,'languages');
-        $catalogeSublist = $this->handlePostCataloge($request); 
-        $post->post_cateloge_post()->sync($catalogeSublist);
-    }
     
     private function updatePostService($request,$post) {
         $data = $request->only($this->requestOnlyPostCataloge()); 
@@ -226,16 +215,6 @@ class PostService extends BaseService implements PostServiceInterfaces
     }
 
     private function updatePostCatalogePostService($request,$post) {
-        $payloadTranslate = $request->only($this->requestOnlyPostCatalogeTranslate());
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $payloadTranslate['language_id'] = $this->languageRepositories->getCurrentLanguage()->id  ?? 1;
-        $payloadTranslate['post_id'] = $post->id;
-        // tách ra khỏi bảng trung gian
-        $detach = $post->languages()->detach([ $payloadTranslate['language_id'],$post->id]);
-        // tạo bảng mới trug gian ghi đè 
-        $translate = $this->postRepositories->createTranslatePivot($post,$payloadTranslate,'languages'); 
-        $catalogeSublist = $this->handlePostCataloge($request); 
-    
-        $post->post_cateloge_post()->sync($catalogeSublist);
+
     }
 }

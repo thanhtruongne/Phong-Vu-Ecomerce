@@ -15,7 +15,7 @@ CKEDITOR.editorConfig = function( config ) {
 	// config.autoUpdateElement = false;
 	// config.entities = true;
 	// config.allowContent = true;
-
+	config.versionCheck = false;
 	
 	// config.toolbarGroups = [
 	// 	{ name: 'clipboard',   groups: [ 'clipboard', 'undo' ] },

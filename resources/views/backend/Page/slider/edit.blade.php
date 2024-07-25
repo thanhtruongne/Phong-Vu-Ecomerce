@@ -91,7 +91,7 @@
                                         <div class="form-group" style="padding: 0 15px;display:flex;align-items:center">
                                             <div class="col-lg-4" style="padding-left: 0">Chiều rộng</div>
                                             <div class="col-lg-8" style="padding-right: 0;position: relative;">
-                                                <input type="number"   name="setting[width]" value="{{ !empty($setting) ? $setting['width'] : old('setting')['width']}}" class="form-control"/>
+                                                <input type="number"   name="setting[width]" value="{{ !empty($setting) ? $setting['width'] : old('setting')['width'] ?? ''}}" class="form-control"/>
                                                 <span style="position: absolute;top: 6px;right: 6px;">px</span>
                                             </div>   
                                         </div>
@@ -101,7 +101,7 @@
                                                 <input 
                                                 type="number" 
                                                  name="setting[height]" 
-                                                 value="{{ !empty($setting) ? $setting['height'] : old('setting')['height']}}"  class="form-control"/>
+                                                 value="{{ !empty($setting) ? $setting['height'] : old('setting')['height'] ?? ''}}"  class="form-control"/>
                                                 <span style="position: absolute;top: 6px;right: 6px;">px</span>
                                             </div>   
                                         </div>
@@ -111,7 +111,7 @@
                                                 <select name="setting[effect]" id="" class="form-control select2">
                                                     @foreach (__('slider.effect') as $key => $slider)
                                                         <option 
-                                                        {{ (!empty($setting['effect']) ? $setting['effect'] : old('setting')['effect']) == $key ? 'selected' : '' }} 
+                                                        {{ (!empty($setting['effect']) ? $setting['effect'] : old('setting')['effect'] ?? '') == $key ? 'selected' : '' }} 
                                                         value="{{ $key }}">{{ $slider }}</option>
                                                     @endforeach
                                                 </select>
@@ -121,7 +121,7 @@
                                             <div class="col-lg-4" style="padding-left: 0">Mũi tên</div>
                                             <div class="col-lg-8" style="padding-right: 0;position: relative;">
                                                 <input 
-                                                {{ (!empty($setting['arrow']) ? $setting['arrow'] : old('setting')['arrow']) == '1' ? 'checked' : '' }} 
+                                                {{ (!empty($setting['arrow']) ? $setting['arrow'] : old('setting')['arrow'] ?? '') == '1' ? 'checked' : '' }} 
                                                  type="checkbox"
                                                  name="setting[arrow]" value="1">
                                             </div>   
@@ -133,7 +133,7 @@
                                                 @foreach (__('slider.directional') as $key =>  $item)
                                                     <div>
                                                         <input  
-                                                        {{ (!empty($setting['directional']) ? $setting['directional'] : old('setting')['directional']) == $key ? 'checked' : '' }} 
+                                                        {{ (!empty($setting['directional']) ? $setting['directional'] : old('setting')['directional'] ?? '') == $key ? 'checked' : '' }} 
                                                             type="radio"
                                                             id="{{ $key }}"
                                                             value="{{ $key }}"
@@ -146,7 +146,7 @@
                                         <div class="form-group" style="padding: 0 15px;display:flex;align-items:center">
                                             <div class="col-lg-4" style="padding-left: 0">Auto</div>
                                             <div class="col-lg-8" style="padding-right: 0;position: relative;">
-                                                <input type="checkbox" {{ (!empty($setting['auto']) ? $setting['auto'] : old('setting')['auto']) == '1' ? 'checked' : '' }}  name="setting[auto]" value="1">
+                                                <input type="checkbox" {{ (!empty($setting['auto']) ? $setting['auto'] : old('setting')['auto'] ?? '') == '1' ? 'checked' : '' }}  name="setting[auto]" value="1">
                                             </div>   
                                         </div>
                                         <div class="form-group" style="padding: 0 15px;display:flex;align-items:center">

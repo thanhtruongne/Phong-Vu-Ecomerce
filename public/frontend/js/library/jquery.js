@@ -7,9 +7,10 @@
         let _this = $(this);
 
         if($('.css-16sn586').hasClass('hidden')) {
-            console.log(123);
+            // console.log(123);
             $('.css-16sn586').removeClass('hidden');
             $('.css-1peoe6k').removeClass('hidden');
+            Data.OnHoverMenuSideBar()
         }
         else {
             $('.css-16sn586').addClass('hidden');  
@@ -37,22 +38,38 @@
     })
     glide.mount();
    }
+
+
+   Data.setUpCategoryOutStandingSlider = () => {
+    var glide =  new Glide('.glide_category',{
+        type: 'carousel',
+        startAt: 0,
+        perView: 10,
+    })
+    glide.mount();
+   }
    
 
    Data.OnHoverMenuSideBar = () => {
-    if($('.set_ui_menu').length) {
+       console.log(1213123213);
+    if($('.set_ui_menu')) {
          $.each($('.set_ui_menu') , function(index,val) {
              let classList = $(val).attr('data-title');
+             console.log(classList);
              $(val).hover(function (e) {
-     
+                console.log(44)
                  $('.css-j61855').removeClass('hidden');
                  $('.css-j61855').find('.'+classList).removeClass('hidden')
                  $('.css-j61855').find('.'+classList).find('div.css-fej9ea').removeClass('hidden')
+                 let divCenter = $('.css-j61855').find('div.css-fej9ea');
+
+                 console.log(divCenter);
+
                  e.stopPropagation();
              }, function () {
                 if(!$('.css-j61855').find('.'+classList).find('div.css-fej9ea').hasClass('hidden')) {             
-                    $('.css-j61855').addClass('hidden');
-                    $('.css-j61855').find('.'+classList).addClass('hidden') 
+                    // $('.css-j61855').addClass('hidden');
+                    // $('.css-j61855').find('.'+classList).addClass('hidden') 
                 }
                 
              });
@@ -102,10 +119,12 @@
 
    $(document).ready(function() {
       Data.OnFocusDataChangeCategory();
+      Data.setUpCategoryOutStandingSlider();
       Data.setUpSlideGlide();
       Data.setUpWidgetSlider();
       Data.OnHoverMenuSideBar();
       Data.SortWrappDivMenu();
+     
    })
 
 })(jQuery);

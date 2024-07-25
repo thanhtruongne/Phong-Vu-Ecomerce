@@ -9,22 +9,19 @@ use Kalnoy\Nestedset\NodeTrait;
 class ProductCateloge extends Model
 {
     use HasFactory;
-    use QueryScopes,NodeTrait,SoftDeletes;
+    use QueryScopes,NodeTrait;
     
     protected $table = 'product_cateloge';
     protected $primaryKey = 'id';
     //dạng fillable mặc định cho model cataloge
-    protected $fillable = ['image','icon','album','status','order','user_id','follow','parent','LEFT','RIGHT'];
+    protected $fillable = ['image','icon','album','status','order','user_id','follow','parent','LEFT','RIGHT','attributes',
+    'name','content','desc','meta_title','meta_desc','meta_keyword','canonical'
+    ];
+
+    protected $casts = [
+        'attributes' => 'json'
+    ];
     
-
-    public function languages() {
-        return $this->belongsToMany(Languages::class,"product_cateloge_translate","product_cateloge_id",'languages_id')
-        ->withPivot(['name','content','desc','meta_title','meta_keyword','meta_desc','meta_link'])->withTimestamps();
-    }
-
-    public function product_cateloge_translate() {
-        return $this->hasMany(ProductCatelogeTranslate::class,'product_cateloge_id','id');
-    }
 
     public function products() {
         return $this->belongsToMany(Product::class,'product_cateloge_product','product_cateloge_id','product_id');

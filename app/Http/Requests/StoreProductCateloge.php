@@ -23,7 +23,7 @@ class StoreProductCateloge extends FormRequest
     {
         return [
             'name' => ['required'],
-            'meta_link' => ['required']
+            'canonical' => ['required']
         ];
     }
 
@@ -31,7 +31,7 @@ class StoreProductCateloge extends FormRequest
     { 
         return [
             'name.required' => 'Mục tiêu tên nhóm không được bỏ trống',
-            'meta_link.required' => 'Mục đường dẫn nhóm không được bỏ trống',
+            'canonical.required' => 'Mục đường dẫn nhóm không được bỏ trống',
         ];
     }
 }

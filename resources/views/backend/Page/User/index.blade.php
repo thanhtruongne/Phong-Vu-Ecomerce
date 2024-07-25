@@ -55,9 +55,18 @@
                         <tbody>
                          @if (count($users) > 0)
                              @foreach ($users as $item)
+                             @dd()
                              <tr >
                                 <td><input type="checkbox" value="{{ $item->id }}"  class="check_item" name="input[]"></td>
-                                <td>{{ $item->email }}</td>
+                                <td>
+                                    <strong>Email: </strong> <span>{{ $item->email }}</span><br>
+                                    <strong> Tên: </strong> <span>{{ $item->name }}</span><br>
+                                    <strong>SDT: </strong> <span>{{ $item->phone }}</span><br>
+                                    <strong>Địa chỉ: </strong> <span>{{ $item->email }}</span><br>
+                                    <strong>Email: </strong> <span>{{ $item->email }}</span><br>
+                                    <strong>Email: </strong> <span>{{ $item->email }}</span><br>
+                                    <strong>Email: </strong> <span>{{ $item->email }}</span><br>
+                                </td>
                                 <td><span class="pie">{{ $item->name }}</span></td>
                                 <td>{{ $item->phone }}</td>
                                 <td>{{ $item->address }}</td>

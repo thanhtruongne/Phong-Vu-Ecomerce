@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Enums\Enum\PromotionEnum;
 use App\Models\PromotionProductVariant;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\PromotionProductVariantRepositories;
 use App\Repositories\PromotionRepositories;
 use App\Services\Interfaces\PromotionServiceInterfaces;
@@ -18,16 +17,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class PromotionService extends BaseService implements PromotionServiceInterfaces
 {
-    protected $promotionRepositories,$languageRepositories,$promotionProductVariantRepositories;
+    protected $promotionRepositories,$promotionProductVariantRepositories;
 
     public function __construct(
          PromotionRepositories $promotionRepositories,
-         LanguageRepositories $languageRepositories,
          PromotionProductVariantRepositories $promotionProductVariantRepositories
          ) {
+        parent::__construct();
         $this->promotionRepositories = $promotionRepositories;
         $this->promotionProductVariantRepositories = $promotionProductVariantRepositories;
-        $this->languageRepositories = $languageRepositories;
     }
     public function paginate($request) 
     {
@@ -46,9 +44,9 @@ class PromotionService extends BaseService implements PromotionServiceInterfaces
     public function create($request ) {
         DB::beginTransaction();
         try {
-            $payload = $request->only(['name','code','desc','startDate','endDate','promotionMethod','neverEndDate','discountMethodProduct']);
+            $payload = $request->only(['name','code','desc','startDate','endDate','promotionMethod','neverEndDate']);
             $payload['startDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['startDate']);
- 
+            $payload['method'] = $request->input('discountMethodProduct');
             if($request->input('neverEndDate') == null && isset($payload['endDate'])) {
                 $payload['endDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['endDate']);
             }
@@ -66,7 +64,7 @@ class PromotionService extends BaseService implements PromotionServiceInterfaces
                 default : 
                     break;    
             }
-  
+        
             $promotion = $this->promotionRepositories->create($payload);
             if($promotion->id > 0) {
                 
@@ -141,7 +139,7 @@ class PromotionService extends BaseService implements PromotionServiceInterfaces
         try {
             $payload = $request->only(['name','code','desc','startDate','endDate','promotionMethod','neverEndDate']);
             $payload['startDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['startDate']);
-         
+            $payload['method'] = $request->input('discountMethodProduct');
             if($request->input('neverEndDate') == null && isset($payload['endDate'])) {
                 $payload['endDate'] = Carbon::createFromFormat('d/m/Y H:i',$payload['endDate']);
                 $payload['neverEndDate'] = null;
@@ -159,22 +157,21 @@ class PromotionService extends BaseService implements PromotionServiceInterfaces
                 default : 
                     break;    
             }
-            $promotion = $this->promotionRepositories->update($id,$payload);
+            $promotion = $this->promotionRepositories->update($id,$payload);       
             $found = $this->promotionRepositories->findByid($id);
             if($promotion == true && $found->id  > 0) {
                 $theme = [];
                 $model = $request->input('discountMethodProduct');
                 $found->products()->detach();
+               
                 if(!is_null($request->input('product_id'))) {
                     foreach($request->input('product_id') as $key => $item) {
                         $theme[] = [
                             'product_id' => $item,
-                            'promotion_id' => $promotion->id,
-                            'product_variant_id' => $request->input('product_variant_id')[$key],
+                            'product_variant_id' => $request->input('product_variant_id')[$key] ?? 0,
                             'model' => $model
                         ];
                     }
-                   
                     $found->products()->sync($theme);
                 }
             }

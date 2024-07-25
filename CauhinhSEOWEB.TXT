@@ -1,0 +1,5 @@
+SEO web theo các thẻ meta
+
+meta name robots --- content=index,follow thể hiện /ẩn trang web theo google
+
+<meta property="og:locale" content="vi_VN" />

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Backend\Ajax;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\ProductCatelogeRepositories;
 use App\Repositories\ProductRepositories;
 use App\Repositories\PromotionRepositories;
@@ -11,15 +10,13 @@ use Illuminate\Http\Request;
 
 class AjaxPromotionController extends Controller
 {
-  protected $language , $productRepositories , $productCatelogeRepositories,$promotionRepositories;
+  protected $productRepositories , $productCatelogeRepositories,$promotionRepositories;
 
   public function __construct(
     ProductRepositories $productRepositories,
     ProductCatelogeRepositories $productCatelogeRepositories,
-    PromotionRepositories $promotionRepositories,
-    LanguageRepositories $languageRepositories) 
+    PromotionRepositories $promotionRepositories) 
     {
-        $this->language = $languageRepositories;
         $this->productCatelogeRepositories = $productCatelogeRepositories;
         $this->productRepositories = $productRepositories;
         $this->promotionRepositories = $promotionRepositories;
@@ -31,12 +28,12 @@ class AjaxPromotionController extends Controller
 
     if($modelType == 'ProductCateloge') {
       $condition['original'] = [
-        ['pct.languages_id','=',$this->language->getCurrentLanguage()->id]
+        ['status','=',1]
       ];
       if(!empty($request->input('keyword'))) {
         $condition['keyword'] = 
         [
-            ['pct.name','like','%'.$request->input('keyword').'%'],
+            ['name','like','%'.$request->input('keyword').'%'],
         ];
       }
       $data =  $this->productCatelogeRepositories->getProductCatelogePromotion($condition , [] );
@@ -44,12 +41,12 @@ class AjaxPromotionController extends Controller
     }
     else if($modelType == 'Product') {
       $condition['original'] = [
-        ['prtrans.languages_id','=',$this->language->getCurrentLanguage()->id]
+        ['product.status','=',1]
       ];
       if(!empty($request->input('keyword'))) {
         $condition['keyword'] = 
         [
-            ['prtrans.name','like','%'.$request->input('keyword').'%'],
+            ['product.name','like','%'.$request->input('keyword').'%'],
             ['pv2.sku','=',$request->input('keyword')],
             ['pv2.barcode','=',$request->input('keyword')],
         ];
@@ -67,7 +64,7 @@ class AjaxPromotionController extends Controller
     $data = [];
     foreach($promotion->products as $key  => $item) {
        $data[] = [
-        'name' => $item->product_translate->first()->name,
+        'name' => $item->name,
         'id' => $item->pivot->product_id,
         'variant_id' => $item->pivot->product_variant_id,
         'checked' => $item->pivot->product_id.'_'.$item->pivot->product_variant_id

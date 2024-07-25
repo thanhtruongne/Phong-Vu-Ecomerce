@@ -120,6 +120,7 @@ use Illuminate\Support\Facades\DB;
         if($type == 'first') return $query->first();
         else return $query->get();
     }
+    
 
     
 
@@ -153,7 +154,7 @@ use Illuminate\Support\Facades\DB;
         foreach($condition as $val) {
             $query->where($val[0],$val[1],$val[2]);
         }
-        return $query->forceDelete();
+        return $query->delete();
     }
 
     public function findOnlyTrashedById(int $modeId, array $column = ['*'], array $relation = []) {
@@ -252,13 +253,13 @@ use Illuminate\Support\Facades\DB;
         // sử dụng mysql để đệ quy câu truy vấn giúp tối ưu phần truy vấn trong server
         $query = "
             WITH RECURSIVE category_some AS (
-                    SELECT id, parent, deleted_at from $table 
-                    WHERE id IN ($params) AND deleted_at IS NULL
+                    SELECT id, parent from $table 
+                    WHERE id IN ($params) 
                 UNION ALL
-                    SELECT custom.id,custom.parent,custom.deleted_at FROM $table as custom 
+                    SELECT custom.id,custom.parent FROM $table as custom 
                     JOIN category_some as cs ON custom.parent = cs.id
             )
-            SELECT id  FROM category_some WHERE deleted_at IS NULL";
+            SELECT id  FROM category_some";
         $object = DB::select($query);
         return $object;
     }
@@ -267,8 +268,10 @@ use Illuminate\Support\Facades\DB;
         return $this->model->where('status',1)
         ->join($model.'_cateloge_'.$model.' as pctp' ,'pctp.'.$model.'_id' , '=',$model.'.id')
         ->whereIn('pctp.'.$model.'_cateloge_id',$id)
-        ->orderBy('order','desc')
+        ->orderBy('desc')
         ->get();
     }
+
+
 
  }

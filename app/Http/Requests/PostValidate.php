@@ -22,8 +22,8 @@ class PostValidate extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','unique:post_translate,name',$this->id],
-            'meta_link' => ['required']
+            'name' => ['required','unique:post,name,'.$this->id],
+            'canonical' => ['required']
         ];
     }
 
@@ -32,7 +32,7 @@ class PostValidate extends FormRequest
         return [
             'name.required' => 'Mục tiêu đề  không được bỏ trống',
             'name.unique' => 'Mục tiêu đề  không được trùng',
-            'meta_link.required' => 'Mục canonical không được bỏ trống',
+            'canonical.required' => 'Mục canonical không được bỏ trống',
         ];
     }
 }

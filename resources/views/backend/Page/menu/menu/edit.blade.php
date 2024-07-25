@@ -19,12 +19,12 @@
                                 
                                 <li class="dd-item" data-id="{{ $item->id }}" style="position: relative;">
                                     
-                                    <div class="dd-handle" >{{ $item->menu_translate->first()->name }}</div>
+                                    <div class="dd-handle" >{{ $item->name }}</div>
                                     @if (!empty($item->children))
                                         <ol class="dd-list" style="display: none;">
                                             @foreach ($item->children as $children)
                                                 <li class="dd-item" data-id="{{ $children->id }}">
-                                                    <div class="dd-handle">-{{ $children->menu_translate->first()->name }}</div>
+                                                    <div class="dd-handle">-{{ $children->name }}</div>
                                                     <div class="" style="position: absolute;top:0px;right:0">
                                                         <a href="{{ route('private-system.management.menu.children',$children->id) }}" class="btn btn-primary">Thêm</a>
                                                         <a  class="btn btn-danger">Xóa</a>

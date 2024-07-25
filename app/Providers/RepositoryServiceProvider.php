@@ -19,7 +19,6 @@ class RepositoryServiceProvider extends ServiceProvider
         'App\Repositories\Interfaces\PermissionsRepositoriesInterfaces' => 'App\Repositories\PermissionsRepositories',
         'App\Repositories\Interfaces\UserCatalogeRepositoriesInterface' => 'App\Repositories\UserCatalogeRepositories',
         'App\Repositories\Interfaces\PostCatalogeRepositoriesInterfaces' => 'App\Repositories\PostCatelogeRepositories',
-        'App\Repositories\Interfaces\LanguageRepositoriesInterfaces' => 'App\Repositories\LanguageRepositories',
         'App\Repositories\Interfaces\ProductCatelogeRepositoreisInterfaces' => 'App\Repositories\ProductCatelogeRepositoreis',  
         'App\Repositories\Interfaces\ProductRepositoreisInterfaces' => 'App\Repositories\ProductRepositoreis', 
         'App\Repositories\Interfaces\RouterRepositoriesInterfaces' => 'App\Repositories\RouterRepositories',
@@ -36,6 +35,8 @@ class RepositoryServiceProvider extends ServiceProvider
          'App\Repositories\Interfaces\CustomerRepositoriesInterfaces' => 'App\Repositories\CustomerRepositories', 
          'App\Repositories\Interfaces\CustomerCatelogeRepositoriesInterfaces' => 'App\Repositories\CustomerCatelogeRepositories', 
          'App\Repositories\Interfaces\PromotionProductVariantRepositoriesInterfaces' => 'App\Repositories\PromotionProductVariantRepositories', 
+         'App\Repositories\Interfaces\OrderRepositoriesInterfaces' => 'App\Repositories\OrderRepositories', 
+         'App\Repositories\Interfaces\OrderPaymentRepositoriesInterfaces' => 'App\Repositories\OrderPaymentRepositories', 
     ];
         /**
      * Register services.

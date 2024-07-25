@@ -13,7 +13,7 @@
             let option = {
                 'model' : $('input[name="model"]:checked').val(),
                 'keyword' : _this.val(),
-                'tableRelation' : Data.ConvertTheStringSnake($('input[name="model"]:checked').val())+'_'+'translate',
+                'table' : $('input[name="model"]:checked').val()
             }
             if(option?.keyword != '' && option?.keyword.length >= 2) {
                 if(debounce)  clearTimeout(debounce);
@@ -147,7 +147,7 @@
             let debounce;
             let option = {
                 'model' : _this.val(),
-                'tableRelation' : Data.ConvertTheStringSnake($('input[name="model"]:checked').val())+'_'+'translate',
+                'table' : $('input[name="model"]:checked').val()
             }
             if(debounce)  clearTimeout(debounce);
             debounce = setTimeout(() => {

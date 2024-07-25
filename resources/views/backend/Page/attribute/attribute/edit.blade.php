@@ -97,7 +97,7 @@
                                                       
                                                   @foreach ($categories as $category)
                                                       <option {{ old('attribute_cateloge_id',$attribute->attribute_cataloge->id) == $category->id ? 'selected' : '' }}  value="{{ $category->id }}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->attribute_cateloge_translate->name }}
+                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->name }}
                                                       </option>
                                                   @endforeach
                                               </select>
@@ -107,23 +107,7 @@
                                           @endif
                                       </div>
                                    
-                                      <div class="form-group" style="margin-top: 8px"><label class="control-label">Danh mục con(*)</label>
-                                          <div class="">
-                                              
-                                              <select class="form-control select2" name="categories_sublist[]" multiple="multiple">                                         
-                                                  @foreach ($categories as $key => $category)
-                                                      <option 
-                                                      {{ in_array($category->id,old('categories_sublist',$arrayPush)) == true ? 'selected' : '' }}
-                                                      value="{{$category->id}}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->attribute_cateloge_translate->name }}
-                                                      </option>
-                                                  @endforeach
-                                              </select>
-                                          </div>
-                                           @if ($errors->has('categories_sublist'))
-                                              <div class="mt-3 text-left text-danger italic" style="position: relative;left:-1px;top:10px;">{{ $errors->first('categories_sublist') }}(*)</div>
-                                          @endif
-                                      </div>
+                                    
                                       <div class="form-group" style="margin-top: 40px"><label class="control-label">Hình ảnh nhóm bài viết (*)</label>
                                           <div class="ckfinder_2" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
                                               <input type="text" name="image" hidden value="{{ old('image',$attribute->image) }}" >

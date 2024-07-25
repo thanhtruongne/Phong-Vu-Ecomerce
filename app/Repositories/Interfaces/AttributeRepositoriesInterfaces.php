@@ -5,7 +5,11 @@ interface AttributeRepositoriesInterfaces {
 
     public function getAttributeById($id , $language  = 1);
 
-    public function searchAttribute(string $keyword = '', string $option = '' , int $languageID);
+    public function searchAttribute(string $keyword = '', string $option = '');
 
-    public function findAttributeByIdArray(array $data = [] , int $language_id = 1);
+    public function findAttributeByIdArray(array $data = []);
+
+    public function getAttributeByWhereIn(array $id = []);
+
+    public function findAttributeProductVariantID(array $data = [] , $productCatelogeID);
 }

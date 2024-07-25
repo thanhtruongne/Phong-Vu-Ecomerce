@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Services;
-
-use App\Repositories\LanguageRepositories;
 use App\Repositories\RouterRepositories;
 use App\Repositories\SliderRepositories;
 use App\Services\Interfaces\SliderServiceInterfaces;
@@ -16,16 +14,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class SliderService extends BaseService implements SliderServiceInterfaces
 {
-    protected $sliderRepositories,$languageRepositories;
+    protected $sliderRepositories;
 
     public function __construct(
          SliderRepositories $sliderRepositories,
-         LanguageRepositories $languageRepositories,
-         RouterRepositories $routerRepositories
          ) {
         $this->sliderRepositories = $sliderRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+       
+        parent::__construct();
     }
     public function paginate($request) 
     {
@@ -42,12 +38,12 @@ class SliderService extends BaseService implements SliderServiceInterfaces
     }
 
 
-    public function create($request , string $language_id = 'vn' ) {
+    public function create($request) {
         DB::beginTransaction();
         try {
             $payload = $request->only(['name','keyword','setting','short_code']);
             $payload['setting'] = json_encode($payload['setting']);
-            $payload['item'] = json_encode($this->FormatJsonSlide($request   , $language_id));
+            $payload['item'] = json_encode($this->FormatJsonSlide($request));
             $this->sliderRepositories->create($payload);
             DB::commit();
             return true;
@@ -58,13 +54,12 @@ class SliderService extends BaseService implements SliderServiceInterfaces
         }
     }
 
-    private function FormatJsonSlide($request , $language) {
+    private function FormatJsonSlide($request ) {
         $slides = $request->input('slide');
         $data = [];
         // dd($slides['thumbnail']);
         foreach($slides['thumbnail'] as $key => $val) {
             $data[] = [  
-                'language' => $language,
                 'thumbnail' => $val ?? '',
                 'desc' => $slides['desc'][$key] ?? '',
                 'canonical' => $slides['canonical'][$key] ?? '',
@@ -80,12 +75,12 @@ class SliderService extends BaseService implements SliderServiceInterfaces
 
 
 
-    public function update(int $id ,$request , string $language_id = 'vn')  {
+    public function update(int $id ,$request)  {
         DB::beginTransaction();
         try {
             $payload = $request->only(['name','keyword','setting','short_code']);
             $payload['setting'] = json_encode($payload['setting']);
-            $payload['item'] = json_encode($this->FormatJsonSlide($request   , $language_id));
+            $payload['item'] = json_encode($this->FormatJsonSlide($request));
             $this->sliderRepositories->update($id,$payload);
             DB::commit();
             return true;

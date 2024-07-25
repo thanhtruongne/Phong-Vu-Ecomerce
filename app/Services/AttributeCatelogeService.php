@@ -18,25 +18,25 @@ class AttributeCatelogeService extends BaseService implements AttributeCatelogeS
 
     public function __construct(
         AttributeCatelogeRepositories $attributeCatelogeRepositories , 
-        RouterRepositories $routerRepositories,
         ) {
         $this->attributeCatelogeRepositories = $attributeCatelogeRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function paginate($request) 
     {
         $condition = [];
         $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-            ['status' ,'=', $request->status ?? 1]
-        ];
+        if($request->has('status')){
+            $condition['where'] = [
+                ['status' ,'=', $request->status]
+            ];
+        }
+        
         $attributeCateloge = $this->attributeCatelogeRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
         //sử dụng mảng 4 để load join vào table
-        [
-           [ 'attribute_cateloge_translate as pct' , 'pct.attribute_cateloge_id','=','attribute.id']
-        ],
+        [],
         $record,[],[],[],[]
         
         );
@@ -47,12 +47,8 @@ class AttributeCatelogeService extends BaseService implements AttributeCatelogeS
     public function create($request) {
         DB::beginTransaction();
         try {
-            $attributeCateloge = $this->createAttributeCatelogeIndex($request);
             //đồng thời tạo phân quyền role cho nhóm người dùng mới
-           
-            if($attributeCateloge->id > 0) {
-                $this->createTranslateAttributeCatelogePivot($request,$attributeCateloge); 
-            }      
+            $attributeCateloge = $this->createAttributeCatelogeIndex($request);    
             DB::commit();
             return true;
         } catch (Exception $e) {
@@ -147,13 +143,15 @@ class AttributeCatelogeService extends BaseService implements AttributeCatelogeS
     }
 
     private function requestOnlyAttributeCateloge() {
-        return ['follow','status','image','album'];
+        return ['status','image','album',
+           'name','desc','content','meta_title','meta_desc','meta_keyword','canonical'
+        ];
     }
 
     private function createAttributeCatelogeIndex($request) {
         $data = $request->only($this->requestOnlyAttributeCateloge());   
-        $data['album'] = !empty($request->input('album') ? json_encode($request->input('album')) : '') ;
-        $data['user_id'] = Auth::user()->id;  
+        $data['album'] = !empty($request->input('album') ? json_encode($request->input('album')) : ''); 
+        $data['canonical'] = Str::slug($data['canonical']);
         $attributeCateloge = $this->attributeCatelogeRepositories->create($data);
         //tạo nested set
         $this->attributeCatelogeRepositories->createCategoriesByNode($request->only($this->createCategoriesNode()), $attributeCateloge);
@@ -191,7 +189,7 @@ class AttributeCatelogeService extends BaseService implements AttributeCatelogeS
         return ['categories_id','name'];
     }
     private function requestOnlyAttributeCatelogeTranslate() {
-        return ['name','desc','content','meta_title','meta_desc','meta_keyword','meta_link'];
+        return ['name','desc','content','meta_title','meta_desc','meta_keyword','canonical'];
     }
 
     private function getPaginateIndex() {

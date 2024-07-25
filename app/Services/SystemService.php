@@ -2,7 +2,6 @@
 namespace App\Services;
 
 use App\Repositories\RouterRepositories;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\SystemRepositories;
 use App\Services\Interfaces\SystemServiceInterfaces;
 use Exception;
@@ -12,17 +11,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class SystemService extends BaseService implements SystemServiceInterfaces
 {
-    protected $languageRepositories , $systemRepositories;
+    protected $systemRepositories;
 
-    public function __construct(
- 
-        LanguageRepositories $languageRepositories,
-        RouterRepositories $routerRepositories,
-        SystemRepositories $systemRepositories
-        ) {
-        $this->languageRepositories = $languageRepositories;
+    public function __construct(SystemRepositories $systemRepositories) {
         $this->systemRepositories = $systemRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function create($request,$language_id) {
         DB::beginTransaction();
@@ -71,8 +64,6 @@ class SystemService extends BaseService implements SystemServiceInterfaces
         $payload = [];
         foreach($data as $key => $val) {
             $payload = [
-                'languages_id' => $language_id,
-                'user_id' => Auth::user()->id,
                 'keyword' => $key,
                 'content' => $val
             ];

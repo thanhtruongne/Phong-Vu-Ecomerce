@@ -3,7 +3,6 @@ namespace App\Services;
 
 use App\Models\AttributeCataloge;
 use App\Repositories\RouterRepositories;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\AttributeRepositories;
 use App\Services\Interfaces\AttributeServiceInterfaces;
 use App\Trait\UploadImage;
@@ -15,36 +14,31 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class AttributeService extends BaseService implements AttributeServiceInterfaces
 {
-    protected $attributeRepositories,$languageRepositories;
+    protected $attributeRepositories;
 
     public function __construct(
         AttributeRepositories $attributeRepositories, 
-        LanguageRepositories $languageRepositories,
-        RouterRepositories $routerRepositories,
         ) {
         $this->attributeRepositories = $attributeRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function paginate($request) 
     {
         $condition = [];
         $condition['search'] = $request->search ?? '';
         $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-          ['pct.languages_id' ,'=',$this->languageRepositories->getCurrentLanguage()->id], 
-          ['status','=',$request->status ?? 1],
-        ];
+        if($request->has('status')){
+            $condition['where'] = [
+                ['status','=',$request->status],
+              ];
+        }
+      
 
         $attribute = $this->attributeRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
         //sử dụng mảng 4 để load join vào table
-        [
-            ['attribute_translate as pct' , 'pct.attribute_id','=','attribute.id'],
-            ['attribute_cateloge_attribute as pcsp','attribute.id','=','pcsp.attribute_id'],
-           
-        ],
+        [],
         $record,
         $this->getPaginateIndex(),
         [],[],$this->whereRawCondition($request) ?? []
@@ -59,12 +53,11 @@ class AttributeService extends BaseService implements AttributeServiceInterfaces
         try {
             $attribute = $this->createAttributeService($request);
             if($attribute->id > 0)  {
-                $this->createTranslatePivotAttributeService($request,$attribute);
+                // $this->createTranslatePivotAttributeService($request,$attribute);
                 $this->createRouter(
-                    $request->input('meta_link'),
+                    $request->input('canonical'),
                     $attribute,
                     'AttributeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }
             DB::commit();
@@ -82,12 +75,12 @@ class AttributeService extends BaseService implements AttributeServiceInterfaces
             $attribute = $this->attributeRepositories->findByid($id); 
             $check = $this->updateAttributeService($request,$attribute);
             if($check == true) {
+                $attribute->attribute_cateloge_attribute()->detach();
                 $this->updateAttributeCatalogeAttributeService($request,$attribute);
                 $this->updateRouter(
-                    $request->input('meta_link'),
+                    $request->input('canonical'),
                     $attribute,
                     'AttributeController',
-                    $this->languageRepositories->getCurrentLanguage()->id
                 );
             }
             DB::commit();
@@ -143,45 +136,21 @@ class AttributeService extends BaseService implements AttributeServiceInterfaces
             return false;
         }
     }
-
-    public function restore(int $id) {
-        DB::beginTransaction();
-        try {
-            $this->attributeRepositories->restore($id);  
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            return false;
-        }
-    }
-
-    public function deleteForce(int $id) {
-        DB::beginTransaction();
-        try {
-            $this->attributeRepositories->deleteForce($id);  
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            DB::rollBack();
-            return false;
-        }
-    }
     
     private function handleAttributeCataloge($request) {
         return array_unique(array_merge($request->categories_sublist,[$request->attribute_cateloge_id]));
     }
 
     private function requestOnlyAttributeCataloge() {
-        return ['follow','status','image','attribute_cateloge_id'];
+        return ['follow','status','image','attribute_cateloge_id','name','desc','content','meta_title','meta_desc','meta_keyword','canonical'];
     }
     private function requestOnlyAttributeCatalogeTranslate() {
-        return ['languages_id','name','desc','content','meta_title','meta_desc','meta_keyword','meta_link'];
+        return [];
     }
 
     private function getPaginateIndex() {
         // return ['status','image','pct.name','id','pcp.attribute_id','pcp.attribute_cateloge_id'];
-        return ['pct.name','attribute.image','attribute.status','attribute.id','attribute.attribute_cateloge_id'];
+        return ['name','image','status','id','attribute_cateloge_id'];
     }
 
     private function whereRawCondition($request) {
@@ -202,36 +171,21 @@ class AttributeService extends BaseService implements AttributeServiceInterfaces
     private function createAttributeService($request) {
         $data = $request->only($this->requestOnlyAttributeCataloge());
         $data['album'] = json_encode($request->input('album')) ?? ' ';
-        $data['user_id'] = Auth::user()->id;
-        $attribute = $this->attributeRepositories->create($data);  
+
+        $attribute = $this->attributeRepositories->create($data); 
+        $this->updateAttributeCatalogeAttributeService($request,$attribute);
         return $attribute;
     }
 
-    private function createTranslatePivotAttributeService($request,$attribute) {
-        $payloadTranslate = $request->only($this->requestOnlyAttributeCatalogeTranslate());
-        $payloadTranslate['languages_id'] =  $this->languageRepositories->getCurrentLanguage()->id;
-        $payloadTranslate['attribute_id'] = $attribute->id;
-        $translate = $this->attributeRepositories->createTranslatePivot($attribute,$payloadTranslate,'languages');
-        $catalogeSublist = $this->handleAttributeCataloge($request); 
-        $attribute->attribute_cateloge_attribute()->sync($catalogeSublist);
-    }
     
     private function updateAttributeService($request,$attribute) {
         $data = $request->only($this->requestOnlyAttributeCataloge()); 
         $data['album'] = json_encode($request->input('album')) ?? $attribute->album;
-        $data['user_id'] = Auth::user()->id;
         $check = $this->attributeRepositories->update($attribute->id,$data);
         return $check;
     }
 
-    private function updateAttributeCatalogeAttributeService($request,$attribute) {
-        $payloadTranslate = $request->only($this->requestOnlyAttributeCatalogeTranslate());
-        $payloadTranslate['languages_id'] =  $this->languageRepositories->getCurrentLanguage()->id;
-        $payloadTranslate['attribute_id'] = $attribute->id;
-        // tách ra khỏi bảng trung gian
-        $detach = $attribute->languages()->detach([ $payloadTranslate['languages_id'],$attribute->id]);
-        // tạo bảng mới trug gian ghi đè 
-        $translate = $this->attributeRepositories->createTranslatePivot($attribute,$payloadTranslate,'languages'); 
+    private function updateAttributeCatalogeAttributeService($request,$attribute) {   
         $catalogeSublist = $this->handleAttributeCataloge($request); 
         $attribute->attribute_cateloge_attribute()->sync($catalogeSublist);
     }

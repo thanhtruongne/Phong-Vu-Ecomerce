@@ -13,7 +13,7 @@
             </div>
             <div class="ibox-content">
                 <div>
-                     <form action="{{ route('private-system.management.table-user.update',$user->id) }}" method="POST" class="form-horizontal" enctype="multipart/form-data">
+                     <form action="{{ route('private.user.update',$user->id) }}" method="POST" class="form-horizontal" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div style="margin: 20px 0px;">

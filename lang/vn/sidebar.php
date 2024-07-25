@@ -85,8 +85,26 @@ return [
             ]
         ],
         [
+            'title' => 'Quản lý đơn hàng',
+            'name' => ['order','cancel'],
+            'icon' => 'fa-solid fa-barcode',
+             
+            'subTitle' => [
+                [
+                    'title' => 'QL đơn hàng',
+                    'route' => '/private/system/order',
+                    'set' => 'order'
+                ],
+                [
+                    'title' => 'QL đơn hàng hủy',
+                    'route' => '/private/system/order/cancel',
+                    'set' => 'cancel'
+                ],
+            ]
+        ],
+        [
             'title' => 'Quản lý sale vả marketing',
-            'name' => ['promotion','source'],
+            'name' => ['promotion'],
             'icon' => 'fa-brands fa-slack',
            
             'subTitle' => [
@@ -94,29 +112,6 @@ return [
                     'title' => 'QL sale',
                     'route' => '/private/system/promotion',
                     'set' => 'promotion'
-                ],
-                [
-                    'title' => 'QL source',
-                    'route' => '/private/system/source',
-                    'set' => 'source'
-                ],
-            ]
-        ],
-        [
-            'title' => 'Quản lý khách hàng',
-            'name' => ['customer','customer.cateloge'],
-            'icon' => 'fa-brands fa-slack',
-           
-            'subTitle' => [
-                [
-                    'title' => 'QL khách hàng',
-                    'route' => '/private/system/customer',
-                    'set' => 'customer'
-                ],
-                [
-                    'title' => 'QL nhóm khách hàng',
-                    'route' => '/private/system/customer/cateloge',
-                    'set' => 'customer.cateloge'
                 ],
             ]
         ],
@@ -136,23 +131,14 @@ return [
         [
             'title' => 'Cấu hình trang web',
             'icon' => 'fa-solid fa-wrench',
-            'name' => ['configuration.language','configuration.permissions','configuration.module','configuration.setting'],
+            'name' => ['configuration.permissions','configuration.setting'],
             'subTitle' => [
-                [
-                    'title' => 'QL ngôn ngữ',
-                    'route' => '/private/system/configuration/language',
-                    'set' => 'configuration.language'
-                ],
                 [
                     'title' => 'QL quyền',
                     'route' => '/private/system/configuration/permissions',
                     'set' => 'configuration.permissions'
                 ],
-                [
-                    'title' => 'QL module',
-                    'route' => '/private/system/configuration/module',
-                    'set' => 'configuration.module'
-                ],
+        
                 [
                     'title' => 'Cấu hình chung',
                     'route' => '/private/system/configuration/setting',

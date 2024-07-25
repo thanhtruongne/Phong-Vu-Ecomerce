@@ -13,7 +13,7 @@ use App\Repositories\Interfaces\WidgetRepositoriesInterfaces;
     public function getWidgetByKeyWord(array $whereIn = [] , string $whereColumn = 'keyword') {
         return $this->model->where('status','=',1)
         ->whereIn($whereColumn,$whereIn)
-        ->orderByRaw("FIELD(keyword,'".implode("','",$whereIn)."')")
+        ->orderByRaw("FIELD(".$whereColumn.",'".implode("','",$whereIn)."')")
         ->get();
     }
  }

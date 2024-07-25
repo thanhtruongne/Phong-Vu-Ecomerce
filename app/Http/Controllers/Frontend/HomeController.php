@@ -3,47 +3,53 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\LanguageRepositories;
+use App\Repositories\ProductRepositories;
 use App\Repositories\SliderRepositories;
-use App\Services\Interfaces\WidgetServiceInterfaces as  WidgetService;
+use App\Repositories\SystemRepositories;
+use App\Services\WidgetService;
 use Illuminate\Http\Request;
 
 class HomeController extends BaseController
 {  
-     protected $sliderRepositories,$widgetService;
+     protected $sliderRepositories,$widgetService,$productRepositories;
     // protected $language;
    public function __construct(
-     LanguageRepositories $languageRepositories,
+     // LanguageRepositories $languageRepositories,
      SliderRepositories $sliderRepositories,
-     WidgetService $widgetService
+     WidgetService $widgetService,
+     ProductRepositories $productRepositories
     )
    {
      $this->sliderRepositories = $sliderRepositories;
      $this->widgetService = $widgetService;
-     parent::__construct($languageRepositories);
+     $this->productRepositories = $productRepositories;
+     parent::__construct();
    }
 
 
    public function home(){
      //hạn chế dùng phương thức này vì khi gọi api ,goi dư các dữ liệu render
-     // $widget = [
-     //      //truyền phần params để nhận biết chọn về khuyến mãi hay sản phẩm
-     //      'category' => $this->widgetService->findTheWidgetByService('widget-main-category',$this->language->getCurrentLanguage()->id,[
-     //           'children' => true
-     //           ,'data-object' => true
-     //      ]),
-
-     // ];
-
+     $config = [ 
+          'js' => [
+              'frontend/js/library/custom.js'
+          ]
+     ];
      $widget = $this->widgetService->foundTheWidgetByKeyword([
-          //trỏ phần danh mục lấy ra các danh mục con chưa danh mục cha và các sản phẩm khi có model là product
-          // ['keyword' => 'widget-main-category','children' => true ,'data-object' => true,'promotion' => true],
-          // ['keyword' => 'product-outstanding'],
-          ['keyword' => 'deal-apple']
-     ],$this->language->getCurrentLanguage()->id);
-    //   Tạo global phần system
+          //product website
+          ['keyword' => 'Brand_widget'],
+          ['keyword' => 'category_outStanding','data-object' => true],
+          ['keyword' => 'macbook_widget','promotion_variant' => true],
+          ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
+          ['keyword' => 'Link_kien_widget','data-object' => true,'promotion_variant' => true],
+          //brand website
+     ]);
+  
+     $Seo = $this->Seo;
+     // Lấy ra các slider
     $slider = $this->sliderRepositories->findCondition(...$this->argumentSlider());
-    return view('Frontend.page.home',compact('slider','widget'));
+    //Sản phẩm nổ bật
+    $productOutStanding = $this->productRepositories->getoutStandingProduct(12);
+    return view('Frontend.page.home',compact('slider','Seo','widget','config'));
    }
 
    private function argumentSlider() {

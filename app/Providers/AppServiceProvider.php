@@ -6,9 +6,14 @@ use App\Http\Controllers\Backend\SystemController;
 use App\Http\ViewComposers\MenuComposer;
 use App\Http\ViewComposers\SystemComposer;
 use Carbon\Carbon;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Validator;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
+
 class AppServiceProvider extends ServiceProvider
 {
 
@@ -16,7 +21,6 @@ class AppServiceProvider extends ServiceProvider
        
        'App\Services\Interfaces\UserServiceInterfaces' => 'App\Services\UserService',
        'App\Services\Interfaces\PostCatalogeServiceInterfaces' => 'App\Services\PostCatelogeService',
-       'App\Services\Interfaces\LanguageServicesInterfaces' => 'App\Services\LanguageService',
        'App\Services\Interfaces\UserCatalogeServiceInteface' => 'App\Services\UserCatalogeService',
        'App\Services\Interfaces\PostServiceInterfaces' => 'App\Services\PostService',
        'App\Services\Interfaces\PermissionsServiceInterfaces' => 'App\Services\PermissionsService',
@@ -35,6 +39,8 @@ class AppServiceProvider extends ServiceProvider
        'App\Services\Interfaces\SourceServiceInterfaces' => 'App\Services\SourceService',
        'App\Services\Interfaces\CustomerServiceInterfaces' => 'App\Services\CustomerService',
        'App\Services\Interfaces\CustomerCatelogeServiceInterfaces' => 'App\Services\CustomerCatelogeService',
+       'App\Services\Interfaces\CartServiceInterfaces' => 'App\Services\CartService',
+       'App\Services\Interfaces\OrderServiceInterfaces' => 'App\Services\OrderService',
     ];
     /**
      * Register any application services.
@@ -53,16 +59,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $locale = App::getLocale();
-        $language = \App\Models\Languages::where('canonical',$locale)->first();
-
-
-        view()->composer('Frontend.layout.layout',function($view) use($language) {
+   
+        Paginator::useBootstrap();
+        view()->composer('*',function($view) {
             $composerClass = [
                 SystemComposer::class , MenuComposer::class
             ];
             foreach($composerClass as $key => $item) {
-                $composer = App::make($item,['language' => $language->id ]);
+                $composer = App::make($item);
                 $composer->compose($view);
             } 
            

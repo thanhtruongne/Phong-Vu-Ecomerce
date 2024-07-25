@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Services;
-
-use App\Repositories\LanguageRepositories;
 use App\Repositories\ProductCatelogeRepositories;
 use App\Repositories\PromotionRepositories;
 use App\Repositories\RouterRepositories;
@@ -20,7 +18,6 @@ use Illuminate\Support\Facades\Hash;
 class WidgetService extends BaseService implements WidgetServiceInterfaces
 {
     protected $widgetRepositories,
-    $languageRepositories,
     $promotionRepositories,
     $productCatelogeRepositories,
     $productService
@@ -29,15 +26,13 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
     public function __construct(
          WidgetRepositories $widgetRepositories,
          ProductService $productService,
-         LanguageRepositories $languageRepositories,
          PromotionRepositories $promotionRepositories,
          ProductCatelogeRepositories $productCatelogeRepositories
-
          ) {
         $this->widgetRepositories = $widgetRepositories;
-        $this->languageRepositories = $languageRepositories;
         $this->promotionRepositories = $promotionRepositories;
         $this->productService = $productService;
+        parent::__construct();
         $this->productCatelogeRepositories = $productCatelogeRepositories;
     }
     public function paginate($request) 
@@ -77,7 +72,6 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
             $data = $request->only(['name','keyword','model','desc','short_code']);
             $data['model_id'] = $request->input('model_id.id');
             $data['album'] = $request->input('album');
-           
             $this->widgetRepositories->update($id,$data);
            
             DB::commit();
@@ -186,62 +180,15 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
         return $instance;
          
     }
-    private function argumentModel($widget,$params,$language_id) {    
-        $relation = [
-            'languages' => function($query) use($language_id) {
-                $query->where('languages_id',$language_id);
-            }
-        ];
-
+    private function argumentModel($widget,$params,$relation) {    
+        // dd($widget,$params,$relation);
         // nếu trong model có cateloge thì trò vào lấy các nme
         if(strpos($widget->model,'Cateloge') && isset($params['children'])) {
             $model = lcfirst(str_replace('Cateloge','',$widget->model)).'s';
-            $relation[$model] = function($query) use($params,$language_id) {
+            $relation[$model] = function($query) use($params) {
                 $query->limit($params['limit'] ?? 12);
                 $query->where('status','=',1);
-                $query->with([
-                    'languages' => function($query) use($language_id) {
-                        $query->where('languages_id',$language_id);
-                    },  
-                ]);
-                // $query->with('promotion' , function($query) {
-                //     //Chỉ chọn 1 promtion áp dụng cho các trường hợp dùng 1 cái 
-                //     // Theo cái giá trị lớn nhất
-                //     $query->select(
-                //         'promotion.id',
-                //         'promotion.discountValue',
-                //         'promotion.maxDiscountValue',
-                //         'promotion.discountType',
-
-                //         DB::raw("
-                //             IF(promotion.maxDiscountValue != 0 ,
-                //             LEAST(
-                //                 CASE  
-                //                     WHEN discountType = 'VND' 
-                //                     THEN (SELECT price FROM product where product.id = product_id ) - maxDiscountValue
-                //                     WHEN discountType = '%' 
-                //                     THEN ((SELECT price FROM product where product.id = product_id )*discountValue/100)
-                //                     ELSE (SELECT price FROM product where product.id = product_id )
-                //                 END,
-                //                 promotion.maxDiscountValue
-                //             ),
-                //                 CASE  
-                //                     WHEN discountType = 'VND' 
-                //                     THEN (SELECT price FROM product where product.id = product_id ) - maxDiscountValue
-                //                     WHEN discountType = '%' 
-                //                     THEN ((SELECT price FROM product where product.id = product_id )*discountValue/100)
-                //                     ELSE (SELECT price FROM product where product.id = product_id )
-                //                 END
-                //             )as discount 
-                //         ")
-                //     );
-                //     $query->where('status',1);
-                //     $query->whereDate('endDate','>',now());
-                //     $query->orderBy('discount','asc');
-                //     $query->take(12);
-                // }); 
             };
-          
             $withCount[] = $model;  
         }
       
@@ -253,7 +200,7 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
                 'whereIn' => 'id',
                 'whereValues' => $widget->model_id
             ],
-            'relation' => $relation,
+            'relation' => $relation ?? [''],
             'type' => 'multiple',
             'withCount' => $withCount ?? []
 
@@ -261,30 +208,28 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
     }
 
 
-    public function foundTheWidgetByKeyword(array $payload , int $language_id = 1) {
+    public function foundTheWidgetByKeyword(array $payload) {
         $whereIn = [];
         if(isset($payload)) {
             foreach($payload as $key => $item) {
                 $whereIn[] = $item['keyword'];
             }
         }
-        $widgets = $this->widgetRepositories->getWidgetByKeyWord($whereIn);
+        $widgets = $this->widgetRepositories->getWidgetByKeyWord($whereIn,'name');
         $data=[];
         if(!is_null($widgets)) {
             foreach($widgets as $key_widget =>  $widget) {
                $class = $this->loadingClass('Repositories','Repositories',$widget->model);
-               $object = $class->findCondition(...$this->argumentModel($widget,$payload[$key_widget],$language_id ));
+               $object = $class->findCondition(...$this->argumentModel($widget,$payload[$key_widget],[] ));
                $model = lcfirst(str_replace('Cateloge','',$widget->model)).'s' ?? lcfirst($widget->model);
-               // tồn tại phần cateloge lấy ra các nhóm sản phẩm 
-            //    dd($widget->model);
-               
+               // tồn tại phần cateloge lấy ra các nhóm sản phẩm       
                 if(count($object) && !is_null($object) && strpos($widget->model,'Cateloge')) {
                    foreach($object as $object_key =>  $object_value) {
                     //tìm các danh mục con chứa các danh mục cha trường hợp có payload truyền vào co children
                    // danh mục cấp 1
                    // hạn chế dùng truy vấ1nn này khi loop mất rất nhiều query truy vấn loading chậm
                         if( isset($payload[$key_widget]['children'])  && $payload[$key_widget]['children'] == true ) {
-                            $childrenArgument = $this->childrenArgument([$object_value->id],$language_id);
+                            $childrenArgument = $this->childrenArgument([$object_value->id],['']);
                             $object->children = $class->findCondition(...$childrenArgument);   
                         }
                         if( isset($payload[$key_widget]['data-object']) && $payload[$key_widget]['data-object'] == true) {
@@ -306,32 +251,36 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
                                 //trường hợp set promotion cho danh mục cha
                                 if(isset($object_value->{$model}) && !empty($object_value->{$model})) {  
                                     $product_id =  $object_value->{$model}->pluck('id')->toArray();
-                                    $object_value->{$model} = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_id,$object_value->{$model}); 
+                                    $object_value->{$model} = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_id,$object_value->{$model},'product'); 
                                 }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
                             }
+                           
                             
                         }
                    }
                 }
                //trường hợp là các sản phẩm
                else {
-                $product_id = $object->pluck('id')->toArray();       
-                $object = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_id,$object); 
+                // $product_id = $object->pluck('id')->toArray();       
+                // $object = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_id,$object,'products'); 
+
+                if(isset($payload[$key_widget]['promotion_variant']) && $payload[$key_widget]['promotion_variant'] == true) {               
+                    foreach($object as $variant_items) {
+                       $product_variant_id = $variant_items->product_variant->pluck('id')->toArray(); 
+                       $variant_items->variant = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_variant_id,$variant_items->product_variant,'variant'); 
+                    }  
+                   
+                }
                }
                $widget->object = $object;
                $data[$payload[$key_widget]['keyword']] = $widget;
             }
+            
         }
-        dd($data);
         return $data;
     }
 
-    private function childrenArgument($object_id , $language_id) {
-        $relation = [
-            'languages' => function($query) use($language_id) {
-                $query->where('languages_id',$language_id);
-            }
-        ];
+    private function childrenArgument($object_id , $relation) {
 
         $condition = [
             ['status','=',1]

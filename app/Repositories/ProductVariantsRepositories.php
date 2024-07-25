@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\Models\ProductVariant;
 use App\Repositories\Interfaces\ProductVariantsRepositoriesInterfaces;
+use Illuminate\Http\Request;
 
  class ProductVariantsRepositories extends BaseRepositories implements ProductVariantsRepositoriesInterfaces  {
     
@@ -34,4 +35,26 @@ use App\Repositories\Interfaces\ProductVariantsRepositoriesInterfaces;
     //                         ])
     //                         ->find($id);
     // }
+    public function findProductVariant($attributeID,$product_Id,string $type = 'single') {
+           $query =  $this->model->where([
+              ['code','=',implode(', ',$attributeID)],
+              ['product_id','=',$product_Id]
+           ]);
+           if($type == 'single') return $query->first();
+           else return $query->get();
+   }
+
+   public function getVariantSkuProduct(string $sku = '',string $nameCode = '',int $id = 0) {
+        return $this->model->select($this->selectVariantSku())
+        ->join('product as pv','pv.id','=','product_variant.product_id')
+        ->where('product_variant.sku',$sku)->where('product_variant.status',1)
+        ->first();
+   }
+   
+   private function selectVariantSku() {
+      return ['product_variant.id as variant_id','pv.id as product_id','product_variant.code','sku','qualnity','product_variant.price','product_variant.album','product_variant.barcode','product_variant.name'];
+   }
+
+
+
  }

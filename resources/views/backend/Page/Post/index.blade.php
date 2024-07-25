@@ -63,20 +63,7 @@
                     <table class="table table-bordered">
                         <thead>
                         <tr >
-                            <th>
-                                <input type="checkbox" name="check_box_all" class="check_box_all_user">
-                            </th>
                             <th>Tên bài viết </th>
-                                @foreach ($languages as $language)
-                            
-                                    @if (App::currentLocale() === $language->canonical)
-                                        @continue 
-                                    @endif     
-                                    <th style="text-align: center" colspan="2">
-                                        <span><img src="{{ $language->image }}" width="60" alt=""></span>
-                                    </th>       
-                                
-                                @endforeach
                             <th>Tình trạng hoạt động</th>
                             <th>Action</th>
                         </tr>
@@ -94,12 +81,11 @@
                                 };
                                 if(!empty($arrayCategories)) {
                                     foreach ($arrayCategories as $sum) {
-                                        $arrayPush[] = $postCataloge = \App\Models\PostCataloge::find($sum)->post_cateloge_translate->first()->name;
+                                        $arrayPush[] = $postCataloge = \App\Models\PostCataloge::find($sum)->name;
                                     }
                                 }
                                 @endphp
                              <tr style="height: 100px">
-                                <td><input type="checkbox" value="{{ $item->id }}"  class="check_item" name="input[]"></td>
                                 <td>
                                     <div style="display:flex;align-items:center">
                                         <div>
@@ -119,7 +105,7 @@
                                     </div>
                                     
                                 </td>
-                                @include('backend.component.transllateLanguage',['type' => 'post_cataloge','model' => 'Post','languages' => $languages , 'item' => $item])
+                              
                                 <td class="js-switch-{{ $item->id }} text-center">
                                     @if ($item->status == 0)
                                     <input 

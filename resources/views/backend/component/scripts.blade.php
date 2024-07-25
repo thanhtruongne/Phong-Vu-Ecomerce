@@ -11,13 +11,15 @@
   <script src="{{ asset('backend/js/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
   {{-- Nested Table list UI --}}
   <script src="{{ asset('backend/js/plugins/nestable/jquery.nestable.js') }}"></script>
-
   <!-- Custom and plugin javascript -->
   <script src="{{ asset('backend/js/inspinia.js') }}"></script>
   <script src="{{ asset('backend/js/plugins/pace/pace.min.js') }}"></script>
   <script src="{{ asset('backend/js/bootstrap-datetimepicker.min.js') }}"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{{ asset('backend/library/library.js') }}"></script>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="text/javascript">
     $.ajaxSetup({
@@ -201,7 +203,7 @@
     });
     // $.fn.datepicker.defaults.format = "dd/mm/yyyy";
   
-    $('.select2').select2();
+        $('.select2').select2();
     $('#sortable_books').sortable();
     $('.niceSelect').niceSelect();
    
@@ -212,4 +214,5 @@
     elems.forEach(function(html) {
         var switchery = new Switchery(html);
     });
-</script>
+</script>   
+

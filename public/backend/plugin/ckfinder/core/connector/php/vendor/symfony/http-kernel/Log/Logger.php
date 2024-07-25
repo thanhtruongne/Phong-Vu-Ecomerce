@@ -111,7 +111,7 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
         }
     }
 
-    public function getLogs(Request $request = null): array
+    public function getLogs(?Request $request = null): array
     {
         if ($request) {
             return $this->logs[spl_object_id($request)] ?? [];
@@ -120,7 +120,7 @@ class Logger extends AbstractLogger implements DebugLoggerInterface
         return array_merge(...array_values($this->logs));
     }
 
-    public function countErrors(Request $request = null): int
+    public function countErrors(?Request $request = null): int
     {
         if ($request) {
             return $this->errorCount[spl_object_id($request)] ?? 0;

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Backend;
 
+use App\Rules\CustomValidateEmail;
 use Illuminate\Foundation\Http\FormRequest;
 
 class Authencate extends FormRequest
@@ -22,7 +23,7 @@ class Authencate extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required','email'],
+            'email' => ['required',new CustomValidateEmail() ],
             'password' => ['required']
         ];
     }
@@ -31,7 +32,6 @@ class Authencate extends FormRequest
     {
         return [
             'email.required' => 'Email không được bỏ trống',
-            'email.email' => 'Email không đúng định dạng ',
             'password.required' => 'Mật khẩu không được bỏ trống',
         ];
 

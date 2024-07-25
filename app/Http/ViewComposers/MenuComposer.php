@@ -7,11 +7,10 @@ use App\Repositories\MenuCatelogeRepositories;
 use Illuminate\View\View;
 
 class MenuComposer {
-    protected $language,$menuCatelogeRepositories;
+    protected $menuCatelogeRepositories;
 
-    public function __construct($language , MenuCatelogeRepositories $menuCatelogeRepositories)
+    public function __construct(MenuCatelogeRepositories $menuCatelogeRepositories)
     {
-        $this->language = $language;
         $this->menuCatelogeRepositories = $menuCatelogeRepositories;
     }
     /**
@@ -19,30 +18,26 @@ class MenuComposer {
      */
     public function compose(View $view)
     {
-        $payload = $this->methodPassArgument($this->language);
+        // $payload = $this->methodPassArgument();
 
-        $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
-        $menusChild = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu));
-        $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
-        $renderChild = explode('---',$menusChild); array_shift($renderChild);
-        $renderParent = explode('---', $menusParent);
-        $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
+        // $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
+        // $menusChild = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu ?? [])) ?? [];
+        // $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
+        // $renderChild = explode('---',$menusChild); array_shift($renderChild);
+        // $renderParent = explode('---', $menusParent);
         
+        // $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
+        $view->with('menus',[]);
     }
 
-    private function methodPassArgument($language_id) {
+    private function methodPassArgument() {
         return [
             'condition' => [
                 ['keyword' , '=' , 'main-item']
             ],
             'params' => [],
             'relation' => [
-                'menu' => function($query) use($language_id) {
-                   $query->with([
-                    'languages' => function($query) use($language_id) {
-                           $query->where('language_id','=',$language_id);
-                    }]);
-                }
+                'menu'             
             ],
             'type' => 'first'
         ];

@@ -13,22 +13,19 @@ use App\Repositories\Interfaces\AttributeRepositoriesInterfaces;
 
     public function getAttributeById($id , $language  = 1) {
         return $this->model->select([
-                            'attribute.id',
-                            'attribute.image',
-                            'attribute.status',
-                            'attribute.follow',
-                            'attribute.album',
-                            'attribute.attribute_cateloge_id',
-                            'pct.name',
-                            'pct.content',
-                            'pct.desc',
-                            'pct.meta_title',
-                            'pct.meta_desc',
-                            'pct.meta_keyword',
-                            'pct.meta_link',
+                            'id',
+                            'image',
+                            'status',
+                            'album',
+                            'attribute_cateloge_id',
+                            'name',
+                            'content',
+                            'desc',
+                            'meta_title',
+                            'meta_desc',
+                            'meta_keyword',
+                            'canonical',
                             ])
-                            ->join('attribute_translate as pct','pct.attribute_id','=','attribute.id')
-                            ->where('pct.languages_id','=',$language)
                             ->with([
                                 'attribute_cataloge'
                             ])
@@ -36,19 +33,42 @@ use App\Repositories\Interfaces\AttributeRepositoriesInterfaces;
     }
 
     //hảm get attribute ajax bên tạo sản phẩm
-    public function searchAttribute(string $keyword = '', string $option = '' , int $languageID) {
-        return $this->model->whereHas('attribute_cataloge',function($query) use($option) {
+    public function searchAttribute(string $keyword = '', string $option = '') {
+        return $this->model
+        ->where('name','like','%'.$keyword.'%')
+        ->whereHas('attribute_cataloge',function($query) use($option) {
             $query->where('attribute_cateloge_id',$option);
-        })->whereHas('attribute_translate',function($query) use($keyword,$languageID) {
-            $query->where([['name','like','%'.$keyword.'%'],['languages_id',$languageID]]);
         })->get();
     }
 
-    public function findAttributeByIdArray(array $data = [] , int $language_id = 1) {
-        return $this->model->select(['attribute.id' , 'tb3.name'])
-        ->join('attribute_translate as tb3','tb3.attribute_id','=','attribute.id')
-        ->where('tb3.languages_id',$language_id)
-        ->whereIn('attribute.id',$data)
+    public function findAttributeByIdArray(array $data = [] ) {
+        return $this->model->select(['id' , 'name'])
+        ->whereIn('id',$data)
         ->get();
+    }
+
+    public function getAttributeByWhereIn(array $id = []) {
+        return $this->model->select(
+            'attribute_cateloge_id',
+            'name',
+            'id',
+        )
+        ->where( 'status',1)
+        ->whereIn('id',$id)
+        ->get();
+    }
+
+    public function findAttributeProductVariantID(array $data = [] , $productCatelogeID) {
+        return $this->model->select([
+          'attribute.id'
+        ])
+        ->leftJoin('product_variant_attribute as pva','pva.attribute_id','=','attribute.id')
+        ->leftJoin('product_variant as pv','pv.id','=','pva.product_variant_id')
+        ->leftJoin('product_cateloge_product as pcp','pcp.product_id','=','pv.product_id')
+        ->where('pcp.product_cateloge_id','=',$productCatelogeID)
+        ->whereIn('attribute.id',$data)
+        ->distinct()
+        ->pluck('attribute.id');
+  
     }
  }

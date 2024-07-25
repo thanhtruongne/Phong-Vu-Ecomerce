@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Routers extends Model
 {
     use HasFactory;
-    protected $table = 'routers';
+    protected $table = 'router';
     protected $primaryKey = 'id';
-    protected $fillable = ['canonical','module_id','controller','languages_id'];
+    protected $fillable = ['canonical','module_id','controller'];
     
 }

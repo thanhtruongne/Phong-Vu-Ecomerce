@@ -1,15 +1,36 @@
 <?php 
 namespace App\Trait;
 
+use Carbon\Carbon;
 use Flasher\Laravel\Http\Request;
 use Illuminate\Support\Facades\File;
 
 trait QueryScopes {
-    public function scopeSearch($query,$search) {
-        if(!empty($search)) {
+    public function scopeSearch($query,$search,array $data = []) {
+        if(!empty($search) && $search != '' && !empty($data) && count($data) > 0) {  
+           foreach($data as $field) {
+            $query->orWhere($field,'LIKE','%'.$search.'%');
+           }
+        }
+        else if(!empty($search)) {
             $query->where('name','LIKE','%'.$search.'%');
         }
         return $query;
+    }
+
+    public function scopeWhereAddress($query,$data) {
+        if(!empty($data) && count($data) > 0) {  
+            foreach($data as $field) {
+                if(!empty($field) && $field[2] != 'none') {
+                    $query->where($field[0],$field[1],$field[2]);
+                }    
+            }
+        }
+        return $query;
+    }
+
+    public function scopeWhereDate($data) {
+        
     }
 
     public function scopeMember($query,$member) {
@@ -31,6 +52,18 @@ trait QueryScopes {
            }
         }
         return $query;
+    }
+
+    public function scopeCustomOrder($query,array $data = []) {
+        if(!empty($data) && $data != 'none') {
+            foreach($data as $key => $val) {
+                if(!empty($val) && $val[2] != 'none') {
+                  
+                    $query->where($val[0],$val[1],$val[2]);
+                }             
+            }
+         }
+         return $query;
     }
     
 
@@ -60,6 +93,25 @@ trait QueryScopes {
             foreach($joins as $join) {
                 $query->join($join[0],$join[1],$join[2],$join[3]);
             }
+        }
+        return $query;
+    }
+
+    public function scopeWhereJoinQuery($query,array $field = []) {
+   
+        if(!empty($field) && $field[2] != 'none') {
+            $query->where($field[0],$field[1],$field[2]);
+        }
+        return $query;
+    }
+
+    public function scopeWhereDateTime($query,string $data = '') {
+   
+        if(!empty($data) && $data != '') {
+           $extract = explode('-',$data);
+           $startDate = Carbon::parse($extract[0]);
+           $endDate = Carbon::parse($extract[1]);
+           $query->where([['created_at','>=',$startDate],['created_at','<=',$endDate]]);
         }
         return $query;
     }

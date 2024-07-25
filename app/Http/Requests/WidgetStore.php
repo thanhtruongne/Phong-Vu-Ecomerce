@@ -24,8 +24,6 @@ class WidgetStore extends FormRequest
         return [
             'name' => ['required'],
             'keyword' => ['required'],
-            'desc' => ['required'],
-            'album' => ['required'],
             'model' => ['required'],
             'model_id' => ['required'],
             'short_code' => ['required'],
@@ -37,8 +35,6 @@ class WidgetStore extends FormRequest
         return [
             'name.required' => 'Mục tiêu đề  không được bỏ trống',
             'keyword.required' => 'Mục keyword  không được bỏ trống',
-            'desc.required' => 'Mục desc  không được bỏ trống',
-            'album.required' => 'Mục album  không được bỏ trống',
             'model.required' => 'Mục model  không được bỏ trống',
             'model_id.required' => 'Mục mode_id  không được bỏ trống',
             'short_code.required' => 'Mục short_code  không được bỏ trống',

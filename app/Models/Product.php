@@ -8,38 +8,27 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
-    use HasFactory;
-    use SoftDeletes,QueryScopes;
+    use HasFactory,QueryScopes;
     protected $table = 'product';
     protected $primaryKey = 'id';
     protected $fillable = [
         'image',
-        'icon',
         'album',
         'status',    
-        'order',
-        'user_id',
-        'follow',
         'product_cateloge_id',
         'attribute',
         'attributeCateloge',
         'variant',
         'code_product',
-        'price','form'
+        'price','form',
+        'name','content','desc','meta_title','meta_desc','meta_keyword','canonical',
+        'demand_product_id  '
     ];
+
     
 
     public function product_cataloge() {
         return $this->belongsTo(ProductCateloge::class,'product_cateloge_id','id');
-    }
-
-    public function product_translate() {
-        return $this->hasMany(ProductTranslate::class,'product_id','id');
-    }
-
-    public function languages() {
-        return $this->belongsToMany(Languages::class,'product_translate','product_id','languages_id')
-        ->withPivot(['name','content','desc','meta_title','meta_keyword','meta_desc','meta_link'])->withTimestamps();
     }
    
     public function promotion() {
@@ -52,7 +41,7 @@ class Product extends Model
     }
     
     public function product_variant() {
-        return $this->hasMany(ProductVariant::class,'product_id','id');
+        return $this->hasMany(ProductVariant::class,'product_id','id')->with('attributes');
     }
 }
 

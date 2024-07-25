@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\PostCataloges;
-use App\Repositories\LanguageRepositories;
 use App\Repositories\MenuRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\MenuServiceInterfaces;
@@ -17,16 +16,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 class MenuService extends BaseService implements MenuServiceInterfaces
 {
-    protected $menuRepositories,$languageRepositories;
+    protected $menuRepositories;
 
     public function __construct(
          MenuRepositories $menuRepositories,
-         LanguageRepositories $languageRepositories,
-         RouterRepositories $routerRepositories
          ) {
         $this->menuRepositories = $menuRepositories;
-        $this->languageRepositories = $languageRepositories;
-        parent::__construct($routerRepositories);
+        parent::__construct();
     }
     public function paginate($request) 
     {
@@ -34,15 +30,11 @@ class MenuService extends BaseService implements MenuServiceInterfaces
         $condition['search'] = $request->search ?? '';
         $condition['status'] = +$request->status ?? 1;
         $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-          ['pct.language_id' ,'=',$this->languageRepositories->getCurrentLanguage()->id], 
-        ];
         $menu = $this->menuRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
         //sử dụng mảng 4 để load join vào table
         [
-            ['menu_translate as pct' , 'pct.menu_id','=','menu.id'],
             ['menu_cateloge as mca','mca.id','=','menu.menu_cateloge_id']
            
         ],
@@ -63,20 +55,10 @@ class MenuService extends BaseService implements MenuServiceInterfaces
                     'image' => $payload['menu']['image'][$key],
                     'type' => $payload['type'],
                     'position' =>  $payload['menu']['position'][$key],
-                    'user_id' => Auth::id()
+                    'name' => $val,
+                    'canonical' => $payload['menu']['canonical'][$key]
                 ];
-                $menuInsert = $this->menuRepositories->create($data);
-                if($menuInsert->id > 0) {
-                    $payloadTranslate = [
-                        'menu_id' => $menuInsert->id,
-                        'language_id' => $language_id,
-                        'name' => $val,
-                        'canonical' => $payload['menu']['canonical'][$key]
-                    ];
-                    $menuInsert->languages()->detach([ $payloadTranslate['language_id'],$menuInsert->id]);
-                    // // tạo bảng mới trug gian ghi đè 
-                    $translate = $this->menuRepositories->createTranslatePivot($menuInsert,$payloadTranslate,'languages'); 
-                }
+                 $this->menuRepositories->create($data);
             }
             DB::commit();
             return true;
@@ -148,7 +130,7 @@ class MenuService extends BaseService implements MenuServiceInterfaces
         }
     }
 
-    public function saveChildren($request , $language_id) {
+    public function saveChildren($request) {
         DB::beginTransaction();
         try {
             $data = $request->only(['menu_id','menu','menu_cateloge_id']);          
@@ -156,22 +138,12 @@ class MenuService extends BaseService implements MenuServiceInterfaces
             foreach($data['menu']['name'] as $key => $val) {
                 $payload = [
                     'menu_cateloge_id' =>  +$data['menu_cateloge_id'],
-                    'user_id' => Auth::id() 
+                    'user_id' => Auth::id(),
+                    'name' => $val,
+                    'canonical' => $data['menu']['canonical'][$key]
                 ];
                 $menuInsert = $this->menuRepositories->create($payload);
-                // dd($payload ,$menuFound, $menuInsert);
-                $this->menuRepositories->createMenuChildrenByNode(+$data['menu_id'],$menuInsert);
-                if($menuInsert->id > 0) {
-                    $payloadTranslate = [
-                        'menu_id' => $menuInsert->id,
-                        'language_id' => $language_id,
-                        'name' => $val,
-                        'canonical' => $data['menu']['canonical'][$key]
-                    ];
-                    $menuInsert->languages()->detach([ $payloadTranslate['language_id'],$menuInsert->id]);
-                    // // tạo bảng mới trug gian ghi đè 
-                    $translate = $this->menuRepositories->createTranslatePivot($menuInsert,$payloadTranslate,'languages'); 
-                }
+                $this->menuRepositories->createMenuChildrenByNode(+$data['menu_id'],$menuInsert);   
             }
            
 ;           DB::commit();
@@ -184,19 +156,18 @@ class MenuService extends BaseService implements MenuServiceInterfaces
     }
 
     public function SaveTheNestedTableListDynamic
-    (array $json = [] , int $language_id = 1 , int $parent_id = 0 ,int $menu_cateloge_id = 0) 
+    (array $json = [] ,$parent_id = null  ,int $menu_cateloge_id = 0) 
     {     
-       
         if(count($json)) {
             // $this->menuRepositories->setUpNullAllParentNode();
             foreach($json as $key => $val) {
                $update = [
-                  'parent' => $parent_id ?? 0,
+                  'parent' => $parent_id ?? null,
                   'position' => count($json) - $key
                ];
                $this->menuRepositories->UpdateMenuChildrenByNode($val['id'],$update);
                if(!empty($val['children']) && count($val['children'])) {
-                  $this->SaveTheNestedTableListDynamic($val['children'],$language_id,$val['id'],$menu_cateloge_id);
+                  $this->SaveTheNestedTableListDynamic($val['children'],$val['id'],$menu_cateloge_id);
                }
             }
         }

@@ -1,13 +1,15 @@
 <?php
 namespace App\Services;
 
-use App\Repositories\LanguageRepositories;
+use App\Repositories\AttributeCatelogeRepositories;
+use App\Repositories\AttributeRepositories;
 use App\Repositories\ProductRepositories;
 use App\Repositories\ProductVariantAttributeRepositories;
 use App\Repositories\ProductVariantsRepositories;
 use App\Repositories\ProductVariantTranslateRepositories;
 use App\Repositories\PromotionRepositories;
 use App\Repositories\RouterRepositories;
+use App\Services\Interfaces\ProductCatelogeServiceInterfaces as ProductCatelogeService;
 use App\Services\Interfaces\ProductServiceInterfaces;
 use App\Trait\UploadImage;
 use Carbon\Carbon;
@@ -21,73 +23,88 @@ class ProductService extends BaseService implements ProductServiceInterfaces
 {
     protected 
      $productRepositories,
-     $languageRepositories ,
      $productVariantAttributeRepositories , 
      $productVariantTranslateRepositories,
      $promotionRepositories,
-     $productVariantsRepositories;
+     $productVariantsRepositories,
+     $attributeCatelogeRepositories,
+     $attributeRepositories,
+     $productCatelogeService;
 
     public function __construct(
             ProductRepositories $productRepositories,
-            LanguageRepositories $languageRepositories,
-            RouterRepositories $routerRepositories,
+            AttributeCatelogeRepositories $attributeCatelogeRepositories,
+            AttributeRepositories $attributeRepositories,
             ProductVariantAttributeRepositories $productVariantAttributeRepositories,
             ProductVariantsRepositories $productVariantsRepositories,
             PromotionRepositories $promotionRepositories,
-            ProductVariantTranslateRepositories $productVariantTranslateRepositories
+            ProductVariantTranslateRepositories $productVariantTranslateRepositories,
+            ProductCatelogeService $productCatelogeService
         ) 
          {
             $this->productRepositories = $productRepositories;
+            $this->attributeRepositories = $attributeRepositories;
+            $this->attributeCatelogeRepositories = $attributeCatelogeRepositories;
             $this->productVariantsRepositories = $productVariantsRepositories;
-            $this->languageRepositories = $languageRepositories;
             $this->productVariantAttributeRepositories = $productVariantAttributeRepositories;
             $this->productVariantTranslateRepositories = $productVariantTranslateRepositories;
             $this->promotionRepositories = $promotionRepositories;
-            parent::__construct($routerRepositories);
+            $this->productCatelogeService = $productCatelogeService;
+            parent::__construct();
         }
-    public function paginate($request) 
+    public function paginate($request,$ProductCateloge = null,string $variant = '',string $promotion = '') 
     {
         $condition = [];
         $condition['search'] = $request->search ?? '';
-        $record = $request->input('record') ?: 6;
-        $condition['where'] = [
-          ['pct.languages_id' ,'=',$this->languageRepositories->getCurrentLanguage()->id], 
-          ['status','=',$request->status ?? 1],
-        ];
+        $record = $request->input('record') ?: 14;
+        if($request->has('status')){
+            $condition['where'] = [
+                ['status','=',$request->status],
+              ];
+        }
+       
 
-        $product = $this->productRepositories->paganation(
+        $products = $this->productRepositories->paganation(
         $this->getPaginateIndex(),
         $condition,
         //sử dụng mảng 4 để load join vào table
         [
-            ['product_translate as pct' , 'pct.product_id','=','product.id'],
             ['product_cateloge_product as pcsp','product.id','=','pcsp.product_id'],
            
         ],
         $record,
         $this->getPaginateIndex(),
-        [],[],$this->whereRawCondition($request) ?? []
-        );
-        // dd($post);
-       return $product;
+        ['product_variant'],[],$this->whereRawCondition($request,$ProductCateloge) ?? []);
+        if($products && $variant =='variant' && $promotion == 'promotion'){
+           foreach($products as $key => $product){
+                $product_variant_id = $product->product_variant->pluck('id')->toArray() ?? []; 
+                if(!empty($product_variant_id)) {
+                    $product->variant = $this->CombineArrayProductHavePromotionByWhereIn($product_variant_id,$product->product_variant,'variant'); 
+                }      
+            }  
+        }
+        return $products;
     }
-
 
     public function create($request) {
         DB::beginTransaction();
         try {
-            $product = $this->createProductService($request);
+            $product = $this->createProductService($request); 
             if($product->id > 0)  {
-                $this->createTranslatePivotProductService($request,$product);
-                $this->createRouter($request->input('meta_link'),$product,'ProductController',$this->languageRepositories->getCurrentLanguage()->id);
-                
-                //tạo các product_variant
-                $this->createProductVariant($product , $request , $this->languageRepositories->getCurrentLanguage()->id);
+                $catalogeSublist = $this->handleProductCataloge($request); 
+                $product->product_cateloge_product()->sync($catalogeSublist);
+                $this->createRouter($request->input('canonical'),$product,'ProductController');
+                if(!empty($request->input('attribute')) && !empty($request->input('productVariants')) && !empty($request->input('variants'))) {
+                    //tạo các product_variant
+                    $this->createProductVariant($product , $request,'create');     
+                }
+                // set attribute
+                $this->productCatelogeService->OverrideAttribute($product); 
             }
             DB::commit();
             return true;
         } catch (Exception $e) {
-            // DB::rollBack();
+            DB::rollBack();
             echo new Exception($e->getMessage()); die();
             // return false;
         }
@@ -96,23 +113,26 @@ class ProductService extends BaseService implements ProductServiceInterfaces
     public function update(int $id ,$request) {
         DB::beginTransaction();
         try {
+            $check = $this->updateProductService($request,$id);  
             $product = $this->productRepositories->findByid($id);      
-            $check = $this->updateProductService($request,$product);    
-            if($check == true) {
-                $this->updateProducTranslatetService($request,$product);
-                $product->product_variant()->each(function($variant) {
-                     dd(123);
-                    $variant->languages()->detach();
-                    $variant->attributes()->detach();
-                    $variant->delete();
-                });
-                $this->createProductVariant($product,$request,$this->languageRepositories->getCurrentLanguage()->id);
+            if($check) {       
+                //tạo lại product_catelgoe_product
+                $product->product_cateloge_product()->detach($product->id);
+                // ta sẽ xóa các variant tồn tại trong product này sau dó tạo lại bảng3 mới
+                $product->product_variant()->delete();
+                $catalogeSublist = $this->handleProductCataloge($request); 
+                $product->product_cateloge_product()->sync($catalogeSublist);
+                //tạo lại variant
+                $this->createProductVariant($product,$request,'update');
+                // set attribute
+                $this->productCatelogeService->OverrideAttribute($product); 
+               
             }
             DB::commit();
             return true;
         } catch (Exception $e) {
             DB::rollBack();
-            echo new Exception($e->getLine());die();
+            echo new Exception($e->getMessage());die();
             // return false;
         }
     }
@@ -191,27 +211,30 @@ class ProductService extends BaseService implements ProductServiceInterfaces
     }
 
     private function requestOnlyProductCataloge() {
-        return ['follow','status','image','product_cateloge_id','attribute','variants','attributeCateloge','album','code_product','form','price'];
-    }
-    private function requestOnlyProductCatalogeTranslate() {
-        return ['language_id','name','desc','content','meta_title','meta_desc','meta_keyword','meta_link'];
+        return ['follow','status','image','product_cateloge_id','attribute','variants','attributeCateloge','album','code_product','form','price'
+     ,'name','desc','content','meta_title','meta_desc','meta_keyword','canonical'
+    ];
     }
 
     private function getPaginateIndex() {
         // return ['status','image','pct.name','id','pcp.product_id','pcp.product_cateloge_id'];
-        return ['pct.name','product.image','product.status','product.id','product.product_cateloge_id'];
+        return ['image','status','id','product.product_cateloge_id',
+    'name','desc','content','meta_title','meta_desc','meta_keyword','canonical'
+    ];
     }
 
-    private function whereRawCondition($request) {
-        if($request->integer('categories') > 0 && $request->input('categories') != 'none' ) {
+    private function whereRawCondition($request,$ProductCateloge = null) {
+      
+        if(($request->integer('categories') > 0 && $request->input('categories') != 'none') || !is_null($ProductCateloge) ) {
+            $id = $request->integer('categories') > 0 ? $request->integer('categories')  : $ProductCateloge['id'];
             return [
                 [
                     'pcsp.product_cateloge_id IN (
-                        SELECT pc.id  FROM product_cateloge 
+                        SELECT  id  FROM product_cateloge 
                         WHERE `LEFT` >= (SELECT `LEFT` from product_cateloge as cat  where cat.id = ?)
                         AND `RIGHT` <= (SELECT `RIGHT` from product_cateloge as cat  where cat.id = ?)
                     )',
-                    [$request->integer('categories'),$request->integer('categories')]
+                    [$id ,$id]
                 ]
             ];
         }
@@ -220,70 +243,36 @@ class ProductService extends BaseService implements ProductServiceInterfaces
     private function createProductService($request) {;
         $data = $request->only($this->requestOnlyProductCataloge());
         $data['album'] = !empty($request->input('album')) ? json_encode($request->input('album')) : '';
-        $data['user_id'] = Auth::user()->id;
-        $data['attribute'] = !empty($request->input('attribute')) ? json_encode($data['attribute']) : '';
-        $data['attributeCateloge'] = !empty($request->input('attributeCateloge')) ? json_encode($data['attributeCateloge']) : '';
-        $data['variant'] = !empty($request->input('variants')) ? json_encode($data['variants']) : '';
+        $data['attribute'] = !empty($request->input('attribute')) ? json_encode($data['attribute']) : null;
+        $data['attributeCateloge'] = !empty($request->input('attributeCateloge')) ? json_encode($data['attributeCateloge']) : null;
+        $data['variant'] = !empty($request->input('variants')) ? json_encode($data['variants']) : null;
+        $data['canonical'] = Str::slug($data['canonical']);
         $product = $this->productRepositories->create($data);  
         return $product;
     }
 
-    private function createTranslatePivotProductService($request,$product) {
-        $payloadTranslate = $request->only($this->requestOnlyProductCatalogeTranslate());
-        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id;
-        $payloadTranslate['product_id'] = $product->id;
-        $payloadTranslate['meta_link'] = Str::slug($payloadTranslate['meta_link']);
-        $translate = $this->productRepositories->createTranslatePivot($product,$payloadTranslate,'languages');
-        $catalogeSublist = $this->handleProductCataloge($request); 
-        $product->product_cateloge_product()->sync($catalogeSublist);
-    }
     
-    private function updateProductService($request,$product) {
+    private function updateProductService($request,$id) {
         $data = $request->only($this->requestOnlyProductCataloge()); 
-        $data['album'] = json_encode($request->input('album')) ?? $product->album;
-        $data['user_id'] = Auth::user()->id;
-        $check = $this->productRepositories->update($product->id,$data);
+        $data['album'] = json_encode($request->input('album')) ?? '';
+        $data['attribute'] = !empty($request->input('attribute')) ? json_encode($data['attribute']) : null;
+        $data['attributeCateloge'] = !empty($request->input('attributeCateloge')) ? json_encode($data['attributeCateloge']) : null;
+        $data['variant'] = !empty($request->input('variants')) ? json_encode($data['variants']) : null;
+        $data['canonical'] = Str::slug($data['canonical']);
+
+        $check = $this->productRepositories->update($id,$data);
+        
         return $check;
     }
 
-    private function updateProducTranslatetService($request,$product) {
-        $payloadTranslate = $request->only($this->requestOnlyProductCatalogeTranslate());
-        $payloadTranslate['languages_id'] = $this->languageRepositories->getCurrentLanguage()->id;
-        $payloadTranslate['product_id'] = $product->id;
-        $payloadTranslate['meta_link'] = Str::slug( $payloadTranslate['meta_link']);
-        // tách ra khỏi bảng trung gian
-        $detach = $product->languages()->detach([ $payloadTranslate['languages_id'],$product->id]);
-        // tạo bảng mới trug gian ghi đè 
-        $translate = $this->productRepositories->createTranslatePivot($product,$payloadTranslate,'languages'); 
-        $catalogeSublist = $this->handleProductCataloge($request); 
-        $product->product_cateloge_product()->sync($catalogeSublist);
-    }
-
-    private function createProductVariant($product ,$request , $language_id) {
+    private function createProductVariant($product ,$request,$type = 'create') {
         $data = $request->only(['variants','productVariants','attribute']);
         $array = $this->createArrayDataProductVariants($data);
-        // ta sẽ xóa các variant tồn tại trong product này sau dó tạo lại bảng3 mới
-        $variants =  $product->product_variant()->createMany($array);
+        $variants =  $product->product_variant()->createMany($array); 
         $product_vartiant_attribute = [];
-        $product_variant_translate = [];
-        //     5 => array:2 [▼
-    //     0 => "8"
-    //     1 => "9"
-    //   ]
-    //   3 => array:2 [▼
-    //     0 => "6"
-    //     1 => "4"
-    //   ]
-    // ]
-    //sắp xếp ra = đệ qui thành ex : [ [6,8], [6,9] ,[4,8] ,[4,9] ]
+
     $productVariantAttribute =  $this->makeCombineAttribute(array_values($data['attribute']));
-        foreach($variants->pluck('id') as $key => $val) {
-           
-            $product_variant_translate[] = [
-                'product_variant_id' => $val ,
-                'languages_id' => $language_id,
-                'name' => $data['productVariants']['name'][$key] 
-            ];
+        foreach($product->product_variant()->pluck('id') as $key => $val) {
             
             if(count($productVariantAttribute)) {
                foreach($productVariantAttribute[$key] as $item) {
@@ -294,8 +283,8 @@ class ProductService extends BaseService implements ProductServiceInterfaces
                }
             }
         }
-         $this->productVariantAttributeRepositories->createByInsert($product_vartiant_attribute);
-        $this->productVariantTranslateRepositories->createByInsert($product_variant_translate);
+        $this->productVariantAttributeRepositories->createByInsert($product_vartiant_attribute);
+        // $this->productVariantTranslateRepositories->createByInsert($product_variant_translate);
 
     }
 
@@ -324,16 +313,20 @@ class ProductService extends BaseService implements ProductServiceInterfaces
         $variants = [];
         if(isset($data['variants']['sku']) && !empty($data['variants']['sku'])) {
             foreach($data['variants']['sku'] as $key => $val) {
+              
+                $sorting = array_map('intval', explode(', ',$data['productVariants']['id'][$key]));
+                sort($sorting,SORT_NUMERIC);
+                // dd($data['productVariants']['id'][$key],$sorting);
                 $variants[] = [
                     'qualnity' => $data['variants']['qualnity'][$key] ?? 0,
                     'price' => $data['variants']['price'][$key] ?? 0,
                     'sku' => $data['variants']['sku'][$key] ?? '',
-                    'code' => $data['productVariants']['id'][$key] ?? 0,
+                    'code' => implode(', ',$sorting) ?? 0,
                     'barcode' => $data['variants']['code'][$key] ?? '',
                     'file_name' => $data['variants']['file_name'][$key] ?? '',
                     'file_url' => $data['variants']['file_url'][$key] ?? '',
                     'album' => $data['variants']['album'][$key] ?? '',
-                    'user_id' => Auth::user()->id
+                     'name' => $data['productVariants']['name'][$key] ?? ''
                 ];
             }
         }
@@ -341,19 +334,115 @@ class ProductService extends BaseService implements ProductServiceInterfaces
     }
 
 
-    public function CombineArrayProductHavePromotionByWhereIn(array $id = [] , $products) {
+    public function CombineArrayProductHavePromotionByWhereIn(array $id = [] , $products,string $subject = 'product') {
         //tìm các promotion chứa các product
-        $promotions = $this->promotionRepositories->findByProductPromotion($id);
-       
+        if($subject == 'product') $promotions = $this->promotionRepositories->findByProductPromotion($id);
+        else if($subject == 'variant') $promotions = $this->promotionRepositories->getProductVariantPromotion($id);
         //gán từng promotion vào product chứa các id
+        // dd($promotions);
         foreach($products as $key => $product) {
             foreach($promotions as $index => $promo) {
-                if($promo['product_id'] == $product->id) {
-                    $products[$key]->promotions = $promo;
+                if($subject === 'product' && $promo['product_id'] === $product->id) {
+                    $products[$index]->promotions = $promo;
                 }
+                if($subject === 'variant' && $promo['product_variant_id'] === $product->id) {;
+                   $products[$index]->promotions = $promo;   
+                }       
             }
         }
         return $products;
+    }   
+
+
+    public function getAttribute($product) {
+        //lấy các attribute cateloge
+        $attributeJson = json_decode($product->attribute,true);
+        $attributeCatelogeId = array_keys($attributeJson);
+        $attributeCateloge = $this->attributeCatelogeRepositories->findCondition(
+            [
+                ['status','=',1]
+            ],
+            [
+                'whereIn' => 'id',
+                'whereValues' => $attributeCatelogeId
+            ],
+            [],'multiple',[]
+        );
+        $attributeId = array_merge(...$attributeJson);
+        $attribute = $this->attributeRepositories->getAttributeByWhereIn($attributeId);
+       
+     
+        foreach($attributeCateloge as $key => $attribute_cateloge) {
+            $temp =[];
+            foreach($attribute as $index => $attribute_attribute) {
+                  if($attribute_attribute->attribute_cateloge_id == $attribute_cateloge->id ) {
+                    $temp[] = $attribute_attribute;
+                  }
+            }
+           $attribute_cateloge->object = $temp;
+        }
+        return $attributeCateloge;
+    }
+
+    public function ComplieCartService($carts) {
+       $cartID = $carts->pluck('id');
+       $data = [];
+       $obj = [];
+       if(!is_null($cartID)) {
+           foreach($cartID as $cart_id) {
+               if(count(explode('_',$cart_id)) == 2) {
+                  $data['variant'][] = explode('_',$cart_id)[1];
+               } 
+               else {
+                $data['product'][] = explode('_',$cart_id)[0];
+               }
+            }
+       }
+       if(isset($data['variant'])) {
+         $obj['variant'] = $this->productVariantsRepositories->findCondition(
+            [['status','=',1]],['whereIn' => 'id','whereValues' => $data['variant']],[],'multiple',[])->keyBy('id');
+       }
+       if(isset($data['product'])) {
+        $obj['product'] = $this->productRepositories->findCondition(
+            [['status','=',1]],['whereIn' => 'id','whereValues' => $data['product']],[],'multiple',[])->keyBy('id');
+       }    
+       $total = 0;
+       foreach($carts as $key => $cart) {
+            $item = explode('_',$cart->id);
+            $obj_id = $item[1] ?? $item[0];
+            if(isset($obj['variant'][$obj_id])) {
+              $variant_item = $obj['variant'][$obj_id];
+              $slug = $this->gettingSlugCanonical($variant_item->name);
+              $url = config('apps.apps.url').'/'.Str::slug($variant_item->product->name);
+              $cart->thumb = explode(',',$variant_item->album)[0];
+              $cart->price_previous = $variant_item->price;
+              $cart->sku = $variant_item->sku;
+              $cart->canonical = $url.'---'.$slug.'?sku='.$variant_item->sku;
+              $cart->quantity = $cart->qualnity;
+              $total += ($cart->options->priceSale ?? $cart->price) * $cart->qty;
+            }
+            else if(isset($obj['product'][$obj_id])) {
+                $variant_item = $obj['product'][$obj_id];
+                $cart->thumb = $variant_item->image;
+                $cart->price_previous = $variant_item->price;  
+                $total += ($cart->options->priceSale ?? $cart->price) * $cart->qty;
+            }
+       }
+       $carts->total = $total;
+       $carts->itemCount = count($carts);
+       return $carts;
+       
+    }
+
+    private function gettingSlugCanonical($slug) {
+        if(is_null($slug)) return false;
+        $data = [];
+        foreach(explode(', ',$slug) as $item) {
+            $data[] = Str::slug($item);
+        }
+
+        $data = implode('--',$data);
+        return $data;
     }
 
 }

@@ -23,7 +23,7 @@ class UpdateProductCateloge extends FormRequest
     {
         return [
             'name' => ['required',],
-            'meta_link' => ['required','unique:router,canonical,'.$this->id],
+            'canonical' => ['required'],
         ];
     }
 
@@ -31,8 +31,7 @@ class UpdateProductCateloge extends FormRequest
     { 
         return [
             'name.required' => 'Mục tên không được bỏ trống',
-            'meta_link.required' => 'Mục meta_link không được bỏ trống',
-            'meta_link.unique' => 'Mục meta_link không được trùng',
+            'canonical.required' => 'Mục canonical không được bỏ trống',
         ];
     }
 }

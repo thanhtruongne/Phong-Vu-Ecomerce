@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Promotion extends Model
 {
-    use HasFactory,SoftDeletes,QueryScopes;
+    use HasFactory,QueryScopes;
     protected $table = 'promotion';
     protected $primaryKey = 'id';
     protected $fillable = [
@@ -25,6 +25,7 @@ class Promotion extends Model
         'maxDiscountValue',
         'discountValue',
         'discountType',
+        'method'
     ];
 
     protected $casts = [
@@ -33,8 +34,7 @@ class Promotion extends Model
     
     public function products() {
         return $this->belongsToMany(Product::class,'promotion_product_variant','promotion_id','product_id')
-        ->withPivot(['product_variant_id','model'])
-        ->withTimestamps();
+        ->withPivot(['product_variant_id','model']);
     }
     
     public function product_cateloge() {

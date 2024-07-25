@@ -88,6 +88,9 @@
                                           $arrayPush[] = \App\Models\ProductCateloge::findOrFail($item)->id;
                                       }
                                   }
+
+                                  //Demand
+                                  $demand = \App\Models\ProductCateloge::select(['name','canonical','image','id'])->descendantsOf(+env('ID_DEMAND_PRODUCT'));
                              @endphp
                              <div class="col-lg-3">
                               <div style="height: 100%">
@@ -135,7 +138,7 @@
                                                       <option value="1">Root</option>
                                                   @foreach ($categories as $category)
                                                       <option {{ old('product_cateloge_id',$product->product_cateloge_id) == $category->id ? 'selected' : '' }}  value="{{ $category->id }}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->product_cateloge_translate->first()->name }}
+                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->name }}
                                                       </option>
                                                   @endforeach
                                               </select>
@@ -153,7 +156,7 @@
                                                       <option 
                                                       {{ in_array($category->id,old('categories_sublist',$arrayPush)) == true ? 'selected' : '' }}
                                                       value="{{$category->id}}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->product_cateloge_translate->first()->name }}
+                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->name }}
                                                       </option>
                                                   @endforeach
                                               </select>
@@ -162,6 +165,24 @@
                                               <div class="mt-3 text-left text-danger italic" style="position: relative;left:-1px;top:10px;">{{ $errors->first('categories_sublist') }}(*)</div>
                                           @endif
                                       </div>
+
+                                        @if (!is_null($demand))
+                                            <div class="form-group" style="margin-top: 8px"><label class="control-label">Nhu cầu sản phẩm</label>
+                                                <div class="">
+                                                    
+                                                    <select class="form-control select2" name="demand_product_id">                                         
+                                                        @foreach ($demand as $key_demand => $demand_item)
+                                                            <option value="{{ $demand_item->id }}">{{ $demand_item->name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                @if ($errors->has('demand_product_id'))
+                                                    <div class="mt-3 text-left text-danger italic" style="position: relative;left:-1px;top:10px;">{{ $errors->first('categories_sublist') }}(*)</div>
+                                                @endif
+                                            </div>
+                                        @endif
+                                      
+
                                       <div class="form-group" style="margin-top: 40px"><label class="control-label">Hình ảnh nhóm bài viết (*)</label>
                                           <div class="ckfinder_2" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
                                               <input type="text" name="image" hidden value="{{ old('image',$product->image) }}" >

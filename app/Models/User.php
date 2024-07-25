@@ -12,9 +12,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-    use SoftDeletes,QueryScopes;
-
+    use Notifiable,HasApiTokens,QueryScopes;
+    protected $guard = 'users';
     /**
      * The attributes that are mass assignable.
      *
@@ -22,9 +21,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
-        'email',
-        'fullname',
-        'birthday',
+        'email',    
         'password',
         'province_code',
         'district_code',
@@ -32,7 +29,6 @@ class User extends Authenticatable
         'address',
         'phone',
         'thumb',
-        'role',
         'status',
         'desc',
         'user_cataloges_id'
@@ -58,7 +54,9 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
- 
+
+
+
 
     public function user_cataloge() {
         return $this->belongsTo(UserCataloge::class,'user_cataloges_id','id');
@@ -67,4 +65,17 @@ class User extends Authenticatable
     public function hasPermission($permissionName) {
         return $this->user_cataloge->permissions->contains('canonical',$permissionName);
     }
+
+    public function province() {
+        return $this->belongsTo(Province::class,'province_code','code');
+      }
+  
+      public function district() {
+        return $this->belongsTo(District::class,'district_code','code');
+      }
+  
+  
+      public function ward() {
+        return $this->belongsTo(Ward::class,'ward_code','code');
+      }
 }

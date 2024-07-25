@@ -13,5 +13,5 @@ interface WidgetServiceInterfaces {
 
     // public function findTheWidgetByService(string $keyword = '' , $language_id = 0,$params);
 
-    public function foundTheWidgetByKeyword(array $payload , int $language_id = 1);
+    public function foundTheWidgetByKeyword(array $payload );
 }

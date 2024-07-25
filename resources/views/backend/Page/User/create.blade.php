@@ -148,9 +148,9 @@
                             </div>
                             <div class="form-group" style="margin-top: 8px"><label class="col-sm-2 control-label"> Phường / Xã (*)</label>
                                 <div class="col-sm-6">
-                                    <select class="form-control select2 wards location" name="ward_code">
-                                      
-                                    </select>
+                                        <select class="form-control select2 wards location" name="ward_code">
+                                        
+                                        </select>
                                 </div>
                                  @if ($errors->has('ward_code'))
                                 <div class="mt-3 text-left text-danger italic">{{ $errors->first('ward_code') }}(*)</div>

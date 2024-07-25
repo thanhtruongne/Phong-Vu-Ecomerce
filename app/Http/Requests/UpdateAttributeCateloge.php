@@ -23,7 +23,7 @@ class UpdateAttributeCateloge extends FormRequest
     {
         return [
             'name' => ['required',],
-            'meta_link' => ['required','unique:routers,canonical,'.$this->id],
+            'meta_link' => ['required','unique:router,canonical,'.$this->id],
         ];
     }
 

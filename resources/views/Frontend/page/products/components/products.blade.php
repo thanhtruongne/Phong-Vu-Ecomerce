@@ -1,0 +1,99 @@
+<div class="css-1y2krk0 ">
+    @if (isset($products) && !empty($products))
+        @foreach ($products as $key => $product)
+            @if (isset($product->variant) && !empty($product->variant))
+                @foreach ($product->variant as $item)
+                    @php
+                        $sort = $item->attributes->pluck('id')->toArray();
+                        sort($sort,SORT_NUMERIC);                
+                        $name_slug = [];
+                        if(isset($item) && !empty($item)); {
+                            $name_variant = $item->name;        
+                            $name = $product->name.' ('.$name_variant.')';
+                            foreach(explode(', ',$name_variant) as $variant) {
+                                $name_slug[] = Str::slug($variant);
+                            }
+                            $product_price_after_discount = 0;
+                            if(!empty($item->promotions)) {     
+                                $product_price_after_discount = 
+                                $item->promotions['product_variant_price'] - $item->promotions['discount'] ;                       
+                            }
+                            else $product_price_after_discount = $item->price;
+                            
+                            
+                            $url = $product->canonical.'---'.implode('--',$name_slug).'?sku='.$item->sku;
+                            $canonical = makeTheURL($url,true);
+                          
+                        }
+                    @endphp
+                      {{-- item --}}
+                    <div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
+                        <div class="css-1msrncq">
+                            <a href="{{ $canonical }}" class="d-block" style="text-decoration: none">
+                                <div class="" style="position-relative" style="margin-bottom:0.5rem">
+                                    <div class="" style="margin-bottom: 0.25rem">
+                                        <div class="position-relative"  style="padding-bottom: 100%">
+                                            <img src="{{ explode(',',$item->album)[0] }}"
+                                            class="w-100 h-100 object-fit-contain position-absolute" style="top:0px;left:0px"
+                                            alt="">
+                                            @if (!empty($item->promotions))
+                                            <div class="position-absolute" style="width: 94px;bottom:0;left:0">
+                                                <div class="css-zb7zul">
+                                                    <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
+                                                    <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
+                                                    
+                                                        {{ convert_price($item->promotions['discount'],true) }} đ
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+                                        </div>
+                                    </div>
+                                    {{-- title --}}
+                                    <div class="" style="margin-bottom: 0.25rem">
+                                        <div type="body" color="textSecondary" class="product-brand-name css-90n0z6" style="text-transform: uppercase; display: inline;">
+                                            {{ Str::upper($product->product_cataloge->name) }}
+                                        </div>
+                                    </div>
+                                    {{-- desc --}}
+                                    <div class="" style="height:3rem">
+                                        <div type="caption" class="att-product-card-title css-1uunp2d" color="textPrimary">
+                                            <h3 title="Laptop ASUS Vivobook 15X Oled M3504YA-L1268W (Ryzen 5 7530U/RAM 16GB/512GB SSD/ Windows 11)" class="css-1xdyrhj">
+                                                {{ $name }}
+                                            </h3>
+                                        </div>
+                                    </div>
+                                    {{-- price --}}
+                                    <div class="" style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
+                                        <div class="d-flex flex-column" style="height:2.5rem;">
+                                            <div type="subtitle" class="att-product-detail-latest-price css-do31rh" color="primary500">14.690.000&nbsp;₫</div>
+                                            @if (isset($item->promotions) && !empty($item->promotions))
+                                                <div class="d-flex" style="height:1rem">
+                                                    <div type="caption" class="att-product-detail-retail-price css-18z00w6" color="textSecondary">{{ convert_price($item->price) }}&nbsp;₫</div>
+                                                    <div type="caption" color="primary500" class="css-2rwx6s">-{{ $item->promotions['discountValue'] }}{{ $item->promotions['discountType'] }}</div>
+                                                </div>
+                                            @endif
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <button height="2rem" color="primary500" class="css-16gdkk6" type="button">
+                                <div type="body" class="button-text css-ct8m8z" color="primary500">Thêm vào giỏ</div>
+                                <span style="margin-left: 0px;">
+                                    <div class="css-157jl91"></div>
+                                </span>
+                            </button> 
+                        </div>
+                    </div>
+                @endforeach
+         
+            @endif
+          
+        @endforeach
+        
+    @endif
+       
+     
+
+    </div>

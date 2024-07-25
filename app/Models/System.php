@@ -9,6 +9,6 @@ class System extends Model
     use HasFactory;
     protected $table = 'system';
     protected $primaryKey = 'id';
-    protected $fillable = ['languages_id','user_id','keyword','content'];
+    protected $fillable = ['user_id','keyword','content'];
 }
 

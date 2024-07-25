@@ -2,7 +2,7 @@
 namespace App\Services\Interfaces;
 
 interface ProductServiceInterfaces {
-    public function paginate($request);
+    public function paginate($request,$productCateloge,string $variant = '',string $promotion = '');
 
     public function create($request);
 
@@ -14,5 +14,9 @@ interface ProductServiceInterfaces {
 
     public function deleteForce(int $id);
 
-    public function CombineArrayProductHavePromotionByWhereIn(array $id = [] , $products);
+    public function CombineArrayProductHavePromotionByWhereIn(array $id = [] , $products,string $subject = 'product');
+
+    public function getAttribute($product); 
+
+    public function ComplieCartService($carts);
 }

@@ -35,13 +35,13 @@
 
              <div class="form-group" style="margin-top: 8px"><label class="col-sm-2 control-label">Đường dẫn SEO (*)</label>
                  <div class="col-sm-10">
-                     <input placeholder="Nhập tiếp tục url theo đường dãn bên dưới " type="text" value="{{ old('meta_link',($data->meta_link) ?? '') }}" name="meta_link" class="form-control link_seo_href_title">
+                     <input placeholder="Nhập tiếp tục url theo đường dãn bên dưới " type="text" value="{{ old('canonical',($data->canonical) ?? '') }}" name="canonical" class="form-control link_seo_href_title">
                  </div>
                  <div >
                      <span style="padding-left: 15px;margin:12px 0px">{{ env('APP_URL_DEFAULT') }}</span>
                  </div>
-                 @if ($errors->has('meta_link'))
-                     <div class="mt-3 text-left text-danger italic" style="position: relative;left:146px">{{ $errors->first('meta_link') }}(*)</div>
+                 @if ($errors->has('canonical'))
+                     <div class="mt-3 text-left text-danger italic" style="position: relative;left:146px">{{ $errors->first('canonical') }}(*)</div>
                  @endif
              </div>              
     </div>

@@ -85,7 +85,7 @@
                                                       <option selected value="1">Root</option>
                                                   @foreach ($categories as $category)
                                                       <option {{ $attributeCateloge->id == $category->id ? 'selected' : '' }}  value="{{ $category->id }}">
-                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->attribute_cateloge_translate->name }}
+                                                          {{ str_repeat('|---',($category->depth > 0) ? $category->depth : 0) }}{{ $category->name }}
                                                       </option>
                                                   @endforeach
                                               </select>

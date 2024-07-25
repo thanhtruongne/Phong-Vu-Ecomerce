@@ -3,18 +3,16 @@
 namespace App\Http\Controllers\Backend\Ajax;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\LanguageRepositories;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class DashboardController extends Controller
 
 {
-   protected $language;
 
-   public function __construct(LanguageRepositories $language)
+   public function __construct()
    {
-      $this->language = $language;
+
    }
    public function changeStatus(Request $request) {
 
@@ -36,21 +34,16 @@ class DashboardController extends Controller
    }
 
    public function getModelWidgetSearch(Request $request) {
-     $instance = $this->handleMadeClass('Repositories','Repositories',$request->input('model'));
-     $tableRelation = Str::snake($request->input('model')).'_translate';
-
-     $find = $instance->findByModelWhereHas(
-       ['*'],
-      [
-         ['name','like','%'.$request->input('keyword').'%'],
-         // ['language_id','=',$this->language->getCurrentLanguage()->id]
-      ],$tableRelation, $tableRelation,'languages','multiple',true);
+      $instance = $this->handleMadeClass('Repositories','Repositories',$request->input('model'));
+      $find = $instance->findCondition([
+         ['name','like','%'.$request->input('keyword').'%']
+      ],[],[],'multiple',[]);
       foreach($find as $key => $val) {
          $data[] =  [
             'id' => $val->id,
-            'name' => $val->$tableRelation->first()->name,
+            'name' => $val->name,
             'image' => $val->image,
-            'canonical' => $val->$tableRelation->first()->meta_link,
+            'canonical' => $val->canonical
          ];
       }
       return $data ?? [];
@@ -82,6 +75,12 @@ class DashboardController extends Controller
       }
       return $payload;
     
+   }
+
+
+   // load variant
+   public function loadProductVariant(Request $request) {
+      dd($request->all());
    }
 
    private function SwitchCasePromotionType(string $type = '') {
@@ -123,4 +122,6 @@ class DashboardController extends Controller
       }
       return $instance;
    }
+
+
 }
