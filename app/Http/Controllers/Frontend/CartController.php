@@ -46,6 +46,7 @@ class CartController extends BaseController
       $carts = Cart::instance('cart')->content();    
       $carts = $this->productService->ComplieCartService($carts);
       $total = $this->totalCart($carts);
+
       return view('Frontend.page.Cart.cart',compact('Seo','carts','config','total'));
    }
 

@@ -392,10 +392,12 @@ class ProductService extends BaseService implements ProductServiceInterfaces
 
     public function ComplieCartService($carts) {
        $cartID = $carts->pluck('id');
+     
        $data = [];
        $obj = [];
        if(!is_null($cartID)) {
            foreach($cartID as $cart_id) {
+            // dd(explode('_',$cart_id));
                if(count(explode('_',$cart_id)) == 2) {
                   $data['variant'][] = explode('_',$cart_id)[1];
                } 
@@ -413,6 +415,7 @@ class ProductService extends BaseService implements ProductServiceInterfaces
             [['status','=',1]],['whereIn' => 'id','whereValues' => $data['product']],[],'multiple',[])->keyBy('id');
        }    
        $total = 0;
+    //    dd($carts);
        foreach($carts as $key => $cart) {
             $item = explode('_',$cart->id);
             $obj_id = $item[1] ?? $item[0];
@@ -430,7 +433,10 @@ class ProductService extends BaseService implements ProductServiceInterfaces
             else if(isset($obj['product'][$obj_id])) {
                 $variant_item = $obj['product'][$obj_id];
                 $cart->thumb = $variant_item->image;
-                $cart->price_previous = $variant_item->price;  
+                $cart->price_previous = $variant_item->price;
+                $cart->quantity = $cart->qualnity;  
+                $cart->sku = $variant_item->code_product;
+                $cart->canonical = config('apps.apps.url').'/'.$variant_item->canonical;
                 $total += ($cart->options->priceSale ?? $cart->price) * $cart->qty;
             }
        }

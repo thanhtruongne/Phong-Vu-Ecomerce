@@ -235,7 +235,8 @@
       $(document).on('click','.add_to_cart',function(e) {
         e.preventDefault();
         let data = {
-            'id'  :  $('input[name="product_id"]').val() + '_' + $('input[name="product_variant_id"]').val(),
+            'id'  :  $('input[name="product_id"]').val() + (
+            $('input[name="product_variant_id"]').val() !== '' ? '_' + $('input[name="product_variant_id"]').val() : '' ),
             'name' : $('.find_original_name .title_product_dynamic').find('h1').text().trim(),
             'price' :  Number($('input[name="price"]').val()),
             'qualnity' :  1,
@@ -245,8 +246,7 @@
             'attribute' :  $('input[name="attribute_id"]').val(),
             'attributeName' :  $('input[name="attribute_name"]').val(),
         }
-        console.log(data);
-        // if(data)  Data.AjaxAddToCart(data);
+        if(data)  Data.AjaxAddToCart(data);
         
       })
    }
