@@ -66,7 +66,7 @@ use App\Repositories\Interfaces\ProductCatelogeRepositoriesInterfaces;
     }
     public function getChildrenDescendantsOf(int $id){
         return $this->model->select([
-            'id','image','name','canonical','album'
+            'id','image','name','canonical','album','parent'
         ])
         ->descendantsOf($id);
     }

@@ -44,38 +44,48 @@ class ProductController extends BaseController
    }
    
    public function index($id ,$request , $slug = null) {
+    $variant = null;$attribute = [];
       $config = [
           'js' => [
             'frontend/js/library/custom.js'
           ],
       ];
 
-      if(!is_null($slug))  $slug = explode('--',$slug);
+    
 
       $product = $this->productRepositories->getProductById($id);
       $conditionCheck = '';
       // dd($product);
-      foreach($product->product_variant->pluck('sku')->toArray() as $check) {
-        if($check == $request->input('sku')) $conditionCheck = $check;
-      }
+      if(count($product->product_variant) > 0) {
+        foreach($product->product_variant->pluck('sku')->toArray() as $check) {
+          if($check == $request->input('sku')) $conditionCheck = $check;
+        }
+      } 
       //variant
-      $variant = $this->productVariantsRepositories->getVariantSkuProduct($conditionCheck,implode(', ',$slug),$product->id);
-      if(is_null($variant)) abort(404);
-      if($variant->variant_id > 0) $variant->promotions = $this->promotionRepositories->getProductVariantPromotion([$variant->variant_id]);
-      //check params 
-      $this->checkParamsVariant($variant,$slug);
+      if(!is_null($slug)) {
+        $slug = explode('--',$slug);
+        $variant = $this->productVariantsRepositories->getVariantSkuProduct($conditionCheck,implode(', ',$slug),$product->id);
+      }
+      // if(is_null($variant)) abort(404);
+      
+
+      if(isset($variant) && !empty($variant) &&  $variant->variant_id > 0){
+        $variant->promotions = $this->promotionRepositories->getProductVariantPromotion([$variant->variant_id]);
+        //check params 
+        $this->checkParamsVariant($variant,$slug);
+        if(!is_null($product->attribute) && !is_null($product->attributeCateloge) && !is_null($product->variant)) {    
+          // các variant attribute
+          $attribute = $this->productService->getAttribute($product);       
+        }  
+      }
+     
     
       
       $option = $this->getBreadCrumbsProductDetail($product);
       //breadcrumb tạm
       // $breadcrumbs =  $this->convertFillCateloge($product->product_cateloge_product);
-     
-      $attribute = [];
-       // các variant attribute
-      if(!is_null($product->attribute) && !is_null($product->attributeCateloge) && !is_null($product->variant)) {
-        $attribute = $this->productService->getAttribute($product);
-        
-      }    
+
+      
       
       $system = json_decode(Redis::get('system'),true);
       $Seo = [
@@ -99,7 +109,7 @@ class ProductController extends BaseController
             'whereIn' => 'id',
             'whereValues' => $prouct_cateloge_id
           ],[],'multiple',[]);
-
+          // dd($prouct_cateloge_id,$productCateloges,$product->product_cateloge_product);
 
           $cateloge = [];
           $id_product_related = [];
@@ -110,17 +120,20 @@ class ProductController extends BaseController
                     $id_product_related[] = $productCateloge->products->pluck('id');
                     $cateloge[$count++] = $productCateloge->toArray();
                 }
-                if(!empty($this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id']))){
+            
+                if(!empty($this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])) 
+                && count($this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])) > 0){
                   $cateloge['parent'] = $this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])
-                 ->first()->toArray();              }
-                }  
+                 ->first()->toArray();              
+                }
+          }  
           //sản phẩm liên quan và promotions
           $product_related = $this->productRepositories->findCondition([
             ['status','=',1]
             ],[
             'whereIn' => 'id',
             'whereValues' => end($id_product_related)->toArray()
-            ],[],'multiple',[]);
+            ],[],'multiple',$this->selectProductPerformance());
             foreach($product_related as $related) {
                 $related->promotions = $this->promotionRepositories->findByProductPromotion([$related->id]);
                 $product_variant_id = $related->product_variant->pluck('id')->toArray(); 
@@ -132,6 +145,11 @@ class ProductController extends BaseController
               'product_related' =>  $product_related,
               'cateloge' => $cateloge
             ];
+   }
+
+   private function selectProductPerformance(){
+      return ['name','image','code_product','id','attribute','variant','attributeCateloge',
+      'canonical','price','content'];
    }
 
   //  private function convertFillCateloge($product_cateloge){

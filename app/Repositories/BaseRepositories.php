@@ -107,7 +107,8 @@ use Illuminate\Support\Facades\DB;
         array $params = [],
         array $relation = [],
         string $type = 'first',
-        array $withCount = []
+        array $withCount = [],
+        array $select = ['*']
         ) {
         $query = $this->model->newQuery();
         $query->with($relation);

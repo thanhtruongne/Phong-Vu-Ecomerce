@@ -96,5 +96,5 @@ Route::get('/',[HomeController::class,'home'])->name('home');
     ->where('canonical','[a-zA-Z0-9-]+')->where('slug','[a-zA-Z0-9-]+');
     //Dynamic router use database render controllers and model
     Route::get('{canonical}',[RouterController::class,'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
-
+    
 // });

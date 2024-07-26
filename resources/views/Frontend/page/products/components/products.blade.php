@@ -28,7 +28,7 @@
                     @endphp
                       {{-- item --}}
                     <div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
-                        <div class="css-1msrncq">
+                        <div class="css-1msrncq fill_parent">
                             <a href="{{ $canonical }}" class="d-block" style="text-decoration: none">
                                 <div class="" style="position-relative" style="margin-bottom:0.5rem">
                                     <div class="" style="margin-bottom: 0.25rem">
@@ -58,7 +58,9 @@
                                     {{-- desc --}}
                                     <div class="" style="height:3rem">
                                         <div type="caption" class="att-product-card-title css-1uunp2d" color="textPrimary">
-                                            <h3 title="Laptop ASUS Vivobook 15X Oled M3504YA-L1268W (Ryzen 5 7530U/RAM 16GB/512GB SSD/ Windows 11)" class="css-1xdyrhj">
+                                            <h3 
+                                            title="Laptop ASUS Vivobook 15X Oled M3504YA-L1268W (Ryzen 5 7530U/RAM 16GB/512GB SSD/ Windows 11)" 
+                                            class="css-1xdyrhj name_category_product">
                                                 {{ $name }}
                                             </h3>
                                         </div>
@@ -78,7 +80,19 @@
                                     </div>
                                 </div>
                             </a>
-                            <button height="2rem" color="primary500" class="css-16gdkk6" type="button">
+                            <div class="">
+                                <input type="hidden" name="product_id" value="{{ $item->product_id }}">
+                                <input type="hidden" name="product_variant_id" value="{{ $item->id }}">
+                                <input type="hidden" name="qualnity" value="1">
+                                <input type="hidden" name="price" value="{{ $item->price ?? $product->price }}">
+                                <input type="hidden" name="price_after_discount" value="{{ $product_price_after_discount ?? 0 }}">
+                                <input type="hidden" name="discountValue" value="{{ $item->promotions['discountValue'] ?? null }}">
+                                <input type="hidden" name="discountType" value="{{  $item->promotions['discountType'] ?? null }}">
+                                <input type="hidden" name="attribute_id" value="{{ $item->code }}">
+                                <input type="hidden" name="attribute_name" value="{{ $item->name}}">
+                            
+                            </div>
+                            <button height="2rem" color="primary500" class="css-16gdkk6 add_to_cart_list" type="button">
                                 <div type="body" class="button-text css-ct8m8z" color="primary500">Thêm vào giỏ</div>
                                 <span style="margin-left: 0px;">
                                     <div class="css-157jl91"></div>

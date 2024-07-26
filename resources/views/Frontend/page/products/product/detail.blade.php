@@ -10,23 +10,31 @@
     <div class="container">
         <div class="w-100">
            <div class="breadcrumbs css-seb2g4">
-            {{-- @dd($option) --}}
-            {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][2]['canonical'] ,$option['cateloge'][1],$option['cateloge'][2],$option['cateloge']['parent']) }}
-                {{-- {{ Breadcrumbs::render('msi',$cateloge['parent'],$cateloge['children']) }}            --}}
+            @if (count($option['cateloge']) <= 1)
+            {{-- @dd($option['cateloge']) --}}
+                {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][1]['canonical'] ,$option['cateloge'][1]) }}
+            @else 
+                {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][2]['canonical'] ,$option['cateloge'][1],$option['cateloge'][2],$option['cateloge']['parent']) }}
+            @endif
+               
           
           
            </div>
            @php
                $name = $product->name;
+            //    dd($variant);
+               $product_price_after_discount = '';
                if(isset($variant) && !empty($variant)) {
                     $name = $name.'('.$variant->name.')';
+                    $product_price_after_discount = !empty($variant->promotions) 
+                        ? $variant->promotions[0]['product_variant_price'] - +$variant->promotions[0]['discount']
+                        : $variant->price;
                }
-               $product_price_after_discount = !empty($variant->promotions) 
-               ? $variant->promotions[0]['product_variant_price'] - $variant->promotions[0]['discount']
-               : $variant->price;
+               else $product_price_after_discount = $product->price;
+           
                $canonical = makeTheURL(Str::slug($product->name),true,false);
 
-
+    
            @endphp
            <div class="d-flex" style="margin: 0px 0px 24px;min-width: 0px;">
                 <div class="" style="margin: 0px 16px 0px 0px;min-width: 0px;width: 75.6%;">
@@ -36,7 +44,9 @@
                                 <div style="margin: 0px;min-width: 0px;width: 40.5%;padding-right: 16px;">
                                     {{-- album --}}
                                     <div id="album_miltiple">
-                                        @include('Frontend.page.products.product.component.album',['data' => $variant,'type' => 'variant'])
+                                        @include('Frontend.page.products.product.component.album',
+                                        ['data' => !empty($variant) ? $variant : $product 
+                                        ,'type' => 'variant'])
                                     </div>
                                     
 
@@ -81,6 +91,15 @@
                                                         </div>
                                                         <div type="caption" color="primary500" class="css-2rwx6s discount_type">
                                                             - {{ $variant->promotions[0]['discountValue'] }} {{ $variant->promotions[0]['discountType'] }}
+                                                        </div>
+                                                    </div>
+                                                @elseif(isset($product->promotions) && !empty($product->promotions))
+                                                    <div class="css-3mjppt d-flex">
+                                                        <div type="caption" class="att-product-detail-retail-price css-18z00w6 price_discount" color="textSecondary">
+                                                            {{ convert_price($product->price,true) }} đ 
+                                                        </div>
+                                                        <div type="caption" color="primary500" class="css-2rwx6s discount_type">
+                                                            - {{ $product->promotions[0]['discountValue'] }} {{ $product->promotions[0]['discountType'] }}
                                                         </div>
                                                     </div>
                                                 @endif
@@ -176,15 +195,16 @@
         </div>
     </div>
    
-    <input type="hidden" name="product_id" value="{{ $variant->product_id }}">
-    <input type="hidden" name="product_variant_id" value="{{ $variant->variant_id }}">
+    <input type="hidden" name="product_id" value="{{ !empty($variant) ?  $variant->product_id : $product->id }}">
+    <input type="hidden" name="product_variant_id" value="{{ !empty($variant) ?  $variant->variant_id : '' }}">
     <input type="hidden" name="qualnity" value="1">
     <input type="hidden" name="price" value="{{ $variant->price ?? $product->price }}">
     <input type="hidden" name="price_after_discount" value="{{ $product_price_after_discount ?? 0 }}">
-    <input type="hidden" name="discountValue" value="{{ $variant->promotions[0]['discountValue'] ?? null }}">
-    <input type="hidden" name="discountType" value="{{  $variant->promotions[0]['discountType'] ?? null }}">
-    <input type="hidden" name="attribute_id" value="{{ $variant->code }}">
-    <input type="hidden" name="attribute_name" value="{{ $variant->name}}">
+
+    <input type="hidden" name="discountValue" value="{{!empty($variant) ? $variant->promotions[0]['discountValue'] ?? null : $product->promotions['discountValue'] ?? null }}">
+    <input type="hidden" name="discountType" value="{{!empty($variant) ?  $variant->promotions[0]['discountType'] ?? null : $product->promotions['discountType'] ?? null }}">
+    <input type="hidden" name="attribute_id" value="{{!empty($variant) ?  $variant->code : $product->code_product }}">
+    <input type="hidden" name="attribute_name" value="{{!empty($variant) ?  $variant->name : $product->name}}">
 
     @push('scripts')
         

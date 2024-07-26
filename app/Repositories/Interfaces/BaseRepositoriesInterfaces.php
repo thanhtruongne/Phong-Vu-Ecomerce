@@ -35,7 +35,7 @@ interface BaseRepositoriesInterfaces {
 
    public function restore(int $id);
 
-   public function findCondition(array $condition = [] ,array $params = [],  array $relation = [],string $type = '', array $withCount = []);
+   public function findCondition(array $condition = [] ,array $params = [],  array $relation = [],string $type = '', array $withCount = [],array $select = ['*']);
 
    public function findByModelWhereHas(
    array $select = [],

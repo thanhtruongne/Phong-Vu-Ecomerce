@@ -7,7 +7,7 @@
     @php
         $categoryOutstanding = $widget['category_outStanding'] ?? [];
         $brand = $widget['Brand_widget'] ?? [];
-        $fieldProduct = ['macbook_widget','MSI_widget'];
+        $fieldProduct = ['macbook_widget','MSI_widget','Ram_widget','VGA_widget','CPU_widget'];
     @endphp
      {{-- banner --}}
      @include('Frontend.layout.container.banner',['slider' => $slider])
@@ -25,7 +25,7 @@
         @include('Frontend.layout.component.brand',['data' => $brand])
 
         {{-- ProductOutstanding --}}
-        @include('frontend.layout.component.productOutStanding')
+        {{-- @include('frontend.layout.component.productOutStanding') --}}
 
      </div>
      

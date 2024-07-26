@@ -339,17 +339,23 @@ class ProductService extends BaseService implements ProductServiceInterfaces
         if($subject == 'product') $promotions = $this->promotionRepositories->findByProductPromotion($id);
         else if($subject == 'variant') $promotions = $this->promotionRepositories->getProductVariantPromotion($id);
         //gán từng promotion vào product chứa các id
+        // dd($products,$promotions);
         // dd($promotions);
         foreach($products as $key => $product) {
             foreach($promotions as $index => $promo) {
+                
                 if($subject === 'product' && $promo['product_id'] === $product->id) {
+                  
                     $products[$index]->promotions = $promo;
                 }
-                if($subject === 'variant' && $promo['product_variant_id'] === $product->id) {;
-                   $products[$index]->promotions = $promo;   
+                if($subject === 'variant' && $promo['product_variant_id'] === $product->id) {
+
+                   $products[$index]->promotions = $promo; 
+               
                 }       
             }
         }
+        
         return $products;
     }   
 

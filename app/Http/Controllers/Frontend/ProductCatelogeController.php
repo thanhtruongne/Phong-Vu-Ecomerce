@@ -29,13 +29,11 @@ class ProductCatelogeController extends BaseController
    public function index($id,$request) {
       // lấy ra productCateloge
       $productCateloge = $this->productCatelogeRepositories->getProductCatelogeById($id);
-
     //   dd(ProductCateloge::withDepth()->with('ancestors')->find($productCateloge->id));
       $descentanofCateloge = $this->productCatelogeRepositories->getChildrenDescendantsOf($productCateloge->id);
-      
       $filter = null;
-      if(count($productCateloge->attributes) > 0) {
-        $filter = $this->productCatelogeService->filterList($productCateloge->attributes);
+      if(count(json_decode($productCateloge->attributes,true)) > 0) {
+        $filter = $this->productCatelogeService->filterList(json_decode($productCateloge->attributes,true));
       }
       $config = [
             'link' => [

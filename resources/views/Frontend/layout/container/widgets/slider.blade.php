@@ -34,7 +34,7 @@
                        
                     @endphp
                          <li class="glide__slide" >
-                            <div  class="css-1ei4kcr ">
+                            <div  class="css-1ei4kcr">
                                 <div class="css-1msrncq fill_parent">
                                     <a href="{{ $canonical }}" style="text-decoration: none">
                                         <div class="css-4rhdrh">

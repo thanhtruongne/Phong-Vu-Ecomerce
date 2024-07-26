@@ -24,6 +24,7 @@ class RouterController extends BaseController
         ],[],[],'first',[]);
         if(!is_null($router) && !empty($router)) {
             $suffixIndex = 'index';
+
             return app($router->controller)->{$suffixIndex}($router->module_id, $request , null);         
         }
    }

@@ -19,8 +19,8 @@
                     <div class="teko-col teko-col-10 css-17ajfcv" style="padding: 0 8px"> 
                         <div class="css-1of9xbq">
                             <div class="teko-row justify-content-start css-iv0lz5">
-                                <h1 class="css-7nrxrf">{!!  $productCateloge->content !!}</h1>
-                                <div class="css-18xfrv">({{ count($productCateloge->products) }} sản phẩm)</div>
+                                 {!! $productCateloge->content !!}
+                                <div class="css-18xfrv">({{ count($products) }} sản phẩm)</div>
                             </div>
 
                             {{-- brand --}}

@@ -49,7 +49,7 @@ class CartService implements CartServiceInterfaces
                         'attributeName' => $request->input('attributeName')
                     ]
                 ];
-
+                
                 Cart::instance('cart')->add($data);
                 return true;
             }

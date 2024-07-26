@@ -245,7 +245,8 @@
             'attribute' :  $('input[name="attribute_id"]').val(),
             'attributeName' :  $('input[name="attribute_name"]').val(),
         }
-        if(data)  Data.AjaxAddToCart(data);
+        console.log(data);
+        // if(data)  Data.AjaxAddToCart(data);
         
       })
    }
@@ -258,7 +259,7 @@
         console.log($(parent).find('input[name="product_variant_id"]').val());
         let data = {
             'id'  :$(parent).find('input[name="product_id"]').val()+ '_' + $(parent).find('input[name="product_variant_id"]').val(),
-            'name' : $(parent).find('h3.name_category_product').text().trim(),
+            'name' : $(parent).find('.name_category_product').text().trim(),
             'price' :  Number($(parent).find('input[name="price"]').val()),
             'qualnity' :  1,
             'discountValue' :  $(parent).find('input[name="discountValue"]').val(),

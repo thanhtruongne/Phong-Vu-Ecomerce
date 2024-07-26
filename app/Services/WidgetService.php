@@ -266,7 +266,7 @@ class WidgetService extends BaseService implements WidgetServiceInterfaces
 
                 if(isset($payload[$key_widget]['promotion_variant']) && $payload[$key_widget]['promotion_variant'] == true) {               
                     foreach($object as $variant_items) {
-                       $product_variant_id = $variant_items->product_variant->pluck('id')->toArray(); 
+                       $product_variant_id = $variant_items->product_variant->pluck('id')->toArray();              
                        $variant_items->variant = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_variant_id,$variant_items->product_variant,'variant'); 
                     }  
                    

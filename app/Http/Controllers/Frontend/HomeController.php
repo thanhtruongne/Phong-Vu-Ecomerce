@@ -40,7 +40,9 @@ class HomeController extends BaseController
           ['keyword' => 'category_outStanding','data-object' => true],
           ['keyword' => 'macbook_widget','promotion_variant' => true],
           ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
-          ['keyword' => 'Link_kien_widget','data-object' => true,'promotion_variant' => true],
+          ['keyword' => 'Ram_widget','data-object' => true],
+          ['keyword' => 'VGA_widget','data-object' => true],
+          ['keyword' => 'CPU_widget','data-object' => true],
           //brand website
      ]);
   
