@@ -19,7 +19,7 @@ class customValitePriceMethod implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {     
-        if($this->method == 'momo' && +$value > 3000000){
+        if($this->method == 'momo' && +$value > 30000000){
             $fail('Số tiền vượt hạn mức thanh toán của Momo');
         }
         if($this->method == 'cod' && +$value >= 5000000) {

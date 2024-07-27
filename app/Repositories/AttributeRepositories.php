@@ -71,4 +71,20 @@ use App\Repositories\Interfaces\AttributeRepositoriesInterfaces;
         ->pluck('attribute.id');
   
     }
+
+
+    // public function findTheAttributeParentProductCateloge(array $data = [] , $productCatelogeID) {
+    //     dd($data,$productCatelogeID);
+    //     return $this->model->select([
+    //       'attribute.id'
+    //     ])
+    //     ->leftJoin('product_variant_attribute as pva','pva.attribute_id','=','attribute.id')
+    //     ->leftJoin('product_variant as pv','pv.id','=','pva.product_variant_id')
+    //     ->leftJoin('product_cateloge_product as pcp','pcp.product_id','=','pv.product_id')
+    //     ->where('pcp.product_cateloge_id','=',$productCatelogeID)
+    //     ->whereIn('attribute.id',$data)
+    //     ->distinct()
+    //     ->pluck('attribute.id');
+  
+    // }
  }

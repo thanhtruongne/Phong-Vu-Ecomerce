@@ -49,11 +49,11 @@
                 Thông tin đơn hàng  
             </div>
             <div class="" style="line-height: 1.7;">
-                <div class="mb-1"><strong>Phương thức thanh toán:</strong> {!! payment_status($order->method) !!}</div>
+                <div class="mb-1"><strong>Phương thức thanh toán:</strong> {!! payment_status_fe($order->method) !!}</div>
                 <div class="mb-2"><strong>Trạng thái đơn hàng:</strong> {!! confirm_order_status($order->confirm) !!}</div>
                 <div class="mb-2"><strong>Trạng thái thanh toán:</strong> {!! confirm_order_status($order->payment) !!}</div>
                 @if ($order->payment != 'unpaid')
-                <div class="mb-2"><strong>Trạng thái giao hàng:</strong> <span style="font-style: italic">{!! proccess_shipping_fe($order->shipping) !!}</span></div>
+                <div class="mb-2"><strong>Trạng thái giao hàng:</strong> <span style="font-style: italic">{!! confirm_order_status_admin($order->shipping) !!}</span></div>
                 @endif       
                 <div class="mb-2" ><strong>Phí giao hàng: </strong><span>{{ convert_price($order->shipping_options['total'],true) }} đ</span></div>
                 <div class="mb-2" ><strong>Thời gian tạo: </strong><span>{{ \Carbon\Carbon::parse($order->createdAt)->format('H:i d/m/Y') }}</span></div>
@@ -75,7 +75,7 @@
                             <div class="" style="widows: 80px;height:80px">
                                 <img 
                                 class="w-100 h-100"
-                                src="https://lh3.googleusercontent.com/1lHnxpY9fkTPji3AXQIFSqL5MT6m6japIS8wbSRMRuaqo8lEMjSWnJXxb9MrX6vP-VIfc7enuvIMF2843gQnXMfmlXlPZb2J=rw" alt="">
+                                src="{{ $product->image }}" alt="">
                             </div>
                         </div>
                         <div class="" style="flex: 1 1 0%;overflow: hidden;">
@@ -96,7 +96,7 @@
                                             {{ convert_price( $product->pivot->priceSale ?: $product->pivot->price , true) }}
                                             <span style="font-size: 0.875rem;font-weight: 500;color: rgb(67, 70, 87);">đ</span>
                                         </span>
-                                        @if (!empty($product->pivot->priceSale))
+                                        @if (!empty($product->pivot->priceSale !== $product->pivot->price))
                                             <span class="css-18z00w6 ">
                                                 {{ convert_price($product->pivot->price,true) }}
                                                 <span style="font-size: 0.875rem;font-weight: 500;color: rgb(67, 70, 87);">đ</span>

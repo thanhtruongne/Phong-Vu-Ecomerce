@@ -50,8 +50,8 @@ class OrderController extends Controller
         if($order->is_transport == 1){
            $transport = new ShippingGHTK($this->orderRepositories);
            $order_shippment = $transport->statusOrderTransport($order->order_transport_fee->label_id);
-           if($order_shippment['success']){
-              $order->info = json_encode($order_shippment['order']);
+           if(!empty($order_shippment) &&  $order_shippment['success']){
+               $order->info = json_encode($order_shippment['order']);
            }
 
         }

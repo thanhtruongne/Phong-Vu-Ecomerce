@@ -37,6 +37,7 @@ class RepositoryServiceProvider extends ServiceProvider
          'App\Repositories\Interfaces\PromotionProductVariantRepositoriesInterfaces' => 'App\Repositories\PromotionProductVariantRepositories', 
          'App\Repositories\Interfaces\OrderRepositoriesInterfaces' => 'App\Repositories\OrderRepositories', 
          'App\Repositories\Interfaces\OrderPaymentRepositoriesInterfaces' => 'App\Repositories\OrderPaymentRepositories', 
+        'App\Repositories\Interfaces\OrderTransportFeeRepositories' => 'App\Repositories\OrderTransportFeeRepositoriesInterfaces', 
     ];
         /**
      * Register services.

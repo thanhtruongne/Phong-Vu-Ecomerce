@@ -23,13 +23,13 @@ class OrderService extends BaseService implements OrderServiceInterfaces
         $this->orderPaymentRepositories = $orderPaymentRepositories;
         $this->orderRepositories = $orderRepositories;
     }
-    public function paginate($request,string $is_cancel = 'no') 
+        public function paginate($request,string $is_cancel = 'no') 
     {
        $condition = $this->arguments($request,$is_cancel);
        $order = $this->orderRepositories->customPagination(...$condition);
        return $order;
     }
-    private function arguments($request,$is_cancel) {
+    private function arguments($request,$is_cancel) { 
         return [
             'column' => ['*'],
             'condition' => [
@@ -54,7 +54,7 @@ class OrderService extends BaseService implements OrderServiceInterfaces
             'join' => [
                 ['order_transport_fee as otf','otf.order_id','=','order.id']
             ],
-            'whereJoins' => ['otf.status','=',is_null($request->input('status_shipping')) ? 'none' : +$request->input('status_shipping')],
+            'whereJoins' => ['otf.status','=',$request->input('status_shipping') ?? 'none'],
             'is_cancel' => $is_cancel
         ];
     }

@@ -32,7 +32,7 @@ class ProductCatelogeController extends BaseController
     //   dd(ProductCateloge::withDepth()->with('ancestors')->find($productCateloge->id));
       $descentanofCateloge = $this->productCatelogeRepositories->getChildrenDescendantsOf($productCateloge->id);
       $filter = null;
-      if(count(json_decode($productCateloge->attributes,true)) > 0) {
+      if(!empty($productCateloge->attributes) && count(json_decode($productCateloge->attributes,true)) > 0) {
         $filter = $this->productCatelogeService->filterList(json_decode($productCateloge->attributes,true));
       }
       $config = [
@@ -54,6 +54,7 @@ class ProductCatelogeController extends BaseController
       $Seo = $this->Seo;
       //tìm sản phẩm của productCateloge
       $products = $this->productService->paginate($request,$productCateloge,'variant','promotion');
+      
       return view('Frontend.page.products.productCategory',compact('products','Seo','config','filter','descentanofCateloge','productCateloge'));
    }
    

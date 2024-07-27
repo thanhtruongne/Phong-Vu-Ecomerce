@@ -5,15 +5,16 @@ namespace App\Http\Controllers\Frontend\Shipping;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Frontend\BaseController;
 use App\Repositories\OrderRepositories;
+use App\Repositories\OrderTransportFeeRepositories;
 use Exception;
 use Illuminate\Http\Request;
 
 class ShippingGHTK extends BaseController
 {  
-    protected $orderRepositories;
-
-    public function __construct(OrderRepositories $orderRepositories){
+    protected $orderRepositories,$orderTransportRepositories;
+    public function __construct(OrderRepositories $orderRepositories ){
         $this->orderRepositories = $orderRepositories;
+        $this->orderTransportRepositories = resolve(OrderTransportFeeRepositories::class);
     }
   
     public function CalcShippingByGhtk(Request $request){
@@ -104,11 +105,15 @@ $response = json_decode($response,true);
         try {
             $this->orderRepositories->UpdateWhere([['code','=',$response['order']['partner_id']]],['is_transport' => 1]);
             $order = $this->orderRepositories->findCondition([['code','=',$response['order']['partner_id']]],[],[],'first',[]);
+            $this->orderTransportRepositories->deleteByCondition([[
+                'order_id','=',$order->id
+            ]]);
+          
             $data = [
                 'label_id' => $response['order']['label'],
                 'partner_id' => $response['order']['partner_id'],
                 'option' => $response['order'],
-                'status' => $response['order']['status'],
+                'status' => $response['order']['status_id'],
             ];
             $order->order_transport_fee()->create($data);
             return redirect()->route('private-system.management.order.detail',$order->code)->with('success','Tạo transport thành công với đơn vị GHTK');
@@ -117,27 +122,34 @@ $response = json_decode($response,true);
         }
        
     }
+    else if($response['success'] == false){
+        return redirect()
+        ->route('private-system.management.order')
+        ->with('error',$response['message']);
+    }
 }
 
 
-    public function statusOrderTransport(string $label) {
+    public function statusOrderTransport(string $label = null) {
         try {
-            $curl = curl_init();
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => "https://services-staging.ghtklab.com/services/shipment/v2/".$label,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_HTTPHEADER => array(
-                    "Token: ".env('API_GHTK_KEY')."",
-                ),
-            ));
- 
-            $response = curl_exec($curl);
-            curl_close($curl);
-            $response = json_decode($response,true);
-            return $response;
+            if(!is_null($label)) {
+                $curl = curl_init();
+                curl_setopt_array($curl, array(
+                    CURLOPT_URL => "https://services-staging.ghtklab.com/services/shipment/v2/".$label,
+                    CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_HTTPHEADER => array(
+                        "Token: ".env('API_GHTK_KEY')."",
+                    ),
+                ));
+     
+                $response = curl_exec($curl);
+                curl_close($curl);
+                $response = json_decode($response,true);
+                return $response;
+            }
         } catch (\Throwable $th) {
-            return $th->getMessage();die();
+            return $th->getMessage().$th->getLine();die();
         }
        
     }

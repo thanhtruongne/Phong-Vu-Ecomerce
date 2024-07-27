@@ -85,7 +85,11 @@ class MomoController
                         'detail_payment' => json_encode($data)
                     ];
                     $this->orderService->updateAfterPayment($order,$payload,'momo');
-                    return redirect()->route('account.order.detail',$order->code)->with('success','Giao dịch thành công');
+                    if(Auth::guard('web')->check()){
+                        return redirect()->route('account.order.detail',$order->code)->with('success','Giao dịch thành công');
+                    }
+                    else  return redirect()->route('guest.order.detail',$order->code)->with('success','Giao dịch thành công');
+                   
                 } else {  
                     return redirect()->back()->with('error','Giao dịch không thành công'); 
                 }

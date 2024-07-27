@@ -9,6 +9,7 @@ use App\Events\OrderSendMail;
 use App\Repositories\BaseRepositories;
 
 use App\Repositories\OrderRepositories;
+use App\Repositories\OrderTransportFeeRepositories;
 use App\Repositories\RouterRepositories;
 use App\Services\Interfaces\CartServiceInterfaces;
 use App\Services\Interfaces\ProductServiceInterfaces as ProductService;
@@ -27,10 +28,15 @@ use Illuminate\Support\Facades\Hash;
  */
 class CartService implements CartServiceInterfaces
 {
-    protected $productService,$orderRepositories;
+    protected $productService,$orderRepositories,$orderTransportFeeRepositories;
     
-    public function __construct(ProductService $productService,OrderRepositories $orderRepositories){
+    public function __construct(
+        ProductService $productService,
+        OrderRepositories $orderRepositories,
+        OrderTransportFeeRepositories $orderTransportFeeRepositories
+    ){
         $this->productService = $productService;
+        $this->orderTransportFeeRepositories = $orderTransportFeeRepositories;
         $this->orderRepositories = $orderRepositories;
     }
     public function add($request) {
@@ -116,7 +122,7 @@ class CartService implements CartServiceInterfaces
             $data = $this->HandleStoreOrder($payload,$carts);
             $order =  $this->orderRepositories->create($data);     
             $this->createProductOrder($carts,$order);     
-
+            $this->orderTransportFeeStart($order);
             event(new OrderSendMail($order));
             DB::commit();
             return $order;
@@ -127,11 +133,12 @@ class CartService implements CartServiceInterfaces
     }
     
     private function HandleStoreOrder($payload,$cart) { 
-        if(!Auth::check()) {
+        if(!Auth::guard('web')->check()) {
             $payload['guest_cookie'] = Cookie::get('guest_cookie') ?: time().'_'.$payload['email'];
         }
         else if(Auth::guard('web')->check()) $payload['customer_id'] = Auth::guard('web')->user()->id;
         $payload['code'] = time().rand(0,123241);
+        
         $payload['payment'] = OrderEnum::UNPAID;
         $payload['confirm'] = OrderEnum::PENDINGCONFIRM;
         $payload['shipping'] = OrderEnum::SHIPPINGBEGIN;
@@ -157,6 +164,15 @@ class CartService implements CartServiceInterfaces
                 ];
             }
             $order->Order_products()->sync($item);
+        }
+    }
+
+    private function orderTransportFeeStart($order){
+        if($order->id > 0) {
+            $item = [
+                'order_id' => $order->id
+            ];
+            $this->orderTransportFeeRepositories->createByInsert($item);
         }
     }
 

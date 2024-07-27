@@ -57,7 +57,11 @@ class VnPayController
 
             if ($inputData['vnp_ResponseCode'] == '00') {
                 $this->orderService->updateAfterPayment($order,$inputData,'vnpay');
-                return redirect()->route('account.order.detail',$order->code)->with('success','Giao dịch thành công');
+                if(Auth::guard('web')->check()){
+                    return redirect()->route('account.order.detail',$order->code)->with('success','Giao dịch thành công');
+                }
+                else   return redirect()->route('guest.order.detail',$order->code)->with('success','Giao dịch thành công');
+              
             } 
             else {
              return redirect()->back()->with('error','Giao dịch không thành công'); 

@@ -18,6 +18,7 @@ class Order extends Model
         'address',
         'phone',
         'cart',
+        'created',
         'province_code',
         'ward_code',
         'district_code',
@@ -43,11 +44,11 @@ class Order extends Model
     ];
 
 
-    // public function Order_products() {
-    //    return $this->belongsToMany(Product::class,'order_product','order_id','product_id')->withPivot([
-    //      'uuid','name','qty','price','priceSale','option','promotion'
-    //    ])->withTimestamps();
-    // }
+    public function Order_products() {
+       return $this->belongsToMany(Product::class,'order_product','order_id','product_id')->withPivot([
+         'uuid','name','qty','price','priceSale','option','promotion'
+       ])->withTimestamps();
+    }
 
     public function order_transport_fee() {
       return $this->hasOne(OrderTransport::class,'order_id','id');

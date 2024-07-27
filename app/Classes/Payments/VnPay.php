@@ -66,6 +66,7 @@ class VnPay {
         $returnData = array('code' => '00'
             , 'message' => 'success'
             , 'data' => $vnp_Url);
+
         return $returnData;
     }
 }

@@ -58,7 +58,7 @@ use App\Repositories\Interfaces\ProductCatelogeRepositoriesInterfaces;
     // pul
 
     public function getParentAncestorsOf($id){
-        return $this->model->select(['name','canonical','id','parent'])->ancestorsOf($id);
+        return $this->model->select(['name','canonical','id','parent','attributes','id','image','album'])->ancestorsOf($id);
     }
      
     public function getChildDencestorsOf($id){
@@ -66,9 +66,10 @@ use App\Repositories\Interfaces\ProductCatelogeRepositoriesInterfaces;
     }
     public function getChildrenDescendantsOf(int $id){
         return $this->model->select([
-            'id','image','name','canonical','album','parent'
+            'id','image','name','canonical','album','parent','attributes'
         ])
-        ->descendantsOf($id);
+        // ->withDepth()->having('depth', '=', 2)->get();
+        ->descendantsOf($id)->toTree($id);
     }
 
 

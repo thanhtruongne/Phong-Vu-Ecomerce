@@ -156,7 +156,7 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
  
     private function updateProductCateloge($request,$productCateloge) {
         $data = $request->only($this->requestOnlyProductCatelogeTranslate());
-        $data['album'] = json_encode($request->input('album')) ?? $productCateloge->album;
+        $data['album'] = !empty($request->input('album'))  ? json_encode($request->input('album')) : $productCateloge->album;
         $data['canonical'] = Str::slug( $data['canonical']);
         $check = $this->productCatelogeRepositories->update($productCateloge->id,$data);
         return $check;
@@ -180,13 +180,15 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
        $attribute = $product->attribute;
        $attributeCatelogeID = +$product->product_cateloge_id;
        $productCateloge = $this->productCatelogeRepositories->findByid($attributeCatelogeID);
-
-       if(!is_array($productCateloge->attributes)){
-          $data['attributes'] = $attribute;
-       }
-       else {
+       //add desccentancof and ancensstancof
+       $this->VertifyAncestorsOfAndDescendantsAndSelf($productCateloge);  
+       
+    //    if(!is_null($productCateloge->attributes)){
+    //       $data['attributes'] = json_decode($attribute,true);
+    //    }
+    //    else {
           $array = $productCateloge->attributes;
-          foreach(json_decode($attribute) as $key => $item){
+          foreach(json_decode($attribute,true) as $key => $item){
             if(!isset($array[$key])){
                 $array[$key] = $item;
             }
@@ -198,14 +200,88 @@ class ProductCatelogeService extends BaseService implements ProductCatelogeServi
  
            //lấy ra các attribute id tồn tại trong product và product cateloge
           $attributePluck = $this->attributeRepositories->findAttributeProductVariantID($flag,$productCateloge->id);
-   
+          
           $data['attributes'] = array_map(function($array_list) use($attributePluck){
             return array_intersect($array_list,$attributePluck->all());
             
           },$array); 
-       }
+    //    }
+
+        // dd($data,123,$product->product_cateloge_product->pluck('id')->toArray());
+       $this->LoopCheckAttributeForParentAndChild($productCateloge,$attribute,$product->product_cateloge_product->pluck('id')->toArray());
        $this->productCatelogeRepositories->update($productCateloge->id,$data);
        return $data;
+    }
+
+    private function LoopCheckAttributeForParentAndChild($productCateloge,$attribute,$arrayCheck){
+        if(count($productCateloge->descentancof) > 0) {
+            foreach($productCateloge->descentancof as  $key => $val){
+                if(in_array($val->id,$arrayCheck)){
+                    $this->getTheChildtAttribute($val,$attribute);
+                }
+             
+            }
+        }
+
+        if(count($productCateloge->ancestorsOf) > 0) {
+            foreach($productCateloge->ancestorsOf as  $index => $item){
+                $this->getTheParentAttribute($item,$attribute);
+            }
+        }
+    }
+
+    private function getTheChildtAttribute($productCateloge,$attribute){
+        $array = $productCateloge->attributes;
+        foreach(json_decode($attribute,true) as $key => $item){
+          if(!isset($array[$key])){
+              $array[$key] = $item;
+          }
+          else { 
+              $array[$key] = array_values(array_unique(array_merge($array[$key],$item)));
+          }
+        }
+         $flag = array_merge(...$array);
+         //lấy ra các attribute id tồn tại trong product và product cateloge
+        $attributePluck = $this->attributeRepositories->findAttributeProductVariantID($flag,$productCateloge->id);
+        $data['attributes'] = array_map(function($array_list) use($attributePluck){
+          return array_intersect($array_list,$attributePluck->all());
+          
+        },$array);
+        $this->productCatelogeRepositories->update($productCateloge->id,$data); 
+        
+    }
+
+    private function getTheParentAttribute($productCateloge,$attribute){
+        $array = $productCateloge->attributes;
+        foreach(json_decode($attribute,true) as $key => $item){
+          if(!isset($array[$key])){
+              $array[$key] = $item;
+          }
+          else { 
+              $array[$key] = array_values(array_unique(array_merge($array[$key],$item)));
+          }
+        }
+         $flag = array_merge(...$array);
+         //lấy ra các attribute id tồn tại trong product và product cateloge
+        // $attributePluck = $this->attributeRepositories->findAttributeProductVariantID($flag,$productCateloge->id);
+        $data['attributes'] = array_map(function($array_list) use($flag){
+            
+          return array_intersect($array_list,$flag);
+          
+        },$array);
+        $this->productCatelogeRepositories->update($productCateloge->id,$data); 
+        
+    }
+
+
+
+
+
+    private function VertifyAncestorsOfAndDescendantsAndSelf($productCateloge){
+        if($productCateloge->id > 0){
+            $productCateloge->descentancof = $this->productCatelogeRepositories->getChildrenDescendantsOf($productCateloge->id);
+            $productCateloge->ancestorsOf = $this->productCatelogeRepositories->getParentAncestorsOf($productCateloge->id);
+        }
     }
 
 

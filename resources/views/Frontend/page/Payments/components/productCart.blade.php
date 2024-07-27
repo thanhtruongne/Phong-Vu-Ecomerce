@@ -8,7 +8,7 @@
                     src="{{ $cart->thumb }}" class="w-100 h-100" alt="">
                 </div>
                 <div class=""  style="flex: 1 1 0%; margin-left: 1rem;">
-                    <a href="{{ $cart->canonical }}" style="text-decoration: none">
+                    <a href="{{ $cart->canonical }}" target="_blank" style="text-decoration: none">
                         <div type="body" color="textPrimary" class="css-1h5tj4c">
                             {{ $cart->name }}
                         </div>
@@ -20,7 +20,9 @@
                     ? $cart->price_previous 
                     : $cart->options->priceSale,true)     
                     }}đ</span>
-                    @if ($cart->options->priceSale != 0 && !is_null($cart->options->priceSale))
+                    @if ($cart->options->priceSale != 0 && !is_null($cart->options->priceSale) 
+                    && !is_null($cart->options->discountValue)&& !is_null($cart->options->discountType)
+                    )
                     <div class="teko-row justify-content-start align-items-center css-1qrgscw">
                         <span class="css-18z00w6 ">{{ convert_price($cart->price,true) }}đ</span> -
                         <span class="css-7ofbab">{{ $cart->options->discountValue }} {{ $cart->options->discountType }}</span>

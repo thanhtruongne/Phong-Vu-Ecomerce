@@ -149,6 +149,30 @@ if(!function_exists('payment_status')) {
     }
     
 }
+
+
+if(!function_exists('payment_status_fe')) {
+    function payment_status_fe(string $val = '') { 
+       $html = '';
+       switch($val) {
+            case 'vnpay' : 
+                $html ='<span style="background-color:#000000bf;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua VnPay </span>';
+                break;
+            case 'momo' : 
+                $html ='<span style="background-color:#a50064;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua Momo </span>';
+                break;
+            case 'zalo' : 
+                $html ='<span style="background-color:#334cc7;padding:6px 10px;border-radius:8px">Thanh toán qua ZaloPay </span>';
+                break;
+            case 'cod' : 
+                $html ='<span style="background-color:#8b8c8f;padding:6px 10px;border-radius:8px">Thanh toán khi nhận hàng';
+                break;    
+       };
+       return $html;
+    }
+    
+}
+
 if(!function_exists('payment_svg')) {
     function payment_svg(string $val = '') { 
        $html = '';

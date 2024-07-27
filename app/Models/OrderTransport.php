@@ -12,9 +12,11 @@ class OrderTransport extends Model
     use HasFactory,QueryScopes;
     
     protected $table = 'order_transport_fee';
-    protected $fillable = ['order_id','label_id','partner_id','option'];
+    protected $fillable = ['order_id','label_id','partner_id','option','status'];
     
     protected $casts = [
         'option' => 'json'
     ];
+
+    public $timestamps = false;
 }

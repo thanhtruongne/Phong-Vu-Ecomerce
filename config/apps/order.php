@@ -14,6 +14,7 @@ return  [
             'unpaid' => 'Chưa thanh toán',
        ],
        'is_transport' => [
+            'none' => 'Chọn ',
             0 => 'Chưa tạo GHTK label',
             1 => 'ĐH create GHTK label',
         ],
