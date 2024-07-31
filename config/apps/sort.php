@@ -26,5 +26,12 @@ return [
             'type' => 'SORT_BY_TOP_SALE_QUANTITY',
             'title' => 'Sản phẩm bán chạy'
         ],
+    ],
+    'name_sort_symbol' => [
+        'price_lte' => 'price_lte',
+        'price_gte' => 'price_gte',
+        'thuonghieu' => 'thuonghieu',
+        'sort' => 'sort',
+        'order' => 'order',
     ]
 ];

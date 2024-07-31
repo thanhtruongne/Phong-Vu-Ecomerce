@@ -5,7 +5,7 @@
             <div 
                 data-type="{{ $sort['type'] }}"
                 data-value="{{ $sort['value'] }}"
-                class="bg-white  css-1w3mv8m sorting" 
+                class="bg-white  css-1w3mv8m checkbox_item_sort" 
                 style="cursor: pointer;;border-radius: 4px;border:1px solid #e0e0e0;padding: 0.5rem;margin-right: 1rem;" >
                 <div class="css-1lchwqw">{{ $sort['title'] }}</div>
             </div>

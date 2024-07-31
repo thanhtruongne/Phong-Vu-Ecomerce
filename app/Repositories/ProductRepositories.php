@@ -79,32 +79,58 @@ use Illuminate\Support\Facades\DB;
     }
 
 
-    public function getProductVariantBySkuAndCode(string $sku = '',string $nameCode = '',int $id = 0,int $languages_id = 1) {
-    //     // $product = $this->model->select($this->selectVariantSku())->with(
-    //     //     [
-    //     //     'product_variant' => function($query) use($sku,$languages_id) {
-    //     //        $query->with(['languages' => function($query) use($languages_id) {
-    //     //          $query->where('languages_id',$languages_id);
-    //     //        }])->where('sku',$sku);
-               
-    //     //     }
-    //     //     ]
-    //     // )->find($id);
-
-
-
-    //     // dd($product);
-    //     return $this->model->select($this->selectVariantSku())
-    //     ->join('product_variant as pv','pv.product_id','=','product.id')
-    //     ->join('product_variant_translate as pvt','pvt.product_variant_id','=','product_variant.id')
-    //     ->where('product_variant.sku',$sku)->where('product_variant.status',1)->where('product.id',$id)
-    //     ->with(['languages' => function($query) use($languages_id) {
-    //             $query->where('languages_id','=',$languages_id);
-    //     }])
-    //     ->first();
-    }
-
     public function getoutStandingProduct(int $record = 4){
         return $this->model->orderBy('created_at','DESC')->paginate($record);
+    }
+
+    public function findProductByFilterDynamic($attribute , $payload) {
+      
+      if(!empty($attribute) && count($attribute) > 0) {
+        $attributeVal = array_unique(array_merge(...$attribute));
+      }
+ 
+      return $this->model->select($this->selectDynamic())
+      ->join('product_variant as pv','product.id','=','pv.product_id')
+      ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
+      ->WhereAttribute($attributeVal ?? [])
+      ->WhereBrand(isset($payload['thuonghieu']) ?  explode(',',$payload['thuonghieu']) : [])
+      ->whereBetWeenPrice(isset($payload['price_lte']) ?  $payload['price_lte'] : '',
+       isset($payload['price_gte']) ?  $payload['price_gte'] : '')
+      ->SortOrderProduct($payload['sort'] ?? '',$payload['order'] ?? '')
+    //   ->toSql();
+      ->get();
+    }
+
+    public function getProductByProductCatelogeID(array $id = []) {
+  
+        return $this->model->select($this->selectProductRelated())
+        // ->join('product_variant as pv','product.id','=','pv.product_id')
+        ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
+        ->whereIn('pc.id',$id)
+        ->with('product_variant')
+        ->get();
+    }
+    
+    private function selectProductRelated() {
+        return ['product.name','product.id','product.image','pc.name as cateloge_name','product.price','product.code_product','product.canonical'];
+    }
+
+    // private function Dynamic
+    
+    private function selectDynamic() {
+        return [
+            DB::raw('CONCAT(product.name,"-",COALESCE(pv.name," ")) as name'),
+            'product.name as product_name',
+            'pv.name as product_variant_name',
+            'pv.id as product_variant_id',
+            'product.canonical as product_canonical',
+            'pv.album',
+            'pv.code',
+            'pv.price',
+            'pv.sku',
+            'pv.qualnity',
+            'pv.product_id as product_id',
+            'pc.name as cateloge_name'
+        ];
     }
  }

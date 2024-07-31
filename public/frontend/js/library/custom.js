@@ -32,8 +32,6 @@
             })
         }
    }
-
-
    Data.handleLoadVariantProduct = (attributeID,attributeParams = null) => {
       $.ajax({
         type: "GET",
@@ -83,10 +81,7 @@
             return false;
         }
       })
-   }
-
-   
-   
+   } 
    Data.setUpGlideSliderProductVariant = () => {
 
                 $("#img_01").elevateZoom({
@@ -119,7 +114,6 @@
                 
    }
 
-   
    Data.SetUpPromotionsProductVariant = (promotions,price) => {
     let product_price_after_discount =  promotions != null ? (promotions['product_variant_price'] - promotions['discount']) : price;
     $('.css-2zf5gn .price_original').html( Data.number_format(product_price_after_discount) + 'đ'); 
@@ -225,7 +219,6 @@
         let change = params.join('--');
         let content_url = url + '---' + change + '?sku=' + sku_id;
         let objectData = { sku : sku_id};
-        console.log(objectData,content_url);
         history.pushState(objectData,'',content_url);
      })
      
@@ -308,127 +301,127 @@
    }
 
 
-   Data.province = () => {
-    $(document).on('change','.location',function() {
-        let option = {
-            'data' : {
-                'location_id' : $(this).val()
-            },
-            'target' : $(this).attr('data-target')
-        }
-        Data.SubmitSendData(option);
-        Data.chooseShippingGHTK();
-    })
-}
-Data.TypingAddressCheck = () => {
-    let clear = null;
-    $('input[name="address"]').on('input',function(){
-        if(clear) clearTimeout(clear);
+//    Data.province = () => {
+//     $(document).on('change','.location',function() {
+//         let option = {
+//             'data' : {
+//                 'location_id' : $(this).val()
+//             },
+//             'target' : $(this).attr('data-target')
+//         }
+//         Data.SubmitSendData(option);
+//         Data.chooseShippingGHTK();
+//     })
+// }
+// Data.TypingAddressCheck = () => {
+//     let clear = null;
+//     $('input[name="address"]').on('input',function(){
+//         if(clear) clearTimeout(clear);
 
-        clear = setTimeout(() => {        
-            return Data.chooseShippingGHTK();   
-        }, 1500);
+//         clear = setTimeout(() => {        
+//             return Data.chooseShippingGHTK();   
+//         }, 1500);
         
-    })
-}
-Data.chooseShippingGHTK = () => {
-    if($('.provinces').val() && $('.districts').val() && $('input[name="address"]').val()) {
-       $.ajax({
-          type: 'GET',
-          url : `${Server_Frontend}/ajax/ghtk/transportfee`,
-          data : {
-            province : $(".provinces option:selected" ).text(),
-            districts :$(".districts option:selected" ).text() ,
-            ward :$(".wards option:selected" ).text() ?? '',
-            address : $('input[name="address"]').val(),
-            value : Number($('.total_render').text().replace("đ", "").replace(/\./g, '')),
-          },
-          beforeSend: function() {
-            // setting a timeout
-            let loading = `
-            <div class="spinner-border text-primary" role="status">
-                <span class="sr-only">Loading...</span>
-            </div>`
-            $('.shipping_price').html(loading);
-        },
-          success : function(data) {
+//     })
+// }
+// Data.chooseShippingGHTK = () => {
+//     if($('.provinces').val() && $('.districts').val() && $('input[name="address"]').val()) {
+//        $.ajax({
+//           type: 'GET',
+//           url : `${Server_Frontend}/ajax/ghtk/transportfee`,
+//           data : {
+//             province : $(".provinces option:selected" ).text(),
+//             districts :$(".districts option:selected" ).text() ,
+//             ward :$(".wards option:selected" ).text() ?? '',
+//             address : $('input[name="address"]').val(),
+//             value : Number($('.total_render').text().replace("đ", "").replace(/\./g, '')),
+//           },
+//           beforeSend: function() {
+//             // setting a timeout
+//             let loading = `
+//             <div class="spinner-border text-primary" role="status">
+//                 <span class="sr-only">Loading...</span>
+//             </div>`
+//             $('.shipping_price').html(loading);
+//         },
+//           success : function(data) {
             
-              if(data.success && data.fee?.delivery != false) {
-                $('.shipping_price').html(' ');
-                 $('body .shipping_price').html(Data.number_format(data?.fee?.fee) + 'đ');
-                 let div = $('<div>');
-                 if(data?.fee?.insurance_fee) {
-                    let html = `
-                    <div>
-                     -- <strong> Bảo hiểm đơn hàng: </strong><span class="text-danger fw-bold">${Data.number_format(data?.fee?.insurance_fee)} đ</span>
-                    </div>`
-                    div.append(html);
-                 }
+//               if(data.success && data.fee?.delivery != false) {
+//                 $('.shipping_price').html(' ');
+//                  $('body .shipping_price').html(Data.number_format(data?.fee?.fee) + 'đ');
+//                  let div = $('<div>');
+//                  if(data?.fee?.insurance_fee) {
+//                     let html = `
+//                     <div>
+//                      -- <strong> Bảo hiểm đơn hàng: </strong><span class="text-danger fw-bold">${Data.number_format(data?.fee?.insurance_fee)} đ</span>
+//                     </div>`
+//                     div.append(html);
+//                  }
                  
-                if(data?.fee?.extFees.length){
-                    $.each(data?.fee?.extFees,function(index,val){
-                        console.log(val.title,index)
-                        let html = `
-                        <div>
-                          -- <strong>${val.title}: </strong><span class="text-danger fw-bold">${val.display}</span>
-                        </div>          `
-                        div.append(html);
-                    })
-                } if(data?.fee?.ship_fee_only) {
-                    let html = `
-                    <div>
-                       -- <strong> Phí vận chuyển: </strong><span class="text-danger fw-bold">${Data.number_format(data?.fee?.ship_fee_only) } đ</span>
-                    </div>`
-                    div.append(html);
-                 }
-                 $('.render_shipping_option').html(div);
-                 Data.TriggerClickDataShippingRule();
-                 Data.setInputShippingOption(data);
-              }
-              else if(data?.fee?.delivery == false && data.success == true) {
-                let span = $('<span>').addClass('text-danger').text('Địa chỉ không hợp lệ !!!');
-                $('.shipping_price').html(span);
-              }
-          },
-          error : function(error) {
-            $.toast({
-                text:error?.message,
-                icon: 'error',
-                bgColor: '#fff',
-                position: 'top-right',
-                showHideTransition: 'plain',
+//                 if(data?.fee?.extFees.length){
+//                     $.each(data?.fee?.extFees,function(index,val){
+//                         console.log(val.title,index)
+//                         let html = `
+//                         <div>
+//                           -- <strong>${val.title}: </strong><span class="text-danger fw-bold">${val.display}</span>
+//                         </div>          `
+//                         div.append(html);
+//                     })
+//                 } if(data?.fee?.ship_fee_only) {
+//                     let html = `
+//                     <div>
+//                        -- <strong> Phí vận chuyển: </strong><span class="text-danger fw-bold">${Data.number_format(data?.fee?.ship_fee_only) } đ</span>
+//                     </div>`
+//                     div.append(html);
+//                  }
+//                  $('.render_shipping_option').html(div);
+//                  Data.TriggerClickDataShippingRule();
+//                  Data.setInputShippingOption(data);
+//               }
+//               else if(data?.fee?.delivery == false && data.success == true) {
+//                 let span = $('<span>').addClass('text-danger').text('Địa chỉ không hợp lệ !!!');
+//                 $('.shipping_price').html(span);
+//               }
+//           },
+//           error : function(error) {
+//             $.toast({
+//                 text:error?.message,
+//                 icon: 'error',
+//                 bgColor: '#fff',
+//                 position: 'top-right',
+//                 showHideTransition: 'plain',
               
-            })
-          }
+//             })
+//           }
           
-       })
-    }
-}
-Data.setInputShippingOption = (data) => {
-    let html = $('<div>');
-    let sum = 0 ;
-   if(data?.fee?.insurance_fee) {
-      let input1 = $('<input>').attr('type','hidden').attr('name','shipping_options[insurance_fee]').val(data?.fee?.insurance_fee);
-      sum += data?.fee?.insurance_fee
-      html.append(input1)
-   }
-   if(data?.fee?.extFees) {
-    $.each(data?.fee?.extFees,function(index,val){
-        let input2 = $('<input>').attr('type','hidden').attr('name','shipping_options[extFees]').val(val?.amount);
-         sum += val?.amount
-        html.append(input2)
+//        })
+//     }
+// }
+// Data.setInputShippingOption = (data) => {
+//     let html = $('<div>');
+//     let sum = 0 ;
+//    if(data?.fee?.insurance_fee) {
+//       let input1 = $('<input>').attr('type','hidden').attr('name','shipping_options[insurance_fee]').val(data?.fee?.insurance_fee);
+//       sum += data?.fee?.insurance_fee
+//       html.append(input1)
+//    }
+//    if(data?.fee?.extFees) {
+//     $.each(data?.fee?.extFees,function(index,val){
+//         let input2 = $('<input>').attr('type','hidden').attr('name','shipping_options[extFees]').val(val?.amount);
+//          sum += val?.amount
+//         html.append(input2)
         
-    })
+//     })
     
-    }
-    if(data?.fee?.ship_fee_only) {
-        let input3 = $('<input>').attr('type','hidden').attr('name','shipping_options[ship_fee_only]').val(data?.fee?.ship_fee_only);
-         sum += data?.fee?.ship_fee_only;
-        html.append(input3)
-    }
-    let total = $('<input>').attr('type','hidden').attr('name','shipping_options[total]').val(sum);html.append(total)
-    $('.input_hidden_price').html(html);
- }
+//     }
+//     if(data?.fee?.ship_fee_only) {
+//         let input3 = $('<input>').attr('type','hidden').attr('name','shipping_options[ship_fee_only]').val(data?.fee?.ship_fee_only);
+//          sum += data?.fee?.ship_fee_only;
+//         html.append(input3)
+//     }
+//     let total = $('<input>').attr('type','hidden').attr('name','shipping_options[total]').val(sum);html.append(total)
+//     $('.input_hidden_price').html(html);
+//  }
 
 Data.number_format = (number, decimals = 0, dec_point = '.', thousands_sep = '.') => {
     number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
@@ -453,49 +446,49 @@ Data.number_format = (number, decimals = 0, dec_point = '.', thousands_sep = '.'
     return s.join(dec);
 } 
 
-Data.TriggerClickDataShippingRule = () => {
-  let found_checked = $('.shipping_price').text();
-  if(found_checked) {
-    let html = `
-    <div type="subtitle" class="css-1lg3tx0">Tổng phí vận chuyển</div>
-        <div class="teko-col css-17ajfcv" style="text-align: right;">
-            <div type="subtitle" color="" style="font-size: 14px;font-weight:bold" class="shipping_attr css-nbdyuc"> ${found_checked}</div>
-        </div>
-    </div>`
-     $('.render_here_method').html(html);
-     Data.RenderPriceToTal();
-  }
+// Data.TriggerClickDataShippingRule = () => {
+//   let found_checked = $('.shipping_price').text();
+//   if(found_checked) {
+//     let html = `
+//     <div type="subtitle" class="css-1lg3tx0">Tổng phí vận chuyển</div>
+//         <div class="teko-col css-17ajfcv" style="text-align: right;">
+//             <div type="subtitle" color="" style="font-size: 14px;font-weight:bold" class="shipping_attr css-nbdyuc"> ${found_checked}</div>
+//         </div>
+//     </div>`
+//      $('.render_here_method').html(html);
+//      Data.RenderPriceToTal();
+//   }
  
   
-}
+// }
 
-Data.SubmitSendData = (option) => {
-    $.ajax({ 
-        type : 'GET', 
-        url: "/ajax/dashboard/location",
-        data: option, 
-        success : function(data) 
-        { 
-            $('.' + option.target).html(data.data);
+// Data.SubmitSendData = (option) => {
+//     $.ajax({ 
+//         type : 'GET', 
+//         url: "/ajax/dashboard/location",
+//         data: option, 
+//         success : function(data) 
+//         { 
+//             $('.' + option.target).html(data.data);
    
-            if(district_id != '' && option.target == 'districts') {          
-                $('.districts').val(district_id).trigger("change");
-            }
-            if(ward_id != '' && option.target == 'wards') {
-                $('.wards').val(ward_id).trigger("change");
-            }
-        }, 
-         error : function(error) { 
-            console.log(error); 
-        }
-     })
-}
+//             if(district_id != '' && option.target == 'districts') {          
+//                 $('.districts').val(district_id).trigger("change");
+//             }
+//             if(ward_id != '' && option.target == 'wards') {
+//                 $('.wards').val(ward_id).trigger("change");
+//             }
+//         }, 
+//          error : function(error) { 
+//             console.log(error); 
+//         }
+//      })
+// }
 
-Data.loadProvince = () => {
-    if(province_id != '') {
-        $('.provinces').val(province_id).trigger("change");
-    } 
-}
+// Data.loadProvince = () => {
+//     if(typeof province_id != null && province_id != '') {
+//         $('.provinces').val(province_id).trigger("change");
+//     } 
+// }
 
 Data.RenderPriceToTal = () => {
     let price_orginal = Number($('#price_yet_cart').text().trim().slice(0,-1).replaceAll('.', ''));
@@ -583,17 +576,268 @@ Data.AjaxUsingGetMenuAttribute = (option , target, subtring = null) => {
     })
 }
 
+Data.setupRangeSlider = () => {
+    var slider = document.getElementById('slider');
+    var moneyFormat = wNumb({
+            decimals: 3,
+            thousand: ".",
+            suffix: " đ"
+        });
+noUiSlider.create(slider, {
+    start: [1000000, 40000000],  
+    step : 100000,
+    range: {
+        'min': 0,
+        'max': 80000000
+    },
+    format :moneyFormat,
+    connect: true,
+});
+var snapValues = [
+    document.getElementById('slider-snap-value-lower'),
+    document.getElementById('slider-snap-value-upper')
+];
+slider.noUiSlider.on('change.one', function (values, handle) {
+    var clear = null;
+    if(clear) clearTimeout(clear);
+
+    clear = setTimeout(() => {        
+        return Data.filterSliderRange($(snapValues[handle]).attr('data-name'),values[handle]);  
+    }, 1000);
+    
+});
+
+
+slider.noUiSlider.on('update', function (values, handle) {
+    $(snapValues[handle]).val(values[handle])
+});
+snapValues.addEventListener('change', function () {
+    slider.noUiSlider.set(this.value);
+});
+}
+
+Data.filterSliderRange = (name,value) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    let num = Number(value.replace(' đ',' ').replaceAll('.',''));
+    if(num === 0 && searchParams.has(name)) searchParams.delete(name);
+    else if(searchParams.has(name)) {
+        searchParams.delete(name);
+        searchParams.set(name,num) 
+    }
+    else searchParams.set(name,num) 
+    Data.setPushStateHistory(searchParams);
+}   
+
+
+Data.filterOnCheckBoxSidebarProdutCate = () => {
+    $('body').on('change','.change_checkbox_item',function(){
+       let _this = $(this);
+       let attributeName = _this.attr('data-attribute');
+       let attributeValue = _this.val();
+       if(_this.is(':checked') == true) {
+          let url = Data.AddQuery(attributeName,attributeValue);
+       }
+       else {
+            Data.existsQueryAdd(attributeName,attributeValue);
+       }
+
+       
+    })
+}
+
+Data.filterSortProductCateloge = () => {
+    $('body').on('click','.checkbox_item_sort',function(){
+        const searchParams = new URLSearchParams(window.location.search);
+        let _this = $(this);
+        let sort = _this.attr('data-type');
+        let order = _this.attr('data-value');
+        if(searchParams.has('sort') && searchParams.has('order')){
+           searchParams.delete('sort'); searchParams.delete('order');
+           searchParams.set('sort',sort);  searchParams.set('order',order);
+        }
+        else {
+            searchParams.set('sort',sort);  searchParams.set('order',order);
+        }
+        Data.setPushStateHistory(searchParams);
+
+    })
+}
+
+Data.AddQuery = (attributeName , attributeValue) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if(searchParams.has(attributeName)) {
+        let orginalParams = searchParams.get(attributeName);
+        let arrayConvert  = orginalParams + ',' + attributeValue;
+        let arraySplit = arrayConvert.split(',').join(',');
+        searchParams.set(attributeName,arraySplit)
+    }
+    else {
+        searchParams.append(attributeName, attributeValue);
+    }
+    
+    Data.setPushStateHistory(searchParams);
+}
+
+Data.existsQueryAdd = (attributeName,attributeValue ) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    let orginalParams = searchParams.has(attributeName);
+    if(orginalParams) {
+        let originalValue = searchParams.get(attributeName);
+        let orignalArray = originalValue.split(',');
+        if(orignalArray.includes(attributeValue)) {
+            orignalArray = orignalArray.filter(element => {
+               return element !== attributeValue
+            });
+            searchParams.set(attributeName,orignalArray);
+            if(searchParams.get(attributeName).length === 0){
+                searchParams.delete(attributeName);
+            }
+            Data.setPushStateHistory(searchParams);
+            
+        }
+    }
+}
+Data.setPushStateHistory = (searchParams) => {
+    let newRelative =
+    searchParams.toString().length > 0 
+    ?  window.location.pathname + '?' + searchParams.toString()
+    :  window.location.pathname;
+   
+    history.pushState(null,"",newRelative);
+    Data.AjaxFilterCallProductCateloge(searchParams)
+}
+
+
+Data.AjaxFilterCallProductCateloge = (searchParams) => {
+    let attemp = {};
+    if(searchParams != undefined &&  searchParams.toString() !== ' '){
+        searchParams.forEach((value, key) => {  
+            attemp[key] = value
+        });
+        if($('input[name="cateloge_id"]').val().length > 0) {
+            attemp['cateloge_id'] = $('input[name="cateloge_id"]').val();
+        }
+        $.ajax({
+            type: 'GET',
+            url : `${Server_Frontend}/ajax/filter/productCateloge`,
+            data : attemp,
+            success : function(data) {
+                console.log(data.data)
+                if(data.status == true) {
+                    let response = data.data;
+                    let html = '';
+                    for(let i = 0; i < response.length ; i++) {
+                       console.log(response[i].promotions)
+                         html += `
+<div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
+    <div class="css-1msrncq fill_parent">
+        <a href="${response[i]?.canonical}" class="d-block" style="text-decoration: none">
+            <div class="" style="position-relative" style="margin-bottom:0.5rem">
+                <div class="" style="margin-bottom: 0.25rem">
+                    <div class="position-relative"  style="padding-bottom: 100%">
+                        <img src="${response[i].album.split(',')[0]}"
+                        class="w-100 h-100 object-fit-contain position-absolute" style="top:0px;left:0px"
+                        alt="">
+                        ${response[i].promotions != undefined 
+                        ? 
+                        `<div class="position-absolute" style="width: 94px;bottom:0;left:0">
+                            <div class="css-zb7zul">
+                                <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
+                                <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
+                                    ${Data.number_format(+response[i].promotions?.discount)}đ 
+                                </div>
+                            </div>
+                        </div>` 
+                        :  ''}
+                    </div>
+                </div>
+                <div class="" style="margin-bottom: 0.25rem">
+                    <div type="body" color="textSecondary" class="product-brand-name css-90n0z6" style="text-transform: uppercase; display: inline;">
+                       ${response[i]?.cateloge_name.toUpperCase()}
+                    </div>
+                </div>
+                <div class="" style="height:3rem">
+                    <div type="caption" class="att-product-card-title css-1uunp2d" color="textPrimary">
+                        <h3 
+                        class="css-1xdyrhj name_category_product">
+                            ${response[i]?.name}
+                        </h3>
+                    </div>
+                </div>
+                <div class="" style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
+                    <div class="d-flex flex-column" style="height:2.5rem;">
+                        <div type="subtitle" class="att-product-detail-latest-price css-do31rh" color="primary500">
+                            ${response[i]?.price_update != undefined 
+                                ?  Data.number_format(response[i]?.price_update)
+                                : Data.number_format(response[i]?.price)
+                            }đ
+                        </div>
+                        ${response[i].promotions != undefined
+                            ? 
+                            `<div class="d-flex" style="height:1rem">
+                                <div type="caption" class="att-product-detail-retail-price css-18z00w6" color="textSecondary">${response[i]?.price} ₫</div>
+                                <div type="caption" color="primary500" class="css-2rwx6s">                 
+                                    -${Data.number_format(response[i]?.promotions?.discountValue)} ${response[i]?.promotions?.discountType}
+                                </div>
+                            </div>
+                            `
+                            :''
+                        }
+                 
+                    </div>
+                </div>
+            </div>
+        </a>
+        <div class="">
+            <input type="hidden" name="product_id" value="${response[i].product_id}">
+            <input type="hidden" name="product_variant_id" value="${response[i].product_variant_id}">
+            <input type="hidden" name="qualnity" value="1">
+            <input type="hidden" name="price" value="${response[i].price}">
+            <input type="hidden" name="price_after_discount" value="${response[i].price_update ?? response[i].price }">
+            <input type="hidden" name="discountValue" value="${response[i].promotions?.discountValue ?? null}  ">
+            <input type="hidden" name="discountType" value="${response[i].promotions?.discountType ?? null }">
+            <input type="hidden" name="attribute_id" value="${response[i].code}">
+            <input type="hidden" name="attribute_name" value="${response[i].product_variant_name}">
+        
+        </div>
+        <button height="2rem" color="primary500" class="css-16gdkk6 add_to_cart_list" type="button">
+            <div type="body" class="button-text css-ct8m8z" color="primary500">Thêm vào giỏ</div>
+            <span style="margin-left: 0px;">
+                <div class="css-157jl91"></div>
+            </span>
+        </button> 
+    </div>
+</div>
+                         `
+
+                    }
+                    $('.render_method_products').html(html)
+                }
+            },
+            error : function(error) {
+                console.log(error);
+            }
+        })
+    }
+}
+
 
 
    $(document).ready(function() {
-    Data.addTocartInFillList();
+      
+        Data.addTocartInFillList();
         Data.loadDingDataTitleDynamic();
         Data.OnchangeTheVariantProduct();
         Data.AddToCartClick();
-        Data.province();
-        Data.loadProvince();
         Data.RenderPriceToTal();
-        Data.TypingAddressCheck();
+        // Data.TypingAddressCheck();
+        Data.filterOnCheckBoxSidebarProdutCate();
+        Data.filterSortProductCateloge();
+        //step error
+        // Data.province();
+        // Data.loadProvince();
+        Data.setupRangeSlider();
+         
       
    })
 

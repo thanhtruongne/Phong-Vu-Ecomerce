@@ -130,6 +130,57 @@ trait QueryScopes {
         }
         return $query;
     }
- 
+
+
+    //filter producateloge custom
+    public function scopeWhereAttribute($query,array $attributeID = []) {
+        if(!empty($attributeID) && count($attributeID) > 0) {
+            $query->join('product_variant_attribute as pva','pv.id','=','pva.product_variant_id');
+            $query->whereIn('pva.attribute_id',$attributeID);
+        }
+        return $query;
+    }
+
+    public function scopeWhereBetWeenPrice($query,$price_lte,$price_gte) {
+        if(!empty($price_lte) && !empty($price_gte)){
+            $query->whereBetween('pv.price',[+$price_gte,+$price_lte]);
+                //   ->orWhereBetween('product.price',[+$price_gte,+$price_lte]);
+        }
+        else if(!empty($price_lte) && empty($price_gte)) {
+            $query->where('pv.price','<=',+$price_lte)
+            // ->orWhere('product.price','<=',+$price_lte);
+             ->whereOr('product.price','<=',+$price_lte);
+        }
+        else if(!empty($price_gte) && empty($price_lte)) {
+            $query->where('pv.price','>=',+$price_gte)
+            // ->orWhere('product.price','>=',+$price_gte);
+             ->whereOr('product.price','<=',+$price_gte);
+        }
+        return $query;
+    }
+
+    public function scopeSortOrderProduct($query,$type,$sort) {
+        if(!empty($type) && !empty($sort) ) {
+           switch($type) {
+                case 'SORT_BY_PRICE' : 
+                    $query->orderBy('pv.price',$sort);
+                break;
+                case 'SORT_BY_CREATED' : 
+                    $query->orderBy('pv.created_at',$sort)
+                          ->orWhere('product.created_at',$sort);
+                break;
+                case 'SORT_BY_TOP_SALE_QUANTITY' : 
+                    $query->orderBy('pv.qualnity',$sort);
+                break;
+           }
+        }
+        return $query;
+    }
+    public function scopeWhereBrand($query,$brand) {
+        if(!empty($brand) && count($brand) > 0) {
+            $query->whereIn('product.product_cateloge_id',$brand);
+        }
+        return $query;
+    }
 
 }

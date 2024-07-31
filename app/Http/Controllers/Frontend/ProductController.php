@@ -82,6 +82,7 @@ class ProductController extends BaseController
     
       
       $option = $this->getBreadCrumbsProductDetail($product);
+      
       //breadcrumb tạm
       // $breadcrumbs =  $this->convertFillCateloge($product->product_cateloge_product);
 
@@ -109,6 +110,7 @@ class ProductController extends BaseController
             'whereIn' => 'id',
             'whereValues' => $prouct_cateloge_id
           ],[],'multiple',[]);
+       
           // dd($prouct_cateloge_id,$productCateloges,$product->product_cateloge_product);
 
           $cateloge = [];
@@ -127,19 +129,8 @@ class ProductController extends BaseController
                  ->first()->toArray();              
                 }
           }  
-          //sản phẩm liên quan và promotions
-          $product_related = $this->productRepositories->findCondition([
-            ['status','=',1]
-            ],[
-            'whereIn' => 'id',
-            'whereValues' => end($id_product_related)->toArray()
-            ],[],'multiple',$this->selectProductPerformance());
-            foreach($product_related as $related) {
-                $related->promotions = $this->promotionRepositories->findByProductPromotion([$related->id]);
-                $product_variant_id = $related->product_variant->pluck('id')->toArray(); 
-                $related->variant = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_variant_id,$related->product_variant,'variant'); 
-            }
-  
+          $product_related = $this->getProductRelatedVariant($productCateloges->pluck('id')->toArray());
+          
 
             return [
               'product_related' =>  $product_related,
@@ -152,32 +143,61 @@ class ProductController extends BaseController
       'canonical','price','content'];
    }
 
-  //  private function convertFillCateloge($product_cateloge){
-  //    $nestedSetID = $product_cateloge->pluck('id')->toArray();
-  //   //  dd($nestedSetID,$product_cateloge);
-  //   $children = '';$data = [];
-  //     foreach($product_cateloge as $key => $item){
-  //         if(in_array($item->parent,$nestedSetID)){
-  //            $children = $item;
-  //         }
-  //         else {
-  //           $item->children = $children;
-  //           $data = $item;
-  //         }
-  //     }
-  //     $parent = $this->productCatelogeRepositories->getParentAncestorsOf($data->id);
-  //     if(!empty($parent) && count($parent) == 1){
-  //         $parent->first()->children = $data;
-  //         // $parent['children'] = $data->toArray();
-  //         return $parent;
+   private function getProductRelatedVariant(array $id = []){
+   
+      $product_related = $this->productRepositories->getProductByProductCatelogeID($id);
+      foreach($product_related as $related) {
+
+       
+        if(!empty($related->product_variant) && count($related->product_variant) > 0) {
+          // $product_related = $this->CombineArrayProductHavePromotionByWhereIn($product_related->pluck('product_variant_id')->toArray(),$product_related,'product');
+          $product_variant_id = $related->product_variant->pluck('id')->toArray();              
+          $related->variant = $this->productService->CombineArrayProductHavePromotionByWhereIn($product_variant_id,$related->product_variant,'variant'); 
+        }
+        else {
+          $related->promotions = $this->promotionRepositories->findByProductPromotion([$related->id]);
+        }
+        // $product_related = $this->createCanonicalDynamic($product_related);
         
-  //     }
-  //     return $data;
-  //  }
+      }
+      return $product_related;
+   }
 
    private function checkParamsVariant($variant,$slug) {
      $flag = strcmp(Str::slug(implode(', ',$slug)),Str::slug($variant->name));
      return $flag == 0 ? true : abort(404);
    }
+   private function combinePromotionAccess(array $id = [] , $products) {
+    $promotions = $this->promotionRepositories->getProductVariantPromotion($id);
+    foreach($products as $key => $product) {
+       
+        foreach($promotions as $index => $promo) {
+            if($promo['product_variant_id'] === $product->product_variant_id) {
+               $products[$index]->promotions = $promo;   
+            
+        }
+    }
+    return $products;
+    }
+}
+private function createCanonicalDynamic($products) {
+    foreach($products as $product){
+        $name_slug = [];
+        $nameCanonical = explode(', ',$product->product_variant_name);
+        foreach($nameCanonical as $variant) {
+            $name_slug[] = Str::slug($variant);
+        };
+        $product_price_after_discount = 0;
+        if(!empty($product->promotions)) {     
+            $product_price_after_discount = 
+            $product->promotions['product_variant_price'] - $product->promotions['discount'] ;                       
+        }
+        $product->price_update = $product_price_after_discount != 0 ? $product_price_after_discount : $product->price;
+        $url = $product->product_canonical.'---'.implode('--',$name_slug).'?sku='.$product->sku;
+        $product->canonical = makeTheURL($url,true);
+      
+    }
+    return $products;
+}
    
 }

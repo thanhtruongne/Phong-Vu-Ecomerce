@@ -2,23 +2,28 @@
 
 namespace App\Http\Controllers\Frontend\Ajax;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\OrderStore;
-use App\Models\Province;
-use App\Repositories\OrderRepositories;
-use App\Repositories\SliderRepositories;
-use App\Repositories\SystemRepositories;
-use App\Services\Interfaces\CartServiceInterfaces as CartService;
-use App\Services\Interfaces\WidgetServiceInterfaces as  WidgetService;
-use App\Services\ProductService;
-use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Repositories\AttributeCatelogeRepositories;
+use App\Repositories\ProductRepositories;
+use App\Repositories\PromotionRepositories;
+use App\Services\Interfaces\ProductCatelogeServiceInterfaces as ProductCatelogeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Str;
 class ProductAjaxController
 {  
-    protected $orderRepositories;
+    protected $orderRepositories,$productRepositories,$attributeCatelogeRepositories,$productCatelogeService,$promotionRepositories;
+
+    public function __construct(
+        AttributeCatelogeRepositories $attributeCatelogeRepositories,
+        ProductRepositories $productRepositories,
+        ProductCatelogeService $productCatelogeService,
+        PromotionRepositories $promotionRepositories,
+        )
+    {
+        $this->attributeCatelogeRepositories = $attributeCatelogeRepositories;
+        $this->productCatelogeService = $productCatelogeService;
+        $this->promotionRepositories = $promotionRepositories;
+        $this->productRepositories = $productRepositories;
+    }
     
     public function getProductAjax(Request $request){
         $model = $request->input('model') ?? 'Product';
@@ -54,6 +59,61 @@ class ProductAjaxController
             'whereRaw' => []
         ];
     
-      }
-  
+    }
+
+
+    public function filterProductCatelogeFE(Request $request) {
+        $data = $request->all();
+        $filedAttribute = [];
+        
+       $fillAttriubteCateloge = $this->attributeCatelogeRepositories->AllCateloge(['name','parent','id','LEFT','RIGHT']);
+       if(count($fillAttriubteCateloge) > 0) {
+            foreach($fillAttriubteCateloge as $payload) {
+                if(array_key_exists(convert_string_slug_trim($payload->name),$data)){
+                     $filedAttribute[] = explode(',',$data[convert_string_slug_trim($payload->name)]);
+                }
+            }
+       }   
+        $products = $this->productRepositories->findProductByFilterDynamic($filedAttribute,$data);
+        if(count($products) > 0) {
+            $products = $this->createCanonicalDynamic($products);
+            $products = $this->combinePromotionAccess($products->pluck('product_variant_id')->toArray(),$products);
+        }
+        return response()->json(['data' => $products,'message' => 'success','status' => true]);
+    }
+
+
+    private function combinePromotionAccess(array $id = [] , $products) {
+        $promotions = $this->promotionRepositories->getProductVariantPromotion($id);
+        foreach($products as $key => $product) {
+           
+            foreach($promotions as $index => $promo) {
+                if($promo['product_variant_id'] === $product->product_variant_id) {
+                   $products[$index]->promotions = $promo;   
+                
+            }
+        }
+        return $products;
+        }
+    }
+    private function createCanonicalDynamic($products) {
+        foreach($products as $product){
+            $name_slug = [];
+            $nameCanonical = explode(', ',$product->product_variant_name);
+            foreach($nameCanonical as $variant) {
+                $name_slug[] = Str::slug($variant);
+            };
+            $product_price_after_discount = 0;
+            if(!empty($product->promotions)) {     
+                $product_price_after_discount = 
+                $product->promotions['product_variant_price'] - $product->promotions['discount'] ;                       
+            }
+            $product->price_update = $product_price_after_discount != 0 ? $product_price_after_discount : $product->price;
+            $url = $product->product_canonical.'---'.implode('--',$name_slug).'?sku='.$product->sku;
+            $product->canonical = makeTheURL($url,true);
+          
+        }
+        return $products;
+    }
+
 }

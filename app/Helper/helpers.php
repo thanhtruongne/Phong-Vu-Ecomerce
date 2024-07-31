@@ -173,6 +173,17 @@ if(!function_exists('payment_status_fe')) {
     
 }
 
+if(!function_exists('convert_string_slug_trim')) {
+    function convert_string_slug_trim(string $val = '') { 
+        $html = '';
+       if($val) {
+            $html =  Str::replace(' ','',Str::of(Str::ascii(Str::lower($val)))->trim());
+       }
+       return $html;
+    }
+    
+}
+
 if(!function_exists('payment_svg')) {
     function payment_svg(string $val = '') { 
        $html = '';
@@ -440,7 +451,7 @@ if(!function_exists('renderMenuDynamicFrontEndParent')) {
             foreach($data as $key => $item) {
                 $name = $item['item']->name;
                 // dd($name);
-                $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
+                $canonical = makeTheURL($item['item']->canonical ?? '',true);
                 $slug = Str::slug($name);
                 $parent .= '<a href="'.$canonical.'" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
                 $parent .= '<div class="css-73wobg">';
@@ -474,7 +485,7 @@ if(!function_exists('renderMenuDynamicFrontEndChild')) {
                 // dd($data);
                 foreach($data as $key => $item) {
                             $name = $item['item']->name;
-                            $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
+                            $canonical = makeTheURL($item['item']->canonical ?? '',true);
                             // $child .= ' <a href="'.$canonical.'" class="css-1h3fn00">';
                             // $child .= '<div class="" style="color:#434657;margin-bottom: 4px">'.$name.'</div>';
                             // $child .= ' </a>';

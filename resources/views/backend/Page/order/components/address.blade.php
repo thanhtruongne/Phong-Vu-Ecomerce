@@ -3,13 +3,13 @@
         <select style="width:100%" class="form-control provinces select2 location" name="province_code" data-target='districts'>
               
             <option selected value="">Chọn thành phố / tỉnh</option>
-            @if (!empty($provinces))
-                @foreach ($provinces as $province)
+            @if (!empty($province))
+                @foreach (json_decode($province) as $provinces)
                    
                     <option 
-                    @if ($order->province_code == $province->code )
+                    @if ($order->province_code == $provinces->code )
                         selected
-                    @endif value='{{ $province->code }}'>{{ $province->full_name }}</option>
+                    @endif value='{{ $provinces->code }}'>{{ $provinces->full_name }}</option>
                 @endforeach
             @endif
         </select>

@@ -119,11 +119,12 @@
 
    $(document).ready(function() {
       Data.OnFocusDataChangeCategory();
+      Data.OnHoverMenuSideBar();
+      Data.SortWrappDivMenu();
       Data.setUpCategoryOutStandingSlider();
       Data.setUpSlideGlide();
       Data.setUpWidgetSlider();
-      Data.OnHoverMenuSideBar();
-      Data.SortWrappDivMenu();
+
      
    })
 

@@ -11,7 +11,6 @@ $productCateloge = ProductCateloge::where('status',1)->withDepth()->get()->toTre
 $product = Product::where('status',1)->get();
 
 foreach($productCateloge as $key => $item) {
-
     if(is_null($item['parent'])){
         Breadcrumbs::for($item['canonical'], function ($trail,$item) {
             $trail->parent('home');
@@ -29,7 +28,7 @@ foreach($productCateloge as $key => $item) {
     }
     foreach($item['children'] as $index => $val) {
        if(isset($val['children']) && !empty($val['children'])){
-    
+         
         foreach($val['children'] as $children){
             Breadcrumbs::for($children['canonical'], function ($trail,$val,$children,$item) {
                 $trail->parent($val['canonical'],$item,$val);

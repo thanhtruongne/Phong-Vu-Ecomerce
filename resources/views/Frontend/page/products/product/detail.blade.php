@@ -10,6 +10,7 @@
     <div class="container">
         <div class="w-100">
            <div class="breadcrumbs css-seb2g4">
+
             @if (count($option['cateloge']) <= 1)
             {{-- @dd($option['cateloge']) --}}
                 {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][1]['canonical'] ,$option['cateloge'][1]) }}

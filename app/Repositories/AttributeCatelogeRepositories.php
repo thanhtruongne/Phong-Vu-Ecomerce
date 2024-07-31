@@ -11,7 +11,7 @@ use App\Repositories\Interfaces\AttributeCatelogeRepositoriesInterfaces;
         $this->model = $model;
     }
 
-    public function getAttributeCatelogeById($id , $language  = 1) {
+    public function getAttributeCatelogeById($id) {
         return $this->model->select([
                             'id',
                             'image',
@@ -28,8 +28,8 @@ use App\Repositories\Interfaces\AttributeCatelogeRepositoriesInterfaces;
                             ->find($id);
     }
 
-    public function AllCateloge(int $language_id = 1) {
-        return $this->model->withDepth()->reversed()->with(['ancestors'])->get()->toFlatTree();
+    public function AllCateloge(array $select = ['*']) {
+        return $this->model->select($select)->withDepth()->reversed()->with(['ancestors'])->get()->toFlatTree();
     }
 
 

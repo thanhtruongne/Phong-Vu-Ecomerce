@@ -11,6 +11,186 @@ p{
     margin: 0 !important;
     padding: 0 !important;
 }
+.css-uwn2d9 {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.css-ae081h {
+    width: 20%;
+}
+.css-1l4xpub {
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    line-height: 1rem;
+    padding: 0.365rem 0.75rem 0px 0px;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: transparent;
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    user-select: none;
+    flex-direction: row;
+    position: relative;
+    width: 100%;
+    font-size: 12px;
+    color: rgb(51, 51, 51);
+    text-align: left;
+    text-decoration: none;
+    max-width: initial;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+}
+.css-1l4xpub:hover {
+    color: #024dbc;
+}
+.css-10enlol {
+    box-sizing: border-box;
+    margin: 0px;
+    min-width: 0px;
+    flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    justify-content: space-between;
+    width: 100%;
+    display: flex;
+}
+.css-1erzqxf {
+    cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
+    line-height: 1rem;
+    padding: 0.365rem 0.75rem 0px 0px;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    background-color: transparent;
+    border-color: transparent;
+    border-width: 1px;
+    border-style: solid;
+    user-select: none;
+    flex-direction: column;
+    position: relative;
+    font-size: 12px;
+    color: rgb(51, 51, 51);
+    text-align: left;
+    text-decoration: none;
+    max-width: 72px;
+    -webkit-box-pack: start;
+    justify-content: flex-start;
+}
+.css-1qnwmuv {
+    mask: url(https://shopfront-cdn.tekoapis.com/static/7534c48e46ec507e.svg) center center / contain no-repeat;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: var(--button-icon-color, #3e3e3e);
+}
+.css-1x3u27e {
+    width: 0.4rem;
+    height: 0.4rem;
+}
+.css-1l7prcq {
+    mask: url(https://shopfront-cdn.tekoapis.com/static/0e924ede5a93187b.svg) center center / contain no-repeat;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: var(--button-icon-color, #3e3e3e);
+}
+.css-1vkz9o9 {
+    mask: url(https://shopfront-cdn.tekoapis.com/static/b2c29b7046b45840.svg) center center / contain no-repeat;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: var(--button-icon-color, #3e3e3e);
+}
+.css-1p02a2r {
+    mask: url(https://shopfront-cdn.tekoapis.com/static/abf02ec95226fd05.svg) center center / contain no-repeat;
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: var(--button-icon-color, #3e3e3e);
+}
+.css-q8uykj {
+    padding: 30px 0px 25px;
+    background-color: rgb(233, 237, 242);
+    margin-top: -10px;
+}
+.css-z54kij {
+    box-sizing: border-box;
+    margin: 0px;
+    min-width: 0px;
+    flex-wrap: wrap;
+    display: flex;
+}
+.css-42iko7 {
+    width: 40%;
+}
+.css-2ig3pg {
+    width: 60%;
+}
+.css-uwn2d9 {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.css-1equo6g {
+    width: 100%;
+}
+.css-1734w3 {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    max-width: 1264px;
+    display: flex;
+    margin-bottom: 10px;
+}
+.css-2gxw46 {
+    box-sizing: border-box;
+    margin: 0px;
+    min-width: 0px;
+    flex-wrap: wrap;
+    width: 100%;
+    display: flex;
+}
+.css-j08kxf {
+    font-size: 14px;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+.css-1qw662x {
+    font-size: 12px;
+    width: 100%;
+    padding-right: 8px;
+}
+.css-1hopt4r {
+    font-size: 12px;
+    font-weight: bold;
+}
+.css-1qw662x {
+    font-size: 12px;
+    width: 100%;
+    padding-right: 8px;
+}
+.css-t5rvn4 {
+    width: 100%;
+    max-width: 160px;
+}
+.css-nyd45u {
+    margin-top: 0.5rem;
+}
+.css-nyd45u img {
+    width: 100%;
+    max-width: 100px;
+}
+.css-wtxc87 {
+    width: 40%;
+}
 body {
     text-rendering: optimizeSpeed;
     font-size: 0.875rem;

@@ -62,7 +62,7 @@
             <form action="{{ route('private-system.ghtk.create.order') }}" method="POST">
                 @csrf
                 <input type="hidden" name="products" value="{{ json_encode( $products )}}">
-                <input type="hidden" name="order_id" value="{{$order->code}}">
+                <input type="hidden" name="order_id" value="{{ $order->code }}">
             <div class="">
                 <h3 class="m-t-none m-b" style="padding:8px 30px">Thông tin người nhận</h3>   
                 <div class="col-sm-12 b-r">

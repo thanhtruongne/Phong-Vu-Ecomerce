@@ -1,6 +1,6 @@
 @php
-    // $parent = implode('',$menus['parent']);
-    // $children = implode('',$menus['child']);
+    $parent = implode('',$menus['parent']);
+    $children = implode('',$menus['child']);
 @endphp
 <div class="css-16sn586 hidden" style="position: absolute; inset: 72px auto auto 109px; transform: translate(65px, 38px);" data-popper-reference-hidden="false" data-popper-escaped="false" data-popper-placement="bottom-start">
     <div class="css-xk1tic">
@@ -20,7 +20,7 @@
                            </div>
                         </div>
                      </a> --}}
-                     {{-- {!! $parent !!} --}}
+                     {!! $parent !!}
                  </div>
                  </div>
    
@@ -59,7 +59,7 @@
                                     </a>
                               </div>
                           </div> --}}
-                          {{-- {!! $children !!} --}}
+                          {!! $children !!}
                     </div>
            </div>
         </div>

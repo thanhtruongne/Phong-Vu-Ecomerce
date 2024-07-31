@@ -87,7 +87,8 @@ class CartController extends BaseController
       $config = [
          'js' => [
            'frontend/js/library/payment.js',
-           'frontend/js/library/custom.js'
+           'frontend/js/library/custom.js',
+           'frontend/js/library/other.js'
          ],
       ];
       $Seo = $this->Seo;

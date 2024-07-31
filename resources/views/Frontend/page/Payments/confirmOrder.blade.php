@@ -39,8 +39,7 @@
                             <strong>Tổng phí vận chuyển :</strong> <span class="shipping_price fw-bold " style="font-size:14px">{{ convert_price($order->shipping_options['total'],true) }} đ</span>
                             <div class="ms-3 render_shipping_option">
                                 --<strong>Bảo hiểm đơn hàng :</strong> <span class="text-danger" >{{ convert_price($order->shipping_options['insurance_fee'],true) }} đ</span>
-                                --<strong>Bảo hiểm hàng hóa dễ vỡ :</strong> <span class="text-danger" >{{ convert_price($order->shipping_options['extFees'],true) }} đ</span>
-                                --<strong>Phí vận chuyển :</strong> <span class="text-danger" >{{ convert_price($order->shipping_options['options'],true) }} đ</span>
+                                --<strong>Phí vận chuyển :</strong> <span class="text-danger" >{{ convert_price($order->shipping_options['ship_fee_only'],true) }} đ</span>
                             </div>      
                         </div>
                         {{-- desc --}}

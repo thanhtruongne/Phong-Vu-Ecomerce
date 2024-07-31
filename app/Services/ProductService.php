@@ -218,7 +218,7 @@ class ProductService extends BaseService implements ProductServiceInterfaces
 
     private function getPaginateIndex() {
         // return ['status','image','pct.name','id','pcp.product_id','pcp.product_cateloge_id'];
-        return ['image','status','id','product.product_cateloge_id',
+        return ['image','status','id','product.product_cateloge_id','price','code_product',
     'name','desc','content','meta_title','meta_desc','meta_keyword','canonical'
     ];
     }

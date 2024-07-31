@@ -222,11 +222,11 @@
 
    $(document).ready(function() {
     Data.OnChangeInfoUser();
-    Data.province();
     Data.toogleCheck();
     Data.ChangeTheShippingOrder();
     Data.ChangeTheConfirmOrder();
     Data.SendEmail()
+    Data.province();
    })
 
 })(jQuery);

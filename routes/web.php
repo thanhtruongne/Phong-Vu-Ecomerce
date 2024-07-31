@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\Ajax\ProductController;
 use App\Http\Controllers\Backend\Auth\AuthencateController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Frontend\AccountController;
+use App\Http\Controllers\Frontend\Ajax\ProductAjaxController;
 use App\Http\Controllers\Frontend\Auth\AuthController;
 use App\Http\Controllers\Frontend\CartController as FrontendCartController;
 use App\Http\Controllers\Frontend\CheckoutController;
@@ -39,7 +40,8 @@ Route::get('/ajax/dashboard/loadVariant',[ProductController::class,'loadProductV
 Route::get('/ajax/dashboard/addToCart',[CartController::class,'addToCart'])->name('addToCart');
 Route::get('/ajax/dashboard/updateQuantityCart',[CartController::class,'updateCartQty'])->name('updateQtyCart');
 Route::get('/ajax/dashboard/location',[LocationController::class,'getLocation'])->name('location');
-
+//filter
+Route::get('/ajax/filter/productCateloge',[ProductAjaxController::class,'filterProductCatelogeFE'])->name('filter.product-cateloge.fe');
 
 
 Route::get('/login',[AuthController::class,'login'])->name('login')->middleware('guest:user');

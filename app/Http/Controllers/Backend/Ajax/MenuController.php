@@ -19,11 +19,11 @@ class MenuController extends Controller
             $instanceRepositories = app($repositoriesName);
         }
         $payload = $this->conditionMenu(Str::snake($model) , $page , $keyword);
-        
+        dd($payload,$model);
         $data = $instanceRepositories->paganation(...array_values($payload));
         return response()->json(['response' => $data]);
         }
-        
+  
   private function conditionMenu(string $model = '' , $page ,  $keyword):array {
     
     if(strpos($model,'_cateloge') == false) {

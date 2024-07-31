@@ -18,16 +18,15 @@ class MenuComposer {
      */
     public function compose(View $view)
     {
-        // $payload = $this->methodPassArgument();
+        $payload = $this->methodPassArgument();
 
-        // $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
-        // $menusChild = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu ?? [])) ?? [];
-        // $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
-        // $renderChild = explode('---',$menusChild); array_shift($renderChild);
-        // $renderParent = explode('---', $menusParent);
+        $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
+        $menusChild = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu ?? [])) ?? [];
+        $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
+        $renderChild = explode('---',$menusChild); array_shift($renderChild);
+        $renderParent = explode('---', $menusParent);
         
-        // $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
-        $view->with('menus',[]);
+        $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
     }
 
     private function methodPassArgument() {

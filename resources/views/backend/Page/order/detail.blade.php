@@ -9,6 +9,7 @@
         $districts_code = $order->district ? $order->district->full_name  : ''; 
         $wards_code = $order->ward ? $order->ward->full_name  : ''; 
         $address = $order->address.', '.$wards_code.', '.$districts_code.', '.$provinces_code;
+        $name = $order->name;
     @endphp
     <div class="col-lg-12">
         <div class="ibox float-e-margins">

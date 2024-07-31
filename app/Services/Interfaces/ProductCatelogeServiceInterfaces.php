@@ -7,6 +7,5 @@ interface ProductCatelogeServiceInterfaces {
     public function destroy($id);
     public function update(int $id ,$request);
     public function OverrideAttribute($product);
-
     public function filterList(array $attribute = []);
 }

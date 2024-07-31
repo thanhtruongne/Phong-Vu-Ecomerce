@@ -18,6 +18,7 @@
                  @yield('content');
            </div>
         </div>
+        @include('Frontend.layout.container.footer')
     </div>
 
     @include('Frontend.component.script')

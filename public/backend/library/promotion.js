@@ -733,14 +733,14 @@
             .attr('rel','prev')
             .attr('aria-label','pagination.previous')
             .attr('data-model',model)
-            .addClass('page-links')
+            .addClass('page-linkss')
             .text('<');
             li.append(span)
          }
          else if(val?.label == 'pagination.next') {
             let span = $('<a>')
                         .attr('href',nextTurnPage?.url)
-                        .addClass('page-links')
+                        .addClass('page-linkss')
                         .attr('rel','next')
                         .attr('data-id',nextTurnPage?.label)
                         .attr('aria-label','pagination.next')
@@ -749,7 +749,7 @@
             li.append(span)
          }
          else if(val?.url) {
-            let a = $('<a>').attr('href',val?.url).attr('data-model',model).addClass('page-links').text(val?.label);
+            let a = $('<a>').attr('href',val?.url).attr('data-model',model).addClass('page-linkss').text(val?.label);
             li.append(a);
          }
          ul.append(li);
@@ -762,7 +762,7 @@
     }
 
     Data.getPromotionageAttribute = () => {
-        $(document).on('click','.page-links',function(e) {
+        $(document).on('click','.page-linkss',function(e) {
                 e.preventDefault();
                 let _this = $(this);
                 let  page = (_this.text() == '>' || _this.text() == '<') ? _this.attr('data-id') : _this.text();
