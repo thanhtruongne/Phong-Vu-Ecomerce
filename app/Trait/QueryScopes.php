@@ -135,8 +135,12 @@ trait QueryScopes {
     //filter producateloge custom
     public function scopeWhereAttribute($query,array $attributeID = []) {
         if(!empty($attributeID) && count($attributeID) > 0) {
+            // $query->whereIn('pv.name')
+        
             $query->join('product_variant_attribute as pva','pv.id','=','pva.product_variant_id');
-            $query->whereIn('pva.attribute_id',$attributeID);
+            $query->join('attribute as attr','attr.id','=','pva.attribute_id');
+            $query->whereIn('attr.canonical',$attributeID['canonical']);
+            $query->whereIn('pva.attribute_id',array_map('intval',$attributeID['id']));
         }
         return $query;
     }

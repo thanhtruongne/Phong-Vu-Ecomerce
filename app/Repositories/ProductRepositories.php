@@ -84,20 +84,19 @@ use Illuminate\Support\Facades\DB;
     }
 
     public function findProductByFilterDynamic($attribute , $payload) {
-      
+    // dd($this->merge_custom(...$attribute));
       if(!empty($attribute) && count($attribute) > 0) {
-        $attributeVal = array_unique(array_merge(...$attribute));
+        $attributeVal = array_merge_recursive(...$attribute);
       }
- 
       return $this->model->select($this->selectDynamic())
       ->join('product_variant as pv','product.id','=','pv.product_id')
       ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
+     
       ->WhereAttribute($attributeVal ?? [])
       ->WhereBrand(isset($payload['thuonghieu']) ?  explode(',',$payload['thuonghieu']) : [])
       ->whereBetWeenPrice(isset($payload['price_lte']) ?  $payload['price_lte'] : '',
        isset($payload['price_gte']) ?  $payload['price_gte'] : '')
       ->SortOrderProduct($payload['sort'] ?? '',$payload['order'] ?? '')
-    //   ->toSql();
       ->get();
     }
 
@@ -113,6 +112,7 @@ use Illuminate\Support\Facades\DB;
     
     private function selectProductRelated() {
         return ['product.name','product.id','product.image','pc.name as cateloge_name','product.price','product.code_product','product.canonical'];
+        // return ['product.name','product.id','pv.name as variant_name'];
     }
 
     // private function Dynamic
@@ -132,5 +132,8 @@ use Illuminate\Support\Facades\DB;
             'pv.product_id as product_id',
             'pc.name as cateloge_name'
         ];
+       
     }
+
+
  }

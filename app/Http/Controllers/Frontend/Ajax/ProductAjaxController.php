@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend\Ajax;
 
 use App\Repositories\AttributeCatelogeRepositories;
+use App\Repositories\AttributeRepositories;
 use App\Repositories\ProductRepositories;
 use App\Repositories\PromotionRepositories;
 use App\Services\Interfaces\ProductCatelogeServiceInterfaces as ProductCatelogeService;
@@ -10,10 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 class ProductAjaxController
 {  
-    protected $orderRepositories,$productRepositories,$attributeCatelogeRepositories,$productCatelogeService,$promotionRepositories;
+    protected $orderRepositories,
+    $productRepositories,
+    $attributeCatelogeRepositories
+    ,$productCatelogeService,
+    $promotionRepositories,$attributeRepositories;
 
     public function __construct(
         AttributeCatelogeRepositories $attributeCatelogeRepositories,
+        AttributeRepositories $attributeRepositories,
         ProductRepositories $productRepositories,
         ProductCatelogeService $productCatelogeService,
         PromotionRepositories $promotionRepositories,
@@ -23,6 +29,7 @@ class ProductAjaxController
         $this->productCatelogeService = $productCatelogeService;
         $this->promotionRepositories = $promotionRepositories;
         $this->productRepositories = $productRepositories;
+        $this->attributeRepositories = $attributeRepositories;
     }
     
     public function getProductAjax(Request $request){
@@ -67,10 +74,16 @@ class ProductAjaxController
         $filedAttribute = [];
         
        $fillAttriubteCateloge = $this->attributeCatelogeRepositories->AllCateloge(['name','parent','id','LEFT','RIGHT']);
+
        if(count($fillAttriubteCateloge) > 0) {
             foreach($fillAttriubteCateloge as $payload) {
                 if(array_key_exists(convert_string_slug_trim($payload->name),$data)){
-                     $filedAttribute[] = explode(',',$data[convert_string_slug_trim($payload->name)]);
+                    
+                     $filedAttribute[] = [
+                        'id' => explode(',',$data[convert_string_slug_trim($payload->name)]),
+                        'canonical' => $this->attributeRepositories->
+                        getAttributeByWhereIn(explode(',',$data[convert_string_slug_trim($payload->name)]))->pluck('canonical')->toArray()
+                     ];
                 }
             }
        }   
@@ -79,6 +92,7 @@ class ProductAjaxController
             $products = $this->createCanonicalDynamic($products);
             $products = $this->combinePromotionAccess($products->pluck('product_variant_id')->toArray(),$products);
         }
+        // dd($product)
         return response()->json(['data' => $products,'message' => 'success','status' => true]);
     }
 

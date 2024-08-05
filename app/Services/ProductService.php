@@ -118,8 +118,12 @@ class ProductService extends BaseService implements ProductServiceInterfaces
             if($check) {       
                 //tạo lại product_catelgoe_product
                 $product->product_cateloge_product()->detach($product->id);
+                // sẽ  xóa các field trong product_variant_attribute;
+                $product->product_variant->each(function ($variant, $key) {
+                    $variant->attributes()->detach();
+                });
                 // ta sẽ xóa các variant tồn tại trong product này sau dó tạo lại bảng3 mới
-                $product->product_variant()->delete();
+                $product->product_variant()->delete();  
                 $catalogeSublist = $this->handleProductCataloge($request); 
                 $product->product_cateloge_product()->sync($catalogeSublist);
                 //tạo lại variant
@@ -270,10 +274,9 @@ class ProductService extends BaseService implements ProductServiceInterfaces
         $array = $this->createArrayDataProductVariants($data);
         $variants =  $product->product_variant()->createMany($array); 
         $product_vartiant_attribute = [];
-
-    $productVariantAttribute =  $this->makeCombineAttribute(array_values($data['attribute']));
-        foreach($product->product_variant()->pluck('id') as $key => $val) {
-            
+        $productVariantAttribute = $this->combineLoopExplodeAttribute($data['productVariants']['id']);
+        
+        foreach($product->product_variant()->pluck('id') as $key => $val) {        
             if(count($productVariantAttribute)) {
                foreach($productVariantAttribute[$key] as $item) {
                     $product_vartiant_attribute[] = [
@@ -281,16 +284,19 @@ class ProductService extends BaseService implements ProductServiceInterfaces
                         'attribute_id' => $item
                     ];
                }
-            }
+            } 
         }
-        $this->productVariantAttributeRepositories->createByInsert($product_vartiant_attribute);
-        // $this->productVariantTranslateRepositories->createByInsert($product_variant_translate);
+    
+        
+     
+       return $this->productVariantAttributeRepositories->createByInsert($product_vartiant_attribute);
 
     }
 
 
     //sử dũng đệ qui
     private function makeCombineAttribute($attributes , int $index = 0 ) {
+         
         //dieu92 kiện thoát đệ qui
         if(count($attributes) == $index) return [[]];
        
@@ -301,9 +307,11 @@ class ProductService extends BaseService implements ProductServiceInterfaces
         foreach($attributes[$index] as $key => $val) {
             
             foreach( $subCombine as $keySub => $item) {
+               
                $combine[] = array_merge([$val], $item);
             }
         }
+       
         // sau khi merge xong gọi lại hàm để merge mảng3 tiếp
         return $combine;
     }
@@ -311,9 +319,12 @@ class ProductService extends BaseService implements ProductServiceInterfaces
     private function createArrayDataProductVariants(array $data = []):array 
     {
         $variants = [];
+      
+      
         if(isset($data['variants']['sku']) && !empty($data['variants']['sku'])) {
             foreach($data['variants']['sku'] as $key => $val) {
-              
+                
+                
                 $sorting = array_map('intval', explode(', ',$data['productVariants']['id'][$key]));
                 sort($sorting,SORT_NUMERIC);
                 // dd($data['productVariants']['id'][$key],$sorting);
@@ -326,7 +337,7 @@ class ProductService extends BaseService implements ProductServiceInterfaces
                     'file_name' => $data['variants']['file_name'][$key] ?? '',
                     'file_url' => $data['variants']['file_url'][$key] ?? '',
                     'album' => $data['variants']['album'][$key] ?? '',
-                     'name' => $data['productVariants']['name'][$key] ?? ''
+                    'name' => $data['productVariants']['name'][$key] ?? ''
                 ];
             }
         }
@@ -339,8 +350,6 @@ class ProductService extends BaseService implements ProductServiceInterfaces
         if($subject == 'product') $promotions = $this->promotionRepositories->findByProductPromotion($id);
         else if($subject == 'variant') $promotions = $this->promotionRepositories->getProductVariantPromotion($id);
         //gán từng promotion vào product chứa các id
-        // dd($products,$promotions);
-        // dd($promotions);
         foreach($products as $key => $product) {
             foreach($promotions as $index => $promo) {
                 
@@ -455,6 +464,14 @@ class ProductService extends BaseService implements ProductServiceInterfaces
 
         $data = implode('--',$data);
         return $data;
+    }
+
+    private function combineLoopExplodeAttribute($attributes) {
+        $loop = [];
+        foreach($attributes as $index => $attribute) {
+            $loop[] = explode(', ',$attribute);
+        }
+        return $loop;
     }
 
 }

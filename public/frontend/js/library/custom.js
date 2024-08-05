@@ -811,7 +811,7 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
                          `
 
                     }
-                    $('.render_method_products').html(html)
+   $('.render_method_products').html(html)
                 }
             },
             error : function(error) {
@@ -823,12 +823,19 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
 
 
 
+Data.checkTriggerCheckboxParams = () => {
+    
+}
+
+
+
    $(document).ready(function() {
       
         Data.addTocartInFillList();
         Data.loadDingDataTitleDynamic();
         Data.OnchangeTheVariantProduct();
         Data.AddToCartClick();
+        Data.checkTriggerCheckboxParams();
         Data.RenderPriceToTal();
         // Data.TypingAddressCheck();
         Data.filterOnCheckBoxSidebarProdutCate();

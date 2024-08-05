@@ -51,7 +51,9 @@ use App\Repositories\Interfaces\AttributeRepositoriesInterfaces;
         return $this->model->select(
             'attribute_cateloge_id',
             'name',
+            'canonical',
             'id',
+       
         )
         ->where( 'status',1)
         ->whereIn('id',$id)

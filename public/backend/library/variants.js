@@ -1207,7 +1207,7 @@
                     attributeCatelogeId : attributeCatelogeId
                 },
                     function(data) {
-                        console.log(data);
+                      
                         if(data.items != 'undefined' && data.items.length) {
                             for(let i = 0 ; i < data.items.length ; i++) {
                                 // tạo ra các option bàng new Option sau đó trigger change để change select2
@@ -1229,6 +1229,7 @@
 
    Data.ProductVariants = () => {
       let variants = JSON.parse(atob(variant));
+      console.log(variants);
       $('.variant-row').each(function(index , val) {
         let _this = $(this);
         let option = [
