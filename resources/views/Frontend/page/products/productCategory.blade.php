@@ -14,7 +14,11 @@
             <div class="css-rf24tk">
                 <div class="teko-row css-ezmamy" style="margin-left: -8px;margin-right: -8px;row-gap: 16px;">
                     {{-- sidebar --}}
-                    @include('Frontend.page.products.components.sidebar',['filter' => $filter,'brands' => $descentanofCateloge])
+                    @include('Frontend.page.products.components.sidebar',[
+                        'filter' => $filter,
+                        'brands' => $descentanofCateloge,
+                        'cateloge' => $product_cateloge_id
+                        ])
 
                     <div class="teko-col teko-col-10 css-17ajfcv" style="padding: 0 8px"> 
                         <div class="css-1of9xbq">

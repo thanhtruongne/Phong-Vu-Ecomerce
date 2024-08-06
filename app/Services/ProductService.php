@@ -117,7 +117,7 @@ class ProductService extends BaseService implements ProductServiceInterfaces
             $product = $this->productRepositories->findByid($id);      
             if($check) {       
                 //tạo lại product_catelgoe_product
-                $product->product_cateloge_product()->detach($product->id);
+                $product->product_cateloge_product()->detach();
                 // sẽ  xóa các field trong product_variant_attribute;
                 $product->product_variant->each(function ($variant, $key) {
                     $variant->attributes()->detach();

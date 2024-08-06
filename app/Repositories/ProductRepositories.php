@@ -84,6 +84,7 @@ use Illuminate\Support\Facades\DB;
     }
 
     public function findProductByFilterDynamic($attribute , $payload) {
+       
     // dd($this->merge_custom(...$attribute));
       if(!empty($attribute) && count($attribute) > 0) {
         $attributeVal = array_merge_recursive(...$attribute);
@@ -91,9 +92,8 @@ use Illuminate\Support\Facades\DB;
       return $this->model->select($this->selectDynamic())
       ->join('product_variant as pv','product.id','=','pv.product_id')
       ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
-     
+      ->WhereBrand( $payload ?? [])
       ->WhereAttribute($attributeVal ?? [])
-      ->WhereBrand(isset($payload['thuonghieu']) ?  explode(',',$payload['thuonghieu']) : [])
       ->whereBetWeenPrice(isset($payload['price_lte']) ?  $payload['price_lte'] : '',
        isset($payload['price_gte']) ?  $payload['price_gte'] : '')
       ->SortOrderProduct($payload['sort'] ?? '',$payload['order'] ?? '')

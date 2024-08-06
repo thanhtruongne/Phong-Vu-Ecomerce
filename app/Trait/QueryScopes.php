@@ -180,9 +180,19 @@ trait QueryScopes {
         }
         return $query;
     }
-    public function scopeWhereBrand($query,$brand) {
-        if(!empty($brand) && count($brand) > 0) {
-            $query->whereIn('product.product_cateloge_id',$brand);
+    public function scopeWhereBrand($query,$payload) {
+        if(!empty($payload) && count($payload) > 0) {
+            
+            if(isset($payload['thuonghieu']) && !empty($payload['thuonghieu']))
+            {
+
+                $query->whereIn('pc.id',explode(',',$payload['thuonghieu']));
+            }
+            else 
+            {
+                $query->whereIn('pc.id',json_decode($payload['cateloge_id'],true));
+            }
+           
         }
         return $query;
     }

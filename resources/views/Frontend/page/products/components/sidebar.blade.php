@@ -3,6 +3,18 @@
         <div class="css-y7yt88">Khoảng giá</div>
         <div class="css-17ajfcv">
              <div class="css-1n5trgy">
+                 @php
+                 $payloadData = [];
+                     $payloadData = array_map(function($arr) {
+                         if(isset($arr)) {
+                             return $payloadData['name'] = convert_string_slug_trim($arr);
+                         }
+                     },$filter->pluck('name')->toArray());
+                    $attributeID = explode(',',implode(',',array_merge(array_values(request()->input())))) ?? [];
+                    
+                    $payload = [];
+                    $requestBrand = explode(',',request()->input('thuonghieu')) ?? [];
+                 @endphp
                  <input  type="text" class="css-11mfy90 set_price" data-name="{{ config('apps.sort.name_sort_symbol.price_gte') }}" id="slider-snap-value-lower"  />
                  <input  type="text" class="css-11mfy90 set_price" data-name="{{ config('apps.sort.name_sort_symbol.price_lte') }}" id="slider-snap-value-upper" />
              </div>
@@ -13,7 +25,8 @@
         <div class="css-1veiyrs">
             <div class="w-100 d-flex" style="border: 1px solid #E4E5F0"></div>
         </div>
-        <input type="hidden" name="cateloge_id" value="{{ json_encode($breadcrumb) ?? null }}">
+        
+        <input type="hidden" name="cateloge_id" value="{{ json_encode($cateloge) ??  null }}">
         <ul id="metismenu" style="list-style: none;margin:0;padding:0">
             @if (isset($brands) && !empty($brands) && count($brands) > 0)     
                 <li class="mb-2">
@@ -25,7 +38,10 @@
                                   data-attribute="{{ config('apps.sort.name_sort_symbol.thuonghieu') }}"
                                   style="width: 16px; height: 16px;"
                                   class="form-check-input change_checkbox_item" 
-                                  type="checkbox" 
+                                  type="checkbox"
+                                  {{ isset($requestBrand) && !empty($requestBrand)  && in_array($brand->id,$requestBrand)
+                                  ? 'checked' : ''
+                                  }}
                                   value="{{ $brand->id }}" 
                                   id="{{ Str::slug($brand->name) }}" />
                                 <label class="css-6r3s23 ms-1" style="position: relative;top:2px" for="{{ Str::slug($brand->name) }}">{{ $brand->name }}</label>
@@ -37,7 +53,6 @@
 
             @if (isset($filter) && !empty($filter))
                 @foreach ($filter as $key =>  $item)
-                  
                     <li class="mb-2">
                         <a class="has-arrow css-q3day0" href="#" aria-expanded="false">{{ $item->name }}</a>
                         <ul class="mm-collapse" style="list-style: none;margin:0;padding:0">
@@ -49,6 +64,11 @@
                                        style="width: 16px; height: 16px;"
                                        class="form-check-input change_checkbox_item" 
                                        type="checkbox" 
+                                       {{ 
+                                       !empty($attributeID) && count($attributeID) > 0 && 
+                                       in_array(convert_string_slug_trim($item->name),$payloadData) &&
+                                       in_array($attribute->id,$attributeID) ? 'checked' : ''
+                                       }}
                                        value="{{ $attribute->id }}"
                                        id="{{ Str::slug($attribute->name) }}" />
                                     <label class="css-6r3s23 ms-1" style="position: relative;top:2px" for="{{ Str::slug($attribute->name) }}">{{ $attribute->name }}</label>
@@ -57,7 +77,9 @@
                         </ul>
                     </li>
                 @endforeach
-                
+                @php
+              
+                @endphp
             @endif
        
          </ul>

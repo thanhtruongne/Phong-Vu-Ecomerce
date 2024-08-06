@@ -722,12 +722,10 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
             url : `${Server_Frontend}/ajax/filter/productCateloge`,
             data : attemp,
             success : function(data) {
-                console.log(data.data)
                 if(data.status == true) {
                     let response = data.data;
                     let html = '';
                     for(let i = 0; i < response.length ; i++) {
-                       console.log(response[i].promotions)
                          html += `
 <div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
     <div class="css-1msrncq fill_parent">
@@ -824,7 +822,10 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
 
 
 Data.checkTriggerCheckboxParams = () => {
-    
+    const searchParams = new URLSearchParams(window.location.search);
+    for (const [key, value] of searchParams.entries()) {
+        console.log(`${key} =>  ${value}`);
+    }
 }
 
 

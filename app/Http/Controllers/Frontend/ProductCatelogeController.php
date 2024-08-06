@@ -29,9 +29,10 @@ class ProductCatelogeController extends BaseController
    public function index($id,$request) {
       // lấy ra productCateloge
       $productCateloge = $this->productCatelogeRepositories->getProductCatelogeById($id);
+
     //   dd(ProductCateloge::withDepth()->with('ancestors')->find($productCateloge->id));
       $descentanofCateloge = $this->productCatelogeRepositories->getChildrenDescendantsOf($productCateloge->id);
-
+      $product_cateloge_id = array_unique(array_merge($descentanofCateloge->pluck('id')->toArray(),[$productCateloge->id]));
       $filter = null;
       if(!empty($productCateloge->attributes) && count($productCateloge->attributes) > 0) {
         $filter = $this->productCatelogeService->filterList($productCateloge->attributes);
@@ -57,7 +58,7 @@ class ProductCatelogeController extends BaseController
       //tìm sản phẩm của productCateloge
       $products = $this->productService->paginate($request,$productCateloge,'variant','promotion');
       $breadcrumb = $this->findtheBreadCrumb($products,$productCateloge);
-      return view('Frontend.page.products.productCategory',compact('products','Seo','config','filter','descentanofCateloge','productCateloge','breadcrumb'));
+      return view('Frontend.page.products.productCategory',compact('products','Seo','config','filter','descentanofCateloge','productCateloge','breadcrumb','product_cateloge_id'));
    }
 
    private function findtheBreadCrumb($product,$productCateloges) {
@@ -68,7 +69,7 @@ class ProductCatelogeController extends BaseController
             foreach($productCateloges as $key => $productCateloge) {
                 $cateloge[$count++] = $productCateloge->toArray();
             }
-        
+             
             if(!empty($this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])) 
             && count($this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])) > 0){
               $cateloge['parent'] = $this->productCatelogeRepositories->getParentAncestorsOf($cateloge[1]['id'])
