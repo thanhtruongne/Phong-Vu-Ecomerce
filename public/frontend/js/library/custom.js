@@ -722,7 +722,7 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
             url : `${Server_Frontend}/ajax/filter/productCateloge`,
             data : attemp,
             success : function(data) {
-                if(data.status == true) {
+                if(data.status == true && data.data.length > 0 ) {
                     let response = data.data;
                     let html = '';
                     for(let i = 0; i < response.length ; i++) {
@@ -809,7 +809,16 @@ Data.AjaxFilterCallProductCateloge = (searchParams) => {
                          `
 
                     }
-   $('.render_method_products').html(html)
+$('.render_method_products').html(html)
+                }
+                else if(data.status == true && data?.data.size == 0) {
+                   
+                    let html =`
+                    <div class="text-center">
+                        <h3>Sản phẩm không tồn tại </h3>
+                    </div>
+                    `
+                    $('.render_method_products').html(html)
                 }
             },
             error : function(error) {

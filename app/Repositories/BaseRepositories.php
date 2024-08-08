@@ -164,8 +164,7 @@ use Illuminate\Support\Facades\DB;
 
     public function create(array $data) {
         $model = $this->model->create($data);   
-        return $model->fresh();
-       
+        return $model->fresh();  
     }
 
     public function updateOrInsert(array $condition = [] , array $payload = []) {

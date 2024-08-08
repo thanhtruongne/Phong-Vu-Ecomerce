@@ -185,12 +185,13 @@ trait QueryScopes {
             
             if(isset($payload['thuonghieu']) && !empty($payload['thuonghieu']))
             {
-
-                $query->whereIn('pc.id',explode(',',$payload['thuonghieu']));
+                
+                $query->whereIn('pcp.product_cateloge_id',explode(',',$payload['thuonghieu']));
             }
             else 
             {
-                $query->whereIn('pc.id',json_decode($payload['cateloge_id'],true));
+                
+                $query->whereIn('pcp.product_cateloge_id',json_decode($payload['cateloge_id'],true));
             }
            
         }

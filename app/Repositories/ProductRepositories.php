@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
                             'album',
                             'product_cateloge_id',
                             'variant',
-                            'attribute',
+                            'attribute',        
                             'attributeCateloge',
                             'code_product',
                             'form',
@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\DB;
                             ->find($id);
     }
 
-
+    
     public function FindByPromotionProduct(array $condition = [], array $relation = []) {
         $query = $this->model->newQuery();
         $query->select([
@@ -90,18 +90,19 @@ use Illuminate\Support\Facades\DB;
         $attributeVal = array_merge_recursive(...$attribute);
       }
       return $this->model->select($this->selectDynamic())
-      ->join('product_variant as pv','product.id','=','pv.product_id')
-      ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
+      ->leftJoin('product_variant as pv','product.id','=','pv.product_id')
+      ->leftJoin('product_cateloge_product as pcp','pcp.product_id','=','product.id')
+      ->leftJoin('product_cateloge as pc','pc.id','=','product.product_cateloge_id')
       ->WhereBrand( $payload ?? [])
       ->WhereAttribute($attributeVal ?? [])
       ->whereBetWeenPrice(isset($payload['price_lte']) ?  $payload['price_lte'] : '',
        isset($payload['price_gte']) ?  $payload['price_gte'] : '')
       ->SortOrderProduct($payload['sort'] ?? '',$payload['order'] ?? '')
+      ->distinct()
       ->get();
     }
 
     public function getProductByProductCatelogeID(array $id = []) {
-  
         return $this->model->select($this->selectProductRelated())
         // ->join('product_variant as pv','product.id','=','pv.product_id')
         ->join('product_cateloge as pc','pc.id','=','product.product_cateloge_id')

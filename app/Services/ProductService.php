@@ -100,6 +100,7 @@ class ProductService extends BaseService implements ProductServiceInterfaces
                 }
                 // set attribute
                 $this->productCatelogeService->OverrideAttribute($product); 
+                
             }
             DB::commit();
             return true;

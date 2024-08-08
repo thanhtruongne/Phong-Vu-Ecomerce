@@ -92,9 +92,9 @@ Route::get('/zaloPay_return',[ZaloPayController::class,'return_page'])->name('za
 Route::get('/ajax/ghtk/transportfee',[ShippingGHTK::class,'CalcShippingByGhtk'])->name('ghtk.tranport.fee');
 
 
-
+Route::get('/',[HomeController::class,'home'])->name('home');
 Route::middleware(['cacheResponse:600'])->group(function(){
-    Route::get('/',[HomeController::class,'home'])->name('home');
+    
     
 });
 Route::get('{canonical}---{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
