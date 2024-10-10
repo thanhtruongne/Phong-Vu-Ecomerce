@@ -2,36 +2,42 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Trait\QueryScopes;
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use Notifiable,HasApiTokens,QueryScopes;
-    protected $guard = 'users';
+    use Notifiable,HasRoles,Cachable;
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
         'email',    
-        'password',
+        'firstname',
+        'username',
+        'lastname',
+        're_login',
+        'type_user',
+        'role',
+        'dob',
+        'gender',
+        'signing_create_account',
+        'content',
         'province_code',
         'district_code',
         'ward_code',
         'address',
         'phone',
-        'thumb',
+        'avatar',
         'status',
         'desc',
-        'user_cataloges_id'
     ];
 
     /**
@@ -55,27 +61,25 @@ class User extends Authenticatable
     ];
 
 
-
-
-
-    public function user_cataloge() {
-        return $this->belongsTo(UserCataloge::class,'user_cataloges_id','id');
-    }
-
-    public function hasPermission($permissionName) {
-        return $this->user_cataloge->permissions->contains('canonical',$permissionName);
-    }
-
     public function province() {
-        return $this->belongsTo(Province::class,'province_code','code');
+        return $this->belongsTo(Province::class,'province_id','id');
       }
   
       public function district() {
-        return $this->belongsTo(District::class,'district_code','code');
+        return $this->belongsTo(District::class,'district_id','id');
       }
   
-  
       public function ward() {
-        return $this->belongsTo(Ward::class,'ward_code','code');
+        return $this->belongsTo(Ward::class,'ward_id','id');
+      }
+
+
+
+
+      public function login($request,$remember){
+        if(\Auth::attempt($request,$remember))
+            return true;
+        
+        return false;
       }
 }

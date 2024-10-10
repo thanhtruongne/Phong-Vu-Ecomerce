@@ -17,41 +17,12 @@ use Laravel\Sanctum\Sanctum;
 class AppServiceProvider extends ServiceProvider
 {
 
-    public $bindings = [
-       
-       'App\Services\Interfaces\UserServiceInterfaces' => 'App\Services\UserService',
-       'App\Services\Interfaces\PostCatalogeServiceInterfaces' => 'App\Services\PostCatelogeService',
-       'App\Services\Interfaces\UserCatalogeServiceInteface' => 'App\Services\UserCatalogeService',
-       'App\Services\Interfaces\PostServiceInterfaces' => 'App\Services\PostService',
-       'App\Services\Interfaces\PermissionsServiceInterfaces' => 'App\Services\PermissionsService',
-       'App\Services\Interfaces\GenerateModuleServiceInterfaces' => 'App\Services\GenerateModuleService',
-       'App\Services\Interfaces\ProductCatelogeServiceInterfaces' => 'App\Services\ProductCatelogeService',
-       'App\Services\Interfaces\ProductServiceInterfaces' => 'App\Services\ProductService',
-       'App\Services\Interfaces\BaseServiceInterfaces' => 'App\Services\BaseService',
-       'App\Services\Interfaces\AttributeCatelogeServiceInterfaces' => 'App\Services\AttributeCatelogeService',
-       'App\Services\Interfaces\AttributeServiceInterfaces' => 'App\Services\AttributeService',
-       'App\Services\Interfaces\SystemServiceInterfaces' => 'App\Services\SystemService',
-       'App\Services\Interfaces\MenuCatelogeServiceInterfaces' => 'App\Services\MenuCatelogeService',
-       'App\Services\Interfaces\MenuServiceInterfaces' => 'App\Services\MenuService',
-       'App\Services\Interfaces\SliderServiceInterfaces' => 'App\Services\SliderService',
-       'App\Services\Interfaces\WidgetServiceInterfaces' => 'App\Services\WidgetService',
-       'App\Services\Interfaces\PromotionServiceInterfaces' => 'App\Services\PromotionService',
-       'App\Services\Interfaces\SourceServiceInterfaces' => 'App\Services\SourceService',
-       'App\Services\Interfaces\CustomerServiceInterfaces' => 'App\Services\CustomerService',
-       'App\Services\Interfaces\CustomerCatelogeServiceInterfaces' => 'App\Services\CustomerCatelogeService',
-       'App\Services\Interfaces\CartServiceInterfaces' => 'App\Services\CartService',
-       'App\Services\Interfaces\OrderServiceInterfaces' => 'App\Services\OrderService',
-    ];
     /**
      * Register any application services.
      */
     public function register(): void
     { 
-        foreach($this->bindings as $key => $val) {
-            $this->app->bind($key,$val);
-        }
-        //bind phần repositories
-        $this->app->register(RepositoryServiceProvider::class);
+
     }
 
     /**
@@ -60,17 +31,18 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
    
-        Paginator::useBootstrap();
-        view()->composer('*',function($view) {
-            $composerClass = [
-                SystemComposer::class , MenuComposer::class
-            ];
-            foreach($composerClass as $key => $item) {
-                $composer = App::make($item);
-                $composer->compose($view);
-            } 
-           
-        });
+        \Schema::defaultStringLength(191);
+        if (explode(':', config('app.url'))[0] == 'https') {
+            $this->app['request']->server->set('HTTPS', 'on');
+            \URL::forceScheme('https');
+        }
+
+        view()->composer('layouts.aside','App\Http\Composer\LeftMenuComposer');
+
+        $modules =\Module::all();
+        foreach ($modules as $module) {
+            $this->loadMigrationsFrom([$module->getPath() . '/Database/Migrations']);
+        }
 
     }
 }

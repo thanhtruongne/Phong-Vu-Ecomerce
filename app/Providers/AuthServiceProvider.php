@@ -23,16 +23,6 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
-        //phẩn quyền
-        Gate::define('modules',function($user,$permissionName) {
-          if(!empty($user) && $user->status != 1) {
-            return false;
-          } 
-          $permission = $user->user_cataloge->permissions;
-          if($permission->contains('canonical',$permissionName)) {
-             return true;
-          }
-          return false;
-        });
+       
     }
 }

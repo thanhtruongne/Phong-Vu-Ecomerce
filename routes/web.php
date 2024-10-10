@@ -76,6 +76,8 @@ Route::post('/store/confirm-order/{code}',[FrontendCartController::class,'StoreC
 Route::get('phpmyinfo', function () {
     phpinfo(); 
 })->name('phpmyinfo');
+
+
 //payment
 // #VNPAY
 Route::get('/vnpay_return',[VnPayController::class,'return_page'])->name('vnpay.return_page');
