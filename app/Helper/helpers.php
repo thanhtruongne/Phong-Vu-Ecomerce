@@ -600,3 +600,9 @@ if(!function_exists('renderInfomationPromotion')) {
     }
 }
 
+if(!function_exists('profile')) {
+    function profile() {
+       return session()->get('profile'); 
+    }
+}
+

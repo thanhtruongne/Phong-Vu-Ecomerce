@@ -2,21 +2,42 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Closure;
-class Authenticate extends Middleware
+use Illuminate\Support\Facades\Cache;
+class Authenticate
 {
-    /**
-     * Get the path the user should be redirected to when they are not authenticated.
-     */
-    protected function redirectTo(Request $request): ?string
+    public function handle(Request $request, Closure $next)
     {
-        
-        return $request->expectsJson() ? null : abort(403);
-    }   
+        if (!\Auth::check()) {
+            if ($request->ajax()){
+                if(!session()->has('target_url')){
+                    $refererUrl = $request->header('Referer');
+                    session()->put('target_url', $refererUrl);
+                }
 
+                return response()->json(["message", "Authentication Required!"],401);
+            }
+            if(!session()->has('target_url')){
+                session()->put('target_url', $request->fullUrl());
+            }
+            return  redirect(route('login'));
+        }
 
+        if (\Auth::check()){
+            $userId = \auth()->id();
+            if (!session()->get('profile')) {
+                $profile = User::whereId($userId)->disableCache()->first();
+                session(['profile' => $profile]);
+                session()->save();
+            }
 
-    
+            if(!cache('avatar_'.profile()->user_id)){
+                $avatar = User::whereId(\profile()->user_id)->value('avatar');
+                Cache::forever('avatar_'. \profile()->user_id, $avatar ?? '');
+            }
+        }
+        return $next($request);
+    }
 }

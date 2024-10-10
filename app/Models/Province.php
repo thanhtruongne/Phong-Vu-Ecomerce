@@ -2,17 +2,18 @@
 
 namespace App\Models;
 
+use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Province extends Model
 {
-    use HasFactory;
+    use Cachable;
 
     
-    protected $table = 'address_provinces';
+    protected $table = 'provinces';
     protected $primaryKey = 'code';
-    protected $fillable = ['name'];
+    protected $fillable = ['name','full_name'];
     
     public $incrementing = false;
 
