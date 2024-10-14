@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             \URL::forceScheme('https');
         }
 
-        view()->composer('layouts.aside','App\Http\Composer\LeftMenuComposer');
+        view()->composer('backends.layouts.aside','App\Http\ViewComposers\LeftMenuComposer');
 
         $modules =\Module::all();
         foreach ($modules as $module) {

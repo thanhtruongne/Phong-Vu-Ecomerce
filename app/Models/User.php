@@ -7,12 +7,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Cache;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     use Notifiable,HasRoles,Cachable;
+
+    protected $table = 'user';
     /**
      * The attributes that are mass assignable.
      *
@@ -73,13 +76,15 @@ class User extends Authenticatable
         return $this->belongsTo(Ward::class,'ward_id','id');
       }
 
+      public function isAdmin(){
+        $cacheKey = 'admin_access_for_' . \Auth::user()->id;
+        return Cache::rememberForever($cacheKey, function () {
+            if (in_array(\Auth::user()->username, ['admin', 'superadmin'])) {
+                return true;
+            }
+            return self::getInstance()->roles()->where('name', 'Admin')->count();
+        });
 
-
-
-      public function login($request,$remember){
-        if(\Auth::attempt($request,$remember))
-            return true;
-        
-        return false;
       }
+
 }

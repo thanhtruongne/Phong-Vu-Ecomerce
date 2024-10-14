@@ -16,13 +16,13 @@ class HomeController extends BaseController
    public function __construct(
      // LanguageRepositories $languageRepositories,
      SliderRepositories $sliderRepositories,
-     WidgetService $widgetService,
-     ProductRepositories $productRepositories
+     // WidgetService $widgetService,
+     // ProductRepositories $productRepositories
     )
    {
      $this->sliderRepositories = $sliderRepositories;
-     $this->widgetService = $widgetService;
-     $this->productRepositories = $productRepositories;
+     // $this->widgetService = $widgetService;
+     // $this->productRepositories = $productRepositories;
      parent::__construct();
    }
 
@@ -34,24 +34,24 @@ class HomeController extends BaseController
               'frontend/js/library/custom.js'
           ]
      ];
-     $widget = $this->widgetService->foundTheWidgetByKeyword([
-          //product website
-          ['keyword' => 'Brand_widget'],
-          ['keyword' => 'category_outStanding','data-object' => true],
-          ['keyword' => 'macbook_widget','promotion_variant' => true],
-          ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
-          ['keyword' => 'Ram_widget','data-object' => true],
-          ['keyword' => 'VGA_widget','data-object' => true],
-          ['keyword' => 'CPU_widget','data-object' => true],
-          //brand website
-     ]);
+//      $widget = $this->widgetService->foundTheWidgetByKeyword([
+//           //product website
+//           ['keyword' => 'Brand_widget'],
+//           ['keyword' => 'category_outStanding','data-object' => true],
+//           ['keyword' => 'macbook_widget','promotion_variant' => true],
+//           ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
+//           ['keyword' => 'Ram_widget','data-object' => true],
+//           ['keyword' => 'VGA_widget','data-object' => true],
+//           ['keyword' => 'CPU_widget','data-object' => true],
+//           //brand website
+//      ]);
   
-     $Seo = $this->Seo;
-     // Lấy ra các slider
+//      $Seo = $this->Seo;
+//      // Lấy ra các slider
     $slider = $this->sliderRepositories->findCondition(...$this->argumentSlider());
-    //Sản phẩm nổ bật
-    $productOutStanding = $this->productRepositories->getoutStandingProduct(12);
-    return view('Frontend.page.home',compact('slider','Seo','widget','config'));
+//     //Sản phẩm nổ bật
+//     $productOutStanding = $this->productRepositories->getoutStandingProduct(12);
+    return view('Frontend.page.home',compact('slider','config'));
    }
 
    private function argumentSlider() {
