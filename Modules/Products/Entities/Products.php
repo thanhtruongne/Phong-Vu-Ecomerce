@@ -32,14 +32,10 @@ class Products extends Model
         return $this->belongsTo(ProductCateloge::class,'product_cateloge_id','id');
     }
    
-    public function promotion() {
-        return $this->belongsToMany(Promotion::class,'promotion_product_variant','product_id','promotion_id')
-       ->withTimestamps();
-    }
-
-    public function product_cateloge_product() {
-        return $this->belongsToMany(ProductCateloge::class,'product_cateloge_product','product_id','product_cateloge_id');
-    }
+    // public function promotion() {
+    //     return $this->belongsToMany(Promotion::class,'promotion_product_variant','product_id','promotion_id')
+    //    ->withTimestamps();
+    // }
     
     public function product_variant() {
         return $this->hasMany(ProductVariant::class,'product_id','id')->with('attributes');

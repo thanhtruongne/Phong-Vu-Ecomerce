@@ -22,7 +22,10 @@ class Authenticate
             if(!session()->has('target_url')){
                 session()->put('target_url', $request->fullUrl());
             }
-            return  redirect(route('login'));
+            if(request()->segment(1) == 'private' && request()->segment(2) == 'system'){
+                return redirect(route('private-system.be.login.template'));
+            }
+            return redirect(route('login'));
         }
 
         if (\Auth::check()){

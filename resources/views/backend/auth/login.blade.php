@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Login System</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{asset('backend2/plugins//fontawesome-free/css/all.min.css')}}">
+    <!-- icheck bootstrap -->
+    {{-- <link rel="stylesheet" href="{{asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}"> --}}
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{asset('backend2/css/adminlte.css')}}">
 
     <style>
 
@@ -44,23 +47,17 @@ div.content {
                       <div class="content">
                         <h3>Đăng nhập vào hệ thống</h3>
                         <hr />
-                            <form action="{{ route('private-system.post.login') }}" method="POST">
-                                @csrf
+                            <form id="form-ajax" method="POST">
                                 <div class="form-group mt-3 mb-3">
-                                    <label for="exampleInputEmail1 " class="text-left form-label w-100">Email</label>
-                                    <input type="text" class="form-control" value="{{ old('email') }}" name="email" id="exampleInputEmail1" placeholder="Email">
-                                    @if ($errors->has('email'))
-                                        <div class="mt-3 text-left text-danger">{{ $errors->first('email') }}</div>
-                                    @endif
+                                    <label for="exampleInputEmail1 " class="text-left form-label w-100">Tài khoản</label>
+                                    <input type="text" class="form-control" value="{{ old('username') }}" name="username" id="exampleInputEmail1" placeholder="Tài khoản">
+                                  
                                 </div>
                                 <div class="form-group mt-3 mb-3">
                                     <label for="exampleInputPassword1" class="text-left form-label w-100">Mật khẩu</label>
                                     <input type="password" class="form-control" name="password" id="exampleInputPassword1" placeholder="Password">
-                                    @if ($errors->has('password'))
-                                        <div class="mt-3 text-left text-danger">{{ $errors->first('password') }}</div>
-                                    @endif
                                 </div>
-                                <button type="submit" class="w-100 mt-3 btn btn-success">Đăng nhập</button>
+                                <button type="submit" class="w-100 mt-3 btn btn-primary save-login">Đăng nhập</button>
                                 <hr />                 
                             </form>     
                       </div>
@@ -71,7 +68,66 @@ div.content {
     
 </body>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="{{asset('backend2/plugins/jquery/jquery.min.js')}}"></script>
+  <script src="{{asset('backend2/plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
+  <!-- Bootstrap 4 -->
+  <script src="{{asset('backend2/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+  <!-- AdminLTE App -->
+  <script src="{{asset('backend2/js/adminlte.min.js')}}"></script>
+
+  <script src="{{asset('backend2/js/backend2.js')}}"></script>
+
+<script>
+    $.ajaxSetup({
+    headers: {
+       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+     $('body').on('keypress',function(e){
+         if(e.keyCode == 13){
+            login();
+         }
+     })
+    $('.save-login').on('click',function(e){
+         login();
+    })
+
+    function login(){
+        var btn = $('.save-login'),
+        btn_text = btn.html();
+        btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+        $.ajax({
+            type: 'POST',
+            url: '{{route('private-system.be.login')}}',
+            data : {
+                'username' : $('input[name="username"]').val(),
+                'password' : $('input[name="password"]').val(),
+            }
+        }).done(function(data){
+        console.log(data);
+            btn.prop('disabled', false).html(btn_text);
+            if(data){
+                if(data.status == 'error'){
+                    show_message(data?.message, data?.status);
+                    return false;
+                }
+                else {
+                show_message(data?.message, data?.status);
+                window.location.href = data.redirect;
+                }
+            }
+        }).fail(function(data) {
+            btn.prop('disabled', false).html(btn_text);
+            show_message('Lỗi hệ thống', 'error');
+            return false;
+        });
+    }
+
+    })
+</script>
+
 </html>

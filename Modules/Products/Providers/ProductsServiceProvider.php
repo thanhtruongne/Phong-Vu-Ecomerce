@@ -17,7 +17,7 @@ class ProductsServiceProvider extends ServiceProvider
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
-        $this->registerFactories();
+        // $this->registerFactories();
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
     }
 
@@ -87,12 +87,12 @@ class ProductsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerFactories()
-    {
-        if (! app()->environment('production')) {
-            app(Factory::class)->load(__DIR__ . '/../Database/factories');
-        }
-    }
+    // public function registerFactories()
+    // {
+    //     if (! app()->environment('production')) {
+    //         app(Factory::class)->load(__DIR__ . '/../Database/factories');
+    //     }
+    // }
 
     /**
      * Get the services provided by the provider.

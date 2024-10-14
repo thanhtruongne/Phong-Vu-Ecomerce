@@ -4,7 +4,7 @@
                 <h3 class="text-success">{{ $title }}</h3>
             </div>
             <div>
-                <div class="font_title_album text-center">
+                <div class="text-center">
                     <div class="check_hidden_image_album {{ isset($data->album) && !empty($data->album) && $data->album != 'null' ? 'hidden' : '' }}">
                         <img class="ckfinder_3" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
                         <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div>

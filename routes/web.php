@@ -45,7 +45,7 @@ Route::get('/ajax/dashboard/location',[LocationController::class,'getLocation'])
 Route::get('/login',[AuthController::class,'login'])->name('login')->middleware('guest:user');
 Route::post('/store-login',[AuthController::class,'StoreLogin'])->name('store.login'); 
 
-Route::middleware(['checkSanctum','auth:sanctum','checkGuard:web'])->group(function() {
+Route::middleware(['auth'])->group(function() {
     Route::post('/logout',[AuthController::class,'logout'])->name('logout'); 
     //account 
     Route::get('/account',[AccountController::class,'account'])->name('account'); 
@@ -54,6 +54,10 @@ Route::middleware(['checkSanctum','auth:sanctum','checkGuard:web'])->group(funct
     Route::get('/account/order',[AccountController::class,'accountOrder'])->name('account.order'); 
     Route::get('/account/order/{code}',[AccountController::class,'detailOrder'])->name('account.order.detail'); 
 });
+
+Route::get('/',[HomeController::class,'home'])->name('fe.home');
+
+
 
 // Route::get('/ghtk',[ShippingGHTK::class,'calcShippingByGhtk'])->name('ghtk');
 //guest
@@ -73,12 +77,10 @@ Route::post('/store/order',[FrontendCartController::class,'StoreOrder'])->name('
 Route::get('/confirm-payment/{code}',[FrontendCartController::class,'confirmPayment'])->name('order.confirm.payment'); 
 Route::post('/store/confirm-order/{code}',[FrontendCartController::class,'StoreConfirmOrder'])->name('order.store.confirm.payment'); 
 
-Route::get('phpmyinfo', function () {
-    phpinfo(); 
-})->name('phpmyinfo');
 
 
 //payment
+
 // #VNPAY
 Route::get('/vnpay_return',[VnPayController::class,'return_page'])->name('vnpay.return_page');
 //Momo
@@ -92,11 +94,13 @@ Route::get('/zaloPay_return',[ZaloPayController::class,'return_page'])->name('za
 Route::get('/ajax/ghtk/transportfee',[ShippingGHTK::class,'CalcShippingByGhtk'])->name('ghtk.tranport.fee');
 
 
-Route::get('/',[HomeController::class,'home'])->name('home');
-// Route::middleware(['cacheResponse:600'])->group(function(){
-    Route::get('{canonical}---{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
-    ->where('canonical','[a-zA-Z0-9-]+')->where('slug','[a-zA-Z0-9-]+');
-    //Dynamic router use database render controllers and model
-    Route::get('{canonical}',[RouterController::class,'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
+
+
+// Route::get('/',[HomeController::class,'home'])->name('home');
+// // Route::middleware(['cacheResponse:600'])->group(function(){
+//     Route::get('{canonical}---{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
+//     ->where('canonical','[a-zA-Z0-9-]+')->where('slug','[a-zA-Z0-9-]+');
+//     //Dynamic router use database render controllers and model
+//     Route::get('{canonical}',[RouterController::class,'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
     
 // });

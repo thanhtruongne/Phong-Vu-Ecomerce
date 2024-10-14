@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Kalnoy\Nestedset\NodeTrait;
 class ProductCateloge extends Model
 {
-    use Cachable,NodeTrait;
+    use NodeTrait;
     
     protected $table = 'product_cateloge';
     protected $primaryKey = 'id';
     //dạng fillable mặc định cho model cataloge
-    protected $fillable = ['image','icon','album','status','parent_id','_lft','_rgt','name'];
+    protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name'];
 
 
 
