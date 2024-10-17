@@ -173,6 +173,36 @@ $(document).ready(function(){
             }
         },
     });
+    $("body").on('input', '.integerInput', function () {
+        $(this).val($(this).val().replace(/[^0-9]/gi, ''));
+    });
+    $("body").on('input', '.decimalInput', function (evt) {
+        this.value = this.value.match(/^\d+\.?\d{0,2}/);
+    });
+
+    $("body").on('keypress', '.is-number', function () {
+        return validate_isNumberKey(this);
+    });
+
+    $("body").on('keyup', '.number-format', function () {
+        return validate_FormatNumber(this);
+    });
+
+    function validate_isNumberKey(evt) {
+        var charCode = (evt.which) ? evt.which : event.keyCode;
+        if (charCode == 59 || charCode == 46)
+            return true;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+            return false;
+        return true;
+    }
+
+    function validate_FormatNumber(a) {
+        a.value = a.value.replace(/\./gi, "");
+        a.value = a.value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+    }
+
+
 })
 
 

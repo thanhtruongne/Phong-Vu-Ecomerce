@@ -1,3 +1,4 @@
+
 <script src="{{asset('backend2/plugins/jquery/jquery.min.js')}}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{asset('backend2/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
@@ -5,6 +6,12 @@
 <script>
   $.widget.bridge('uibutton', $.ui.button)
 </script>
+
+<script type="text/javascript">
+  var base_url = '{{ config('app.env') }}' + 'private/system';
+  window._app_env_ = '{{ config('app.env') }}';
+</script>
+
 <!-- Bootstrap 4 -->
 <script src="{{asset('backend2/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
@@ -49,3 +56,6 @@
 <script src="{{asset('backend2/plugins/ckeditor/config.js')}}"></script>
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
 
+<script src="{{asset('backend2/js/load-ajax.js')}}"></script>
+
+<script src="{{asset('backend2/js/load-select.js')}}"></script>

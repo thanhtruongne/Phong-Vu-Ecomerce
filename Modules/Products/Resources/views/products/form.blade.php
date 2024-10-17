@@ -25,6 +25,12 @@
     
 @endsection
 
+@section('links')
+{{-- <link href="{{asset('css/iconIconic.css')}}" rel="stylesheet" type="text/css"> --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" href="{{asset('backend2/css/cusomTreeCategory.css')}}">
+    <link rel="stylesheet" href="{{asset('backend2/css/treeSelect.min.css')}}">
+
 @endsection
 
 @section('content')
@@ -75,10 +81,11 @@
                             <form action="" id="form-create-product" class="form-horizontal form-ajax" enctype="multipart/form-data">
                                   <input type="hidden" name="id" value="">
                                   <div class="row">
-                                    <div class="col-md-9">
+                                    <div class="col-md-8">
                                         <div class="form-group row">
                                             <label for="" class="col-sm-2 control-label">
                                                 Tên sản phẩm
+                                                <span class="text-danger">(*)</span>
                                             </label>
                                             <div class="col-md-8">
                                                 <input type="text" class="form-control" name="name">
@@ -102,7 +109,7 @@
                                         </div>
                                         <div class="form-group row">
                                             <label for="" class="col-sm-2 control-label">
-                                               Hình ảnh
+                                               Galley Image
                                             </label>
                                             <div class="col-md-8">
                                                 <div class="text-center" style="border: 1px solid #ccc">
@@ -112,9 +119,9 @@
                                                     </div>
                                                     <div class="ul_upload_view_album clearfix py-2" style="list-style-type: none" id="sortable_books">
                                                         @if (isset($data) && !empty($data))
-                                                        @php
-                                                            $album = !is_array($data) ? json_decode($data->album) : ($data ?? []);
-                                                        @endphp
+                                                            @php
+                                                                $album = !is_array($data) ? json_decode($data->album) : ($data ?? []);
+                                                            @endphp
                                                         @if (!empty($album) && count($album) > 0)
                                                             @foreach ($album as $item) 
                                                             <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
@@ -132,8 +139,88 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-2 control-label">
+                                               Sản phẩm variant
+                                            </label>
+                                            <div class="col-md-8">
+                                                <div class="d-flex align-items-center">
+                                                    <input type="checkbox" id="is_single" name="is_single" class="form-control mt-1">
+                                                    <span class="ml-3">( Sản phẩm đơn hoặc có nhiều phần variants con. )</span>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
+                                    <div class="col-md-4">
 
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-4 control-label">
+                                            Hình ảnh
+                                            </label>
+                                            <div class="col-md-7">
+                                                <div class="ckfinder_12" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
+                                                    <input type="hidden" name="image" >
+                                                    <img class="image" style="width:100%" src={{ old('image') ?? "https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" }} alt="">
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">
+                                                Mã SKU
+                                            </label>
+                                            <div class="col-md-8">
+                                                <input type="text" class="form-control integerInput" name="sku">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-4 control-label">
+                                                Giá tiền
+                                               <span class="text-danger">(*)</span>
+                                            </label>
+                                            <div class="col-md-8">
+                                                <input  class="form-control number-format" name="cost" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                            </div>
+                                        </div>
+
+
+
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-5 control-label">
+                                               Danh mục sản phẩm
+                                               <span class="text-danger">(*)</span>
+                                            </label>
+                                            <div class="col-md-8">
+                                               <div class="tree_select_demo_main"></div>
+                                               <input type="hidden" name="category_id" id="category_id">
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <div class="col-md-8 text-right">
+                                                <div class="dropdown">
+                                                    <button class="btn dropdown-toggle add_attribute" type="button" data-toggle="dropdown" aria-expanded="false">
+                                                        Thêm attribute
+                                                    </button>
+                                                    <div class="dropdown-menu toggle_attribute">
+                                                        @php
+                                                            $attributes = \Modules\Products\Entities\Attribute::whereNull('parent_id')->get();
+                                                     @endphp
+                                                        @if (isset($attributes))
+                                                            @foreach ($attributes as $attribute)
+                                                                <a class="dropdown-item attribute_choose" data-parent="{{$attribute->id}}" >{{ $attribute->name }}</a>
+                                                            @endforeach
+                                                        @endif   
+                                                    </div>
+                                                  </div>
+                                            </div>
+                                        </div>
+                                        <div class="render_attribute_parent">
+
+                                        </div>
+                                    </div>
+ 
                              
                                   </div>
                             </form>
@@ -147,4 +234,122 @@
 @endsection
 
 @section('scripts')
+<script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
+<script>
+        let attribute_parent = $('.render_attribute_parent')
+        let arrIds = [];
+        $('body .attribute_choose').on('click',function(){
+            let check = false;
+            let _this = $(this);
+            let name = _this.text();
+            let id = _this.data('parent');
+            $.map(arrIds,function(item,index){if(item == id) { check = true}})
+            if(check){
+               return;
+            }
+            else{
+                _this.addClass('disabled');
+                arrIds.push(id);
+                attribute_parent.append(`
+                <div class="form-group d-flex algin-items-center attribute_item">
+                    <div style="width:65%">
+                        <label for="" class="control-label fw-bold">
+                            ${name}
+                            <span class="text-danger">(*)</span>
+                        </label>
+                        <div class="">
+                            <select name="atttribute[]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
+                        </div>
+                    </div>
+                    <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
+                </div>`);
+            load_attrbute();
+            }
+          
+           
+        })
+        
+
+        $('body').on('click','.remove_item_attribute',function(){
+                let _this = $(this);
+                let id = _this.parents('.attribute_item').find('select').data('parent');
+                let find = $('body .attribute_choose[data-parent="'+id+'"]');
+                find.removeClass('disabled');
+                let menu = $('body .toggle_attribute');
+                arrIds = arrIds.filter(function(r){
+                    return r !== id;
+                })
+                _this.parents('.attribute_item').remove();
+        })
+
+        function load_attrbute(){
+            $('.load-attribute-custom').select2({
+                allowClear: true,
+                dropdownAutoWidth : true,
+                width: '100%',
+                placeholder: function(params) {
+                    return {
+                        id: null,
+                        text: params.placeholder,
+                    }
+                },
+                ajax: {
+                    method: 'GET',
+                    url: base_url + '/load-ajax/loadAttribute',
+                    dataType: 'json',
+                    data: function (params) {
+
+                        var query = {
+                            search: $.trim(params.term),
+                            page: params.page,
+                            parent_id: $(this).data('parent'),
+                        };
+
+                        return query;
+                    }
+                }
+
+            })
+        }
+   
+        $('body').on('click','.trash_album',function(e) {       
+            $(this).parents('.item_album').remove();
+            if($('.ul_upload_view_album li.item_album').length == 0) $('.ul_upload_view_album').prev().removeClass('hidden');
+            e.preventDefault();
+        })
+        const domElement = document.querySelector('.tree_select_demo_main')
+        const treeselect = new Treeselect({
+            parentHtmlContainer: domElement,
+            value: [],
+            options: @json($categories),
+            placeholder: '-- Chon danh mục sản phẩm --',
+            isSingleSelect: true,
+        })
+
+        treeselect.srcElement.addEventListener('input', (e) => {
+        console.log('Selected value:', e.detail)
+            $('#category_id').val(e.detail );
+        })
+
+        $('#is_single').on('click',function(){
+            let _this = $(this);
+            if(_this.prop('checked')){
+                $('input[name="sku"]').prop('disabled',true);
+                $('input[name="cost"]').prop('disabled',true);
+                $('.render_attribute_parent').addClass('hidden');
+                $('body .add_attribute').prop('disabled',true);
+
+            }
+            else {
+                $('input[name="sku"]').prop('disabled',false);
+                $('input[name="cost"]').prop('disabled',false);
+                $('.render_attribute_parent').removeClass('hidden');
+                $('body .add_attribute').prop('disabled',false);
+            }
+        })
+
+       //variant
+       
+
+</script>
 @endsection

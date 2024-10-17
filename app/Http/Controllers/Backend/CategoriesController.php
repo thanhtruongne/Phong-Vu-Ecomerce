@@ -17,28 +17,14 @@ class CategoriesController extends Controller
 
     public function __construct(){
         $categories = Categories::whereNotNull('name')->get()->toTree()->toArray();
-        $this->tree =  $this->rebuildTree($categories);
+        $this->tree =  Categories::rebuildTree($categories);
     }
 
     public function index(){
         return view('backends.pages.categories.index',['categories' => $this->tree]);
     }
 
-    private function rebuildTree($categories,$parent_id = 0){
-        if(isset($categories) && count($categories) > 0){
-            foreach($categories as $key => $children){
-                if($parent_id == $children['parent_id']){
-                    $data[] = [
-                       'name' => $children['name'],
-                       'value' => $children['id'],
-                       'children' => count($children['children']) ?  $this->rebuildTree($children['children'],$children['id']) : []
-                   ];
-                }
-            }
-             
-            return  $data;
-        }
-    }
+   
 
 
     public function getData(Request $request){
