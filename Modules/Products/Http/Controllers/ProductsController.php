@@ -2,6 +2,7 @@
 
 namespace Modules\Products\Http\Controllers;
 
+use App\Models\Categories;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -18,10 +19,12 @@ class ProductsController extends Controller
 
 
     public function form(Request $request){
+        $data = Categories::whereNotNull('name')->get()->toTree()->toArray();
+        $categories = Categories::rebuildTree($data);
         if($request->id){
-
+           
         }
-        return view('products::products.form');
+        return view('products::products.form',['categories' => $categories]);
     }
 
 

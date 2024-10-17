@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Backend\Ajax\AjaxLoaderController;
 use App\Http\Controllers\Backend\Auth\AuthencateController;
 use App\Http\Controllers\Backend\DashboardController;
 
@@ -63,7 +64,7 @@ use Modules\Products\Http\Controllers\ProductsController;
         Route::get('/product/create',[ProductsController::class,'form'])->name('product.create'); 
         
         
-        
+        Route::get('load-ajax/{func}',[AjaxLoaderController::class,'load_ajax'])->name('load_ajax');
         
         
         

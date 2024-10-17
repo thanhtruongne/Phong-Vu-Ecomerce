@@ -28,6 +28,7 @@ class Authenticate
             return redirect(route('login'));
         }
 
+
         if (\Auth::check()){
             $userId = \auth()->id();
             if (!session()->get('profile')) {

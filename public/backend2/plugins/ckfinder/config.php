@@ -1,5 +1,4 @@
 <?php
-
 /*
  * CKFinder Configuration File
  *
@@ -11,8 +10,11 @@
 
 // Production
 
+// use Illuminate\Support\Facades\Auth;
+
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 1);
+
 
 // Development
 // error_reporting(E_ALL);
@@ -26,9 +28,14 @@ $config['debug'] = true;
 /*============================ Enable PHP Connector HERE ==============================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_authentication
 
-$config['authentication'] = function () {
-       return true;
+// $config['authentication'] = function () {
+//        return true;
+// };
+
+$config['authentication'] = function(){
+    return true;
 };
+
 
 /*============================ License Key ============================================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_licenseKey

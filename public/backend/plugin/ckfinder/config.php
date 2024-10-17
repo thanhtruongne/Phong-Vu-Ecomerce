@@ -10,6 +10,9 @@
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/debugging.html
 
 // Production
+
+use Illuminate\Support\Facades\Session;
+
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
 ini_set('display_errors', 0);
 
@@ -24,9 +27,10 @@ $config = array();
 
 /*============================ Enable PHP Connector HERE ==============================*/
 // https://ckeditor.com/docs/ckfinder/ckfinder3-php/configuration.html#configuration_options_authentication
+// session_start();
 
 $config['authentication'] = function () {
-    return true;
+    return Session::get('isAdmin');
 };
 
 /*============================ License Key ============================================*/

@@ -49,110 +49,97 @@
     
     @include('backends.layouts.components.scirpts')
     <script>
-      $(document).ready(function(){
-        $.ajaxSetup({
-            headers: {
-              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        $(document).ready(function(){
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+
+                }
+            });
+    
+        $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
+            if (jqxhr.status === 401) {
+                window.location = "/";
+            }
+        
+            if (jqxhr.status === 419 ) {
+                alert('Token đã hết hạn!!!');
+                window.location = "";
             }
         });
-        var scrollTrigger = 60,
-          backToTop = function() {
+            var scrollTrigger = 60,
+            backToTop = function() {
 
-          };
- 
-        $('.bootstrap-table').removeClass('table-bordered');
-        $(window).on('scroll', function() {
-            backToTop();
-        });    
+            };
+    
+            $('.bootstrap-table').removeClass('table-bordered');
+            $(window).on('scroll', function() {
+                backToTop();
+            });    
 
-        $('.editor').each(function() {
-            let editor = $(this);
-            let id = editor.data('target');
-            CKEDITOR.replace(id);
+            $('.editor').each(function() {
+                let editor = $(this);
+                let id = editor.data('target');
+                CKEDITOR.replace(id);
+            })
+
+            $('body').on('click','.ckfinder_3',function() {
+            let element = $(this);
+            let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
+            CKFinder.popup({
+            chooseFiles: true,
+            onInit : function(finder) {
+                finder.on( 'files:choose', function( evt ) {   
+
+                        var files = evt.data.files;
+                        var html = '';
+                        files.forEach( function( file, i ) {
+                            html += `
+                            <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
+                                <img height="120" src="${file.getUrl()}" width="150" alt="">
+                                <input type="hidden" name="album[]" value="${file.getUrl()}"/>
+                                <button type="button" class="trash_album btn bg-red" >
+                                    <i class="fas fa-trash text-white" ></i>
+                                </button >
+                            </li> 
+                            `
+                        });
+                        
+                        element.parents('.check_hidden_image_album').addClass('hidden');
+                        render.html(html);              
+                
+                } );
+                finder.on( 'file:choose:resizedImage', function( evt ) {
+                    // document.getElementById( 'url' ).value = evt.data.resizedUrl;
+                } );
+            }
+        });
         })
 
-        $('body').on('click','.ckfinder_3',function() {
-        let element = $(this);
-        let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
-        CKFinder.popup({
-        chooseFiles: true,
-        onInit : function(finder) {
-            finder.on( 'files:choose', function( evt ) {   
-
-                    var files = evt.data.files;
-                    var html = '';
-                    files.forEach( function( file, i ) {
-                        html += `
-                        <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
-                            <img height="120" src="${file.getUrl()}" width="150" alt="">
-                            <input type="hidden" name="album[]" value="${file.getUrl()}"/>
-                            <button type="button" class="trash_album" >
-                                <i class="fa-solid fa-trash"></i>
-                            </button >
-                        </li> 
-                        `
+        $('body').on('click','.ckfinder_12',function() {
+            let input = $(this).find('input');   
+            let img = $(this).find('img');   
+            console.log(42213)
+            CKFinder.popup({
+                chooseFiles: true,
+                onInit : function(finder) {
+                    finder.on('files:choose', function( evt ) {                 
+                            var file = evt.data.files.first(); 
+                            input.val(file.getUrl());
+                            img.attr("src",file.getUrl())
                     });
-                    
-                    element.parents('.check_hidden_image_album').addClass('hidden');
-                    render.html(html);              
-               
-            } );
-            finder.on( 'file:choose:resizedImage', function( evt ) {
-                // document.getElementById( 'url' ).value = evt.data.resizedUrl;
-            } );
-        }
-      });
-    })
-
-    $('body').on('click','.ckfinder_12',function() {
-        let input = $(this).find('input');   
-        let img = $(this).find('img');   
-        CKFinder.popup({
-        chooseFiles: true,
-        onInit : function(finder) {
-            finder.on( 'files:choose', function( evt ) {   
-                if(type == 'image') {
-                    var file = evt.data.files.first();
-                    input.val(file.getUrl());
-                    console.log( input.val(file.getUrl()),image)
-                    if(image != null) {
-                        image.attr("src",file.getUrl())
-                    }
-                }
-                else {
-                    var files = evt.data.files;
-                    var html = '';
-                    files.forEach( function( file, i ) {
-                        html += `
-                        <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
-                            <img height="120" src="${file.getUrl()}" width="150" alt="">
-                            <input type="hidden" name="album[]" value="${file.getUrl()}"/>
-                            <button type="button" class="trash_album" >
-                                <i class="fa-solid fa-trash"></i>
-                            </button >
-                        </li> 
-                        `
+                    finder.on( 'file:choose:resizedImage', function( evt ) {
+                        // document.getElementById( 'url' ).value = evt.data.resizedUrl;
                     });
-                    
-                    input.parents('.check_hidden_image_album').addClass('hidden');
-                    image.html(html);            
                 }
-               
-            } );
-            finder.on( 'file:choose:resizedImage', function( evt ) {
-                // document.getElementById( 'url' ).value = evt.data.resizedUrl;
-            } );
-        }
-      });
-    })
+            });
+        })
 
-    function setUpCkFinder(input = null,image = null,type = null){
-     
-    }
+        })
+    </script>
 
+    
 
-      })
-     </script>
     @yield('scripts')
 </body>
 </html>
