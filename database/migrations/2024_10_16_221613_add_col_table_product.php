@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('is_single')->default(1)->comment('Sản phẩm khống có các variant con khác');
             $table->string('image')->nullable();
             $table->longtext('galley')->nullable();
-     
+            $table->text('attributeFilter')->nullable();
         });
     }
 

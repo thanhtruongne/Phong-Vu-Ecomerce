@@ -1,5 +1,7 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="{{asset('backend2/plugins/fontawesome-free/css/all.min.css')}}">
+
+<link rel="stylesheet" href="{{asset('backend2/plugins/jquery-ui/jquery-ui.min.css')}}">
 <!-- Tempusdominus Bootstrap 4 -->
 <link rel="stylesheet" href="{{asset('backend2/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css')}}">
 <!-- iCheck -->

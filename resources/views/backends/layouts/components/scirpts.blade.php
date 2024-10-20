@@ -2,6 +2,7 @@
 <script src="{{asset('backend2/plugins/jquery/jquery.min.js')}}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{asset('backend2/plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+
 <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
 <script>
   $.widget.bridge('uibutton', $.ui.button)
@@ -59,3 +60,4 @@
 <script src="{{asset('backend2/js/load-ajax.js')}}"></script>
 
 <script src="{{asset('backend2/js/load-select.js')}}"></script>
+

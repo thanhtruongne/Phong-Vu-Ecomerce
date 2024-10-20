@@ -616,3 +616,97 @@ function json_result($result_data, $decode = false)
 }
 
 }
+
+
+if(!function_exists('formatCurrencyVND')) {
+    function formatCurrencyVND($value)
+    {
+        $dotCount = substr_count($value, '.');
+        $commaCount = substr_count($value, ',');
+        if ($dotCount > 0 && $commaCount > 0) {
+            $value = substr($value, 0, -2);
+            $value = str_replace(['.', ','], '', $value);
+        } else {
+            $value = str_replace(['.', ','], '', $value);
+        }
+        return $value;
+    }
+}
+
+if(!function_exists('date_convert')) {
+/* chuyển date từ 'd/m/Y' sang 'Y-m-d H:i:s' */
+    function date_convert($date, $time = '00:00:00')
+    {
+        if ($date) {
+            $date = str_replace('/', '-', $date);
+            return date('Y-m-d H:i:s', strtotime($date . ' ' . $time));
+        }
+
+        return null;
+    }
+}
+
+if(!function_exists('datetime_convert')) {
+/* chuyển datetime từ d/m/Y H:i:s sang 'Y-m-d H:i:s' */
+        function datetime_convert($date_time)
+        {
+            if ($date_time) {
+                $date_time = str_replace('/', '-', $date_time);
+                return date('Y-m-d H:i:s', strtotime($date_time));
+            }
+
+            return null;
+        }
+
+}
+if(!function_exists('numberFormat')) {
+    function numberFormat($number, $decimail = 0, $culture = 'general')
+    {
+        if ($culture == 'vn')
+            return number_format($number, $decimail, ',', '.');
+        return number_format($number, $decimail);
+    }
+    
+    
+}
+
+if(!function_exists('format_money')) {
+
+    function format_money($number, $decimals = 2)
+    {
+        $formattedNumber = number_format($number, $decimals, '.', ','); // Sử dụng number_format() để định dạng số tiền
+    
+        // Thay thế dấu phẩy thành dấu chấm và dấu chấm thành dấu phẩy
+        $formattedNumber = str_replace(',', '|', $formattedNumber);
+        $formattedNumber = str_replace('.', ',', $formattedNumber);
+        $formattedNumber = str_replace('|', '.', $formattedNumber);
+    
+        return $formattedNumber;
+    }
+}
+
+if(!function_exists('get_date')) {
+    function get_date($date, $format = "d/m/Y")
+    {
+        if (empty($date)) {
+            return '';
+        }
+        $date = str_replace('/', '-', $date);
+        return date($format, strtotime($date));
+    }
+}
+
+if(!function_exists('get_datetime')) {
+    function get_datetime($date, $format = "d/m/Y H:i:s A")
+    {
+        if (empty($date)) {
+            return '';
+        }
+    
+        return date($format, strtotime($date));
+    }
+}
+
+
+
+

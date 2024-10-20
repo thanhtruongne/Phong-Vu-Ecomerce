@@ -18,6 +18,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_id')->index();
             $table->string('name')->nullable();
             $table->longText('album')->nullable();
+            $table->bigInteger('views')->default(0);
             $table->string('image')->nullable();
             $table->bigInteger('qualnity')->default(0);
             $table->float('price');
