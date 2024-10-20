@@ -14,7 +14,7 @@ class Products extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'image',
-        'album',
+        'galley',
         'status',    
         'product_cateloge_id',
         'attribute',
@@ -24,8 +24,13 @@ class Products extends Model
         'name',
         'content',
         'desc',
+        'qualnity',
+        'sku',
     ];
 
+    protected $casts = [
+       'attribute' => 'json',
+    ];
     
 
     public function product_cataloge() {

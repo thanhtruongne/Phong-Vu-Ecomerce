@@ -62,6 +62,7 @@ use Modules\Products\Http\Controllers\ProductsController;
         Route::get('/product',[ProductsController::class,'index'])->name('product');
         Route::get('/product/get-data',[ProductsController::class,'getData'])->name('product.getdata'); 
         Route::get('/product/create',[ProductsController::class,'form'])->name('product.create'); 
+        Route::post('/product/save',[ProductsController::class,'save'])->name('product.save'); 
         
         
         Route::get('load-ajax/{func}',[AjaxLoaderController::class,'load_ajax'])->name('load_ajax');

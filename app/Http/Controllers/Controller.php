@@ -25,4 +25,20 @@ class Controller extends BaseController
             return response()->json(['message' => $validator->errors()->all()[0], 'status' =>'error']);
         }
     }
+
+    public function rebuildTree($data,$parent_id = 0){
+        if(isset($data) && count($data) > 0){
+            foreach($data as $key => $children){
+                if($parent_id == $children['parent_id']){
+                    $sum[] = [
+                       'name' => $children['name'],
+                       'value' => $children['id'],
+                       'children' => count($children['children']) ? self::rebuildTree($children['children'],$children['id']) : []
+                   ];
+                }
+            }
+             
+            return  $sum;
+        }
+    }
 }

@@ -67,6 +67,8 @@
                 window.location = "";
             }
         });
+
+        $('.sortable').sortable();
             var scrollTrigger = 60,
             backToTop = function() {
 
@@ -84,37 +86,37 @@
             })
 
             $('body').on('click','.ckfinder_3',function() {
-            let element = $(this);
-            let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
-            CKFinder.popup({
-            chooseFiles: true,
-            onInit : function(finder) {
-                finder.on( 'files:choose', function( evt ) {   
+                let element = $(this);
+                let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
+                CKFinder.popup({
+                chooseFiles: true,
+                onInit : function(finder) {
+                    finder.on( 'files:choose', function( evt ) {   
 
-                        var files = evt.data.files;
-                        var html = '';
-                        files.forEach( function( file, i ) {
-                            html += `
-                            <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
-                                <img height="120" src="${file.getUrl()}" width="150" alt="">
-                                <input type="hidden" name="album[]" value="${file.getUrl()}"/>
-                                <button type="button" class="trash_album btn bg-red" >
-                                    <i class="fas fa-trash text-white" ></i>
-                                </button >
-                            </li> 
-                            `
-                        });
-                        
-                        element.parents('.check_hidden_image_album').addClass('hidden');
-                        render.html(html);              
-                
-                } );
-                finder.on( 'file:choose:resizedImage', function( evt ) {
-                    // document.getElementById( 'url' ).value = evt.data.resizedUrl;
-                } );
-            }
-        });
-        })
+                            var files = evt.data.files;
+                            var html = '';
+                            files.forEach( function( file, i ) {
+                                html += `
+                                <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
+                                    <img height="120" src="${file.getUrl()}" width="150" alt="">
+                                    <input type="hidden" name="album[]" value="${file.getUrl()}"/>
+                                    <button type="button" class="trash_album btn bg-red" >
+                                        <i class="fas fa-trash text-white" ></i>
+                                    </button >
+                                </li> 
+                                `
+                            });
+                            
+                            element.parents('.check_hidden_image_album').addClass('hidden');
+                            render.html(html);              
+                    
+                    } );
+                    finder.on( 'file:choose:resizedImage', function( evt ) {
+                        // document.getElementById( 'url' ).value = evt.data.resizedUrl;
+                    } );
+                }
+                });
+            })
 
         $('body').on('click','.ckfinder_12',function() {
             let input = $(this).find('input');   
@@ -131,6 +133,42 @@
                     finder.on( 'file:choose:resizedImage', function( evt ) {
                         // document.getElementById( 'url' ).value = evt.data.resizedUrl;
                     });
+                }
+            });
+        })
+
+        //variant
+        $('body').on('click','.ckfinder',function(){
+            let element = $(this);
+            let id = element.data('id');
+            console.log(id)
+            let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
+            CKFinder.popup({
+            chooseFiles: true,
+            onInit : function(finder) {
+                finder.on( 'files:choose', function( evt ) {   
+
+                        var files = evt.data.files;
+                        var html = '';
+                        files.forEach( function( file, i ) {
+                            html += `
+                            <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
+                                <img height="120" src="${file.getUrl()}" width="150" alt="">
+                                <input type="hidden" name="variant_album[${id}][]" value="${file.getUrl()}"/>
+                                <button type="button" class="trash_album btn bg-red" >
+                                    <i class="fas fa-trash text-white" ></i>
+                                </button >
+                            </li> 
+                            `
+                        });
+                        
+                        element.parents('.check_hidden_image_album').addClass('hidden');
+                        render.html(html);              
+                
+                } );
+                finder.on( 'file:choose:resizedImage', function( evt ) {
+                    // document.getElementById( 'url' ).value = evt.data.resizedUrl;
+                } );
                 }
             });
         })

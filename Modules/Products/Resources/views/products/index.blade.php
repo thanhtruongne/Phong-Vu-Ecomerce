@@ -50,20 +50,14 @@
                    <div class="col-md-8 form-inline">
                       <form action="" class="form-inline w-100 form-search mb-3" id="form-search">
                            <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên thuộc tính --">
-                           <div class="" style="width: 28% !important;">
-                            <div class="tree_select_demo_main"></div>
-                            <input type="hidden" value="" id="category_product_main" name="category_product_main">
-                            {{-- <select name="category_id" id="" class="select2 mr-2" data-placeholder="-- Danh mục --" multiple>
-                                @foreach ($nodes as $item)
-                                    <option value="{{$item->id}}">   
-                                       {{ str_repeat('|---',($item->depth > 0) ? $item->depth : 0) }}
-                                       {{ $item->name }}
-                                   </option>
-                                @endforeach
-                          </select> --}}
-
+                           <div class="px-2" style="width: 28% !important;">
+                                <div class="tree_select_demo_main"></div>
+                                <input type="hidden" value="" id="category_product_main" name="category_product_main">
                            </div>
-                          
+                            <div class="px-2" style="width: 28% !important;">
+                                <div class="tree_select_attribute"></div>
+                                <input type="hidden" value="" id="attribute_ids" name="attribute_ids">
+                            </div>
                            {{-- <input type="hidden" name="category_id" id="category_id"> --}}
                            <button type="submit" class="btn"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                       </form>
@@ -100,8 +94,10 @@
                         <tr>    
                           <th data-field="index" data-align="center" data-width="5%" data-formatter="index_formatter">#</th> 
                             <th data-field="check" data-checkbox="true" data-width="4%"></th>
-                            <th data-field="name" data-width="20%" data-formatter="name_formatter">Tên thuộc tính</th>
-                            <th data-field="category_child" data-formatter="getModalCategory">Số lượng thuộc tính con</th>
+                            <th data-field="image" data-width="10%" data-formatter="image_formatted">Hình ảnh</th>
+                            <th data-field="name" data-width="50%" data-formatter="name_formatter">Tên sản phẩm</th>
+                            <th data-field="price" data-width="10%" >Giá tiền</th>
+                            <th data-field="category_name">Danh mục</th>
                             {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
                             <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
                         </tr>
@@ -183,16 +179,27 @@
     <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
     <script>
         function index_formatter(value, row, index) {
-            console.log(row);
             return (index+1);
         }
 
+
+
         function name_formatter(value,row,index){
-            return '<a class="overide" id="edit_'+row.id+'" href="#" onClick="edit('+row.id+')">'+ row.name +'</a>';
+            console.log(row)
+            return `<div>
+                        <a class="" href="'+row.edit_url+'">${row.name}</a>
+                        <div>
+                             <span class="fw-bold">Sku: ${row.sku}</span>
+                        </div>
+                         <div>
+                             <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>
+                        </div>
+                    </div>`;
         }
 
-        function getModalCategory(value,row,index){
-            return '<a id="row_'+row.id+'" class="overide" href="#" onClick="getModal('+ row.id +')">'+ row.category_child +'</a>';
+
+        function image_formatted(value,row,index){
+            return '<img src="'+value+'" width="100" height="100" class=""/>';
         }
 
 
@@ -304,10 +311,6 @@
 
         }
 
-            function treeSelect(value){
-                
-            }
-
             
           
 
@@ -394,7 +397,30 @@
 
             }
 
-    
+            const domElement1 = document.querySelector('.tree_select_demo_main')
+            const treeselect1 = new Treeselect({
+                parentHtmlContainer: domElement1,
+                value: [],
+                options: @json($productCateloge),
+                placeholder: '-- Chon danh mục sản phẩm --',
+                isSingleSelect: false,
+            })
+
+            treeselect1.srcElement.addEventListener('input', (e) => {
+                $('#category_product_main').val(e.detail );
+            })
+            const domElement2 = document.querySelector('.tree_select_attribute')
+            const treeselect2 = new Treeselect({
+                parentHtmlContainer: domElement2,
+                value: [],
+                options: @json($attributes),
+                placeholder: '-- Chon thuộc tính sản phẩm --',
+                isSingleSelect: false,
+            })
+
+            treeselect2.srcElement.addEventListener('input', (e) => {
+                $('#attribute_ids').val(e.detail );
+            })
 
 
     </script>

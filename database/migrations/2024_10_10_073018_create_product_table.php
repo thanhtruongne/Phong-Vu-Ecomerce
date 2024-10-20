@@ -16,11 +16,13 @@ return new class extends Migration
             $table->string('code',150);
             $table->string('name')->nullable();
             $table->longText('content')->nullable();
+            $table->bigInteger('qualnity')->default(0);
+            $table->bigInteger('views')->default(0);
             $table->longText('desc')->nullable();
             $table->longText('attribute')->nullable();
             $table->unsignedBigInteger('product_cateloge_id')->index();
             $table->tinyInteger('status')->default(1);
-            $table->float('price');
+            $table->bigInteger('price');
             $table->timestamps();
         });
     }
