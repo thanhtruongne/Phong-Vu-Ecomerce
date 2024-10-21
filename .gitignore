@@ -4,6 +4,7 @@
 /public/hot
 /public/storage
 /public/ckfinder
+/public/upload
 /public/public
 /storage/*.key
 /vendor

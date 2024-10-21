@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('product_variant', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('code',150);
             $table->string('sku',150)->unique();
             $table->unsignedBigInteger('user_id')->index();
             $table->unsignedBigInteger('product_id')->index();
@@ -22,7 +21,7 @@ return new class extends Migration
             $table->bigInteger('views')->default(0);
             $table->string('image')->nullable();
             $table->bigInteger('qualnity')->default(0);
-            $table->float('price');
+            $table->bigInteger('price');
             $table->longText('attribute')->nullable()->comment('cateloge => {item,item,item}');
             $table->tinyInteger('status')->default(1);
             $table->timestamps();

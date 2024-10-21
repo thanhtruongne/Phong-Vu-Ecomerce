@@ -89,7 +89,10 @@
                 </div>
                 <br>
 
-                <table class="tDefault table table-bordered bootstrap-table" >
+                <table class="tDefault table table-bordered bootstrap-table" 
+                    data-detail-view="true"
+                    data-detail-formatter="detailFormatter"
+                >
                     <thead>
                         <tr>    
                           <th data-field="index" data-align="center" data-width="5%" data-formatter="index_formatter">#</th> 
@@ -97,6 +100,8 @@
                             <th data-field="image" data-width="10%" data-formatter="image_formatted">Hình ảnh</th>
                             <th data-field="name" data-width="50%" data-formatter="name_formatter">Tên sản phẩm</th>
                             <th data-field="price" data-width="10%" >Giá tiền</th>
+                            <th data-field="views" data-width="10%" >Lượt xem</th>
+                            <th data-field="qualnity" data-width="10%">Số lượng</th>
                             <th data-field="category_name">Danh mục</th>
                             {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
                             <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
@@ -182,6 +187,12 @@
             return (index+1);
         }
 
+        function detailFormatter(index, row) {
+            var html = []
+            var rows = $('<nav>').addClass('tree-nav');
+            rows.html(row.variant_name ?? [])
+            return rows;
+        }
 
 
         function name_formatter(value,row,index){
@@ -215,7 +226,7 @@
         var table = new LoadBootstrapTable({
             locale: '{{ \App::getLocale() }}',
             url: '{{ route('private-system.product.getdata') }}',
-            remove_url: '{{ route('private-system.product-attribute.remove',['type' => "all"]) }}'
+            remove_url: '{{route('private-system.product.remove',['type' => 'all'])}}'
         });
 
         function deleteRow(id){

@@ -17,7 +17,9 @@ class Attribute extends Model
     //dạng fillable mặc định cho model cataloge
     protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name'];
 
-
+    public function products(){
+        return $this->belongsToMany(Products::class,'product_attribute_relation','attribute_id','product_id');
+    }
 
     public function getLftName()
     {

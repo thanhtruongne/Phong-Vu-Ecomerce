@@ -372,6 +372,7 @@
                 $('input[name="cost"]').prop('disabled',true);
                 $('input[name="qualnity"]').prop('disabled',true);
                 $('.render_attribute_parent').addClass('hidden');
+                $('.render_attribute_parent .attribute_item select').prop('disabled',true);
                 $('body .add_attribute').prop('disabled',true);
                 //variant
                 $('.variant_child').removeClass('hidden');
@@ -382,6 +383,7 @@
                 $('input[name="cost"]').prop('disabled',false);
                 $('input[name="qualnity"]').prop('disabled',false);
                 $('.render_attribute_parent').removeClass('hidden');
+                $('.render_attribute_parent .attribute_item select').prop('disabled',false);
                 $('body .add_attribute').prop('disabled',false);
                 $('.variant_child').addClass('hidden')
                 $('body .create_variant').prop('disabled',true)
@@ -415,7 +417,7 @@
                                     Mã SKU
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="text" class="form-control integerInput" name="sku[${sumAvg}][]">
+                                    <input type="text" class="form-control integerInput" name="sku[${sumAvg}]">
                                 </div>
                             </div>
                         </div>  
@@ -425,7 +427,7 @@
                                 <span class="text-danger">(*)</span>
                             </label>
                             <div class="col-md-8">
-                                <input type="text" class="form-control integerInput" name="qualnity[${sumAvg}][]">
+                                <input type="text" class="form-control integerInput" name="qualnity[${sumAvg}]">
                             </div>
                         </div>
                         <div class="form-group">
@@ -434,7 +436,7 @@
                                 <span class="text-danger">(*)</span>
                             </label>
                             <div class="col-md-8">
-                                <input  class="form-control number-format" name="cost[${sumAvg}][]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                <input  class="form-control number-format" name="cost[${sumAvg}]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                             </div>
                         </div>
                         <div class="form-group">
@@ -483,7 +485,7 @@
                             <span class="text-danger">(*)</span>
                         </label>
                         <div class="">
-                            <select name="[${parent_id}][attribute][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
+                            <select name="attribute[${parent_id}][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
                         </div>
                     </div>
                     <div style="margin-left:20px;"> <a onclick="removeVariant(${id})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
@@ -521,10 +523,16 @@
             dataType: 'json',
             success: function(result) {
                 console.log(result)
-                if(result.status){
+                if(result.status == 'success'){
                     show_message(result.message,result.status)
                     window.location.href = result.redirect;
                 }
+                else if(result.status == 'error'){
+                    $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
+                    show_message(result.message,result.status);
+                    return false;
+                }
+
                 $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
             }
         }).fail(function(result) {
