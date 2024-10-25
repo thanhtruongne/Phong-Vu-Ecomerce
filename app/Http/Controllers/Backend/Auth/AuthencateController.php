@@ -116,11 +116,12 @@ class AuthencateController extends Controller
         }
         $sessionId = session()->getId();
         session()->flush();
-        $this->guard()->logout();
+        auth()->logout();
+        // $this->guard('web')->logout();
         $request->session()->invalidate();
 
         UserActivities::endUserActivityDuration(\Auth::id(),$sessionId);
-        return  redirect(route('be.login.template'));
+        return  redirect(route('private-system.be.login.template'));
     }
 
     public function showLoginForm()

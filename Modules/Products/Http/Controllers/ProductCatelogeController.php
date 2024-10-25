@@ -19,21 +19,6 @@ class ProductCatelogeController extends Controller
         return view('products::cateloge.index',['categories' => $data]);
     }
     
-    private function rebuildTree($categories,$parent_id = 0){
-        if(isset($categories) && count($categories) > 0){
-            foreach($categories as $key => $children){
-                if($parent_id == $children['parent_id']){
-                    $data[] = [
-                       'name' => $children['name'],
-                       'value' => $children['id'],
-                       'children' => count($children['children']) ?  $this->rebuildTree($children['children'],$children['id']) : []
-                   ];
-                }
-            }
-             
-            return  $data;
-        }
-    }
 
 
     public function getData(Request $request){

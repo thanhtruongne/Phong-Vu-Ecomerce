@@ -10,6 +10,7 @@ class Authenticate
 {
     public function handle(Request $request, Closure $next)
     {
+        // dd(\Auth::check());
         if (!\Auth::check()) {
             if ($request->ajax()){
                 if(!session()->has('target_url')){

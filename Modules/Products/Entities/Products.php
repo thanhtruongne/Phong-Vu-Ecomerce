@@ -17,7 +17,7 @@ class Products extends Model
         'galley',
         'status',    
         'product_cateloge_id',
-        'attribute',
+        // 'attribu/ste////
         'variant',
         'code_product',
         'price',
@@ -25,12 +25,13 @@ class Products extends Model
         'content',
         'desc',
         'qualnity',
+        'attributeFilter',
         'sku',
     ];
 
-    protected $casts = [
-       'attribute' => 'json',
-    ];
+    // protected $casts = [
+    //    'attribute' => 'json',
+    // ];
     
 
     public function product_cataloge() {
@@ -43,7 +44,23 @@ class Products extends Model
     // }
     
     public function product_variant() {
-        return $this->hasMany(ProductVariant::class,'product_id','id')->with('attributes');
+        return $this->hasMany(ProductVariant::class,'product_id','id');
+    }
+
+    public function attributes(){
+        return $this->belongsToMany(Attribute::class,'product_attribute_relation','product_id','attribute_id');
+    }
+
+
+    public static function getAttributeName(){
+        return [
+            'name' => 'Tên sản phẩm',
+            'cost' => 'Giá sản phẩm',
+            'desc' => 'Mô tả sản phẩm',
+            'content' => 'Nội dung sản phẩm',
+            'album'=> 'Ảnh sản phẩm',
+            'category_id' => 'Danh mục sản phẩm'
+        ];
     }
 }
 
