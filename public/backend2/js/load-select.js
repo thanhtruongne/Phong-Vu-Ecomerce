@@ -11,8 +11,6 @@ $(document).ready(function(){
         },
     });
 
-
-
     $('.load-product-categories-by-code').select2({
         allowClear: true,
         dropdownAutoWidth : true,

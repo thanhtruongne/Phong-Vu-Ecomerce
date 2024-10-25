@@ -17,9 +17,16 @@ use Modules\Products\Http\Controllers\ProductsController;
     Route::get('/login',[AuthencateController::class,'index'])->name('be.login.template');
     Route::post('/login',[AuthencateController::class,'login'])->name('be.login');
 
+    Route::match(['get', 'post'], 'logout',[AuthencateController::class,'logout'] )->name('logout');
+
+
+
+    // Route::post('/logout',[AuthencateController::class,'logout'])->name('logout');
     Route::middleware(['auth','isAdmin'])->group(function(){
+
+       
         Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
-        Route::get('/logout',[AuthencateController::class,'logout'])->name('logout');
+        // Route::post('/logout',[AuthencateController::class,'logout'])->name('logout');
 
         //categories boa gồm các danh mcu5 sản phẩm
         Route::get('/categories',[CategoriesController::class,'index'])->name('categories');
@@ -62,13 +69,14 @@ use Modules\Products\Http\Controllers\ProductsController;
         Route::get('/product',[ProductsController::class,'index'])->name('product');
         Route::get('/product/get-data',[ProductsController::class,'getData'])->name('product.getdata'); 
         Route::get('/product/create',[ProductsController::class,'form'])->name('product.create'); 
+        Route::get('/product/edit/{id}',[ProductsController::class,'form'])->name('product.edit'); 
         Route::post('/product/save',[ProductsController::class,'save'])->name('product.save'); 
         Route::post('/product/remove',[ProductsController::class,'remove'])->name('product.remove'); 
+        Route::post('/product/remove_variant',[ProductsController::class,'remove_variant'])->name('product.remove_variant'); 
+      
+        
         
         Route::get('load-ajax/{func}',[AjaxLoaderController::class,'load_ajax'])->name('load_ajax');
-        
-        
-        
         
         
         

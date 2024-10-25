@@ -11,7 +11,7 @@ class AjaxLoaderController extends Controller
 {
   public function load_ajax($func,Request $request)
   {
-    if (method_exists($this, $func) && \Auth::check()) {
+    if (method_exists($this, $func)) {
         $this->{$func}($request);
         exit();
     }
@@ -31,7 +31,7 @@ class AjaxLoaderController extends Controller
 
       $query->orderBy('id', 'desc');
       $paginate = $query->paginate(10);
-      $data['results'] = $query->select('id', 'name AS text')->get();;
+      $data['results'] = $query->select('id', 'name AS text')->get();
       if ($paginate->nextPageUrl()) {
           $data['pagination'] = ['more' => true];
       }
@@ -56,7 +56,7 @@ class AjaxLoaderController extends Controller
     $query->orderBy('id', 'desc');
     $query->where('status',1);
     $paginate = $query->paginate(10);
-    $data['results'] = $query->select('id', 'name AS text')->get();;
+    $data['results'] = $query->select('id', 'name AS text')->get();
     if ($paginate->nextPageUrl()) {
         $data['pagination'] = ['more' => true];
     }

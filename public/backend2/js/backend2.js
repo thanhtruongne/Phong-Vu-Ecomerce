@@ -162,17 +162,17 @@ class LoadBootstrapTable {
 }
 
 $(document).ready(function(){
-    $('.select2').select2({
-        allowClear: true,
-        dropdownAutoWidth : true,
-        width: '100%',
-        placeholder: function(params) {
-            return {
-                id: null,
-                text: params.placeholder,
-            }
-        },
-    });
+    // $('.select2').select2({
+    //     allowClear: true,
+    //     dropdownAutoWidth : true,
+    //     width: '100%',
+    //     placeholder: function(params) {
+    //         return {
+    //             id: null,
+    //             text: params.placeholder,
+    //         }
+    //     },
+    // });
     $("body").on('input', '.integerInput', function () {
         $(this).val($(this).val().replace(/[^0-9]/gi, ''));
     });

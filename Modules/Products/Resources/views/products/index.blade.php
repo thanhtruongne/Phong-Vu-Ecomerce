@@ -49,7 +49,7 @@
                   {{-- Tìm kiếm --}}
                    <div class="col-md-8 form-inline">
                       <form action="" class="form-inline w-100 form-search mb-3" id="form-search">
-                           <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên thuộc tính --">
+                           <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên sản phẩm --">
                            <div class="px-2" style="width: 28% !important;">
                                 <div class="tree_select_demo_main"></div>
                                 <input type="hidden" value="" id="category_product_main" name="category_product_main">
@@ -198,7 +198,7 @@
         function name_formatter(value,row,index){
             console.log(row)
             return `<div>
-                        <a class="" href="'+row.edit_url+'">${row.name}</a>
+                        <a class="" href="${row.edit_url}">${row.name}</a>
                         <div>
                              <span class="fw-bold">Sku: ${row.sku}</span>
                         </div>
@@ -243,13 +243,12 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{route('private-system.product-attribute.remove')}}',
+                        url: '{{route('private-system.product.remove_variant')}}',
                         dataType: 'json',
                         data : {
                         'id' : id
                         }
                     }).done(function(result){
-                        console.log(result);
                         show_message(result.message, result.status);
                         $(table.table).bootstrapTable('refresh');
                     }).fail(function(data) {

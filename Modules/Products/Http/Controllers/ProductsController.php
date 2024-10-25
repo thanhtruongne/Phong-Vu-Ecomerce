@@ -35,16 +35,21 @@ class ProductsController extends Controller
         $query = Products::query();
         $query->from('product as a');
         $query->select(['a.*']);
-        // $query->leftJoin('product_variant as b','b.product_id','=','a.id');   
+        $query->leftJoin('product_attribute_relation as b','b.product_id','=','a.id');
+        $query->leftJoin('attribute as c','c.id','=','b.attribute_id');
+        $query->leftJoin('product_cateloge as d','d.id','=','a.product_cateloge_id');
         // // $query->whereExists(function($subquery) {
         //   return  $subquery->leftJoin('product_variant as b','b.product_id','=','a.id');   
         // });
         if($search){
-            $query->where('a.name','like','&'.$search.'%');
+            $query->where('a.name','like','%'.$search.'%');
             // $query->orWhere('b.name as product_variant_name','like','&'.$search.'%');
         }
         if($attribute_ids){
-            $query->whereJsonContains('attribute',$attribute_ids);
+            $query->whereIn('b.attribute_id',$attribute_ids);
+        }
+        if($category_product_main){
+            $query->whereIn('d.id',$category_product_main);
         }
         $query->orderBy($sort,$order);
         $query->offset($offset);
@@ -56,7 +61,7 @@ class ProductsController extends Controller
         foreach($rows as $row) {
             $attribute = array_keys(get_object_vars(json_decode($row->attributeFilter)));
             $nameAttribute = Attribute::whereIn('id',$attribute)->pluck('name')->toArray();
-            $row->edit_url = route('private-system.product-cateloge.edit',['id'=> $row->id]);
+            $row->edit_url = route('private-system.product.edit',['id' => $row->id]);
             $row->price = numberFormat($row->price);
             $row->category_name = ProductCateloge::whereId($row->product_cateloge_id)->value('name');
             $row->attribute_name = implode(' - ',$nameAttribute);
@@ -72,13 +77,31 @@ class ProductsController extends Controller
     }
 
 
-    public function form(Request $request){
+    public function form($id = null){
         $data = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
         $categories = $this->rebuildTree($data);
-        if($request->id){
-           
+        $model = Products::firstOrNew(['id' => $id]);
+        if($model){
+            $model->price = numberFormat($model->price);
+            if($model->product_variant){
+                foreach($model->product_variant as $item){
+                    $attributes = json_decode($item->attribute);
+                    $data = [];
+                    foreach($attributes as $attribute){
+                        $val = Attribute::where('id',$attribute)->first();
+                        $data[] = [
+                            'parent_name' => $val->ancestors->first()->name,
+                            'id' => $val->id,
+                            'name' => $val->name,
+                            'parent_id' => $val->parent_id
+                        ];
+                    }
+                    $model->attribute = $data;
+                }
+                $model->album = json_decode($model->album);
+            }
         }
-        return view('products::products.form',['categories' => $categories]);
+        return view('products::products.form',['categories' => $categories , 'model' => $model]);
     }
 
     private function renderHTML($row){
@@ -127,7 +150,7 @@ class ProductsController extends Controller
         //  tạo variant
         if($request->is_single){
             $attribute = $request->attribute;
-            $model->fill($request->except(['sku','qualnity','image','attribute']));
+            $model->fill($request->except(['sku','qu`alnity','image','attribute']));
             $model->is_single = 2;
             $model->code = \Str::random(10);
             $arrAttribute = array_unique(array_merge(...$attribute ?: []));
@@ -161,10 +184,17 @@ class ProductsController extends Controller
              $model->fill($request->except(['attribute']));
              $model->product_cateloge_id = $request->category_id;
              $attribute = Attribute::whereIn('id',$request->attribute)->get(['id','name','parent_id']);
-             $model->name = $request->name.' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
+             if($request->id){
+                $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
+                if($name)
+                    $model->name = $name[0] . ' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
+                else 
+                    $model->name = $request->name.' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
+             }
+             else $model->name = $request->name.' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
              // lưu các giá trị attribute khi filters
              $model->attributeFilter = json_encode($attribute->pluck('id','parent_id')->toArray());
-             $model->price = (int)str_replace('.','',$request->cost);
+             $model->price = (int)str_replace([',','.'],'',$request->cost);
              $model->galley = json_encode($request->album);    
              if($model->save()){
                 $model->attributes()->sync((array_unique($request->attribute ?: [])));
@@ -187,6 +217,18 @@ class ProductsController extends Controller
             }
         }
         return response()->json(['status' => 'success','message' => 'Xóa sản phẩm thành công']);
+      
+    }
+
+    public function remove_variant(Request $request){
+        // if($request->type && $request->type == 'all'){
+            $id = $request->input('id', null);
+            // foreach ($ids as $id){
+            $model = ProductVariant::find($id);
+            $model->delete();
+            // }
+        // }
+        return response()->json(['status' => 'success','message' => 'Xóa sản phẩm variant thành công']);
       
     }
 
