@@ -30,7 +30,7 @@ class ProductCatelogeController extends Controller
         // $limit = $request->input('limit',20);
         
         $query = ProductCateloge::query();
-        $query->select(['name','status','parent_id','id']);
+        // $query->select(['name','status','parent_id','id']);
         if($search){
             $query->where('name','like','%'.$search.'%');
         }
@@ -42,7 +42,10 @@ class ProductCatelogeController extends Controller
         // $query->offset($offset);
         // $query->limit($limit);
         $count = $query->count();
-        $rows = $query->get()->toTree();
+        if($category_product_main)
+            $rows = $query->get();
+        else
+            $rows = $query->get()->toTree();
         foreach($rows as $row){
             $row->category_child = count($row->children);
             // $row->edit_url= route('ProductCateloge.edit',['id' => $row->id]);
@@ -143,22 +146,15 @@ class ProductCatelogeController extends Controller
 
 
     public function save(Request $request){
-        $rules = [
-            'name' => 'required',
-            // 'type' => 'required',
-            'status' => 'required',
-        ];
-        $messages = [
-            'name.required' => 'Tên danh mục không được bỏ trống',
-            // 'type.required' => 'Loại danh mục không được bỏ trống',
-            'status.required' => 'Trạng thái bắt buộc chọn',
-        ];
-        $validator = \Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->all()[0] , 'status' => 'error']);
-        }
+        $this->validateRequest(
+            [   
+                'name' => 'required',
+                'status' => 'required'
+            ],$request,ProductCateloge::getAttributeName()
+        );
         $model = ProductCateloge::firstOrCreate(['id' => $request->id]);
         $model->name = $request->name;
+        $model->ikey =\Str::slug($request->name);
         $model->status = $request->status;
         $model->save();
 

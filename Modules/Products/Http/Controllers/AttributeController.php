@@ -24,12 +24,12 @@ class AttributeController extends Controller
         $search = $request->input('search');
         $category_product_main = $request->input('category_product_main');
         $sort = $request->input('sort','id');
-        $order = $request->input('order','desc');
+        $order = $request->input('order','');
         // $offset = $request->input('offset',0);
         // $limit = $request->input('limit',20);
         
         $query = Attribute::query();
-        $query->select(['name','status','parent_id','id']);
+        // $query->select(['name','status','parent_id','id']);
         if($search){
             $query->where('name','like','%'.$search.'%');
         }
@@ -37,11 +37,15 @@ class AttributeController extends Controller
             $query->whereIn('id',explode(',',$category_product_main));
         }
         // $query->whereNull('parent_id');
-        $query->orderBy($sort,$order);
+        $query->orderBy($sort,'desc');
         // $query->offset($offset);
         // $query->limit($limit);
         $count = $query->count();
-        $rows = $query->get()->toTree();
+        if($category_product_main)
+            $rows = $query->get();
+        else
+            $rows = $query->get()->toTree();
+      
         foreach($rows as $row){
             $row->category_child = count($row->children);
             // $row->edit_url= route('ProductCateloge.edit',['id' => $row->id]);
@@ -140,25 +144,17 @@ class AttributeController extends Controller
         return response()->json(['status' => 'error','message' => 'Có lỗi xảy ra !']);
     }
 
-
     public function save(Request $request){
-        $rules = [
-            'name' => 'required',
-            // 'type' => 'required',
-            'status' => 'required',
-        ];
-        $messages = [
-            'name.required' => 'Tên danh mục không được bỏ trống',
-            // 'type.required' => 'Loại danh mục không được bỏ trống',
-            'status.required' => 'Trạng thái bắt buộc chọn',
-        ];
-        $validator = \Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->all()[0] , 'status' => 'error']);
-        }
+        $this->validateRequest(
+            [   
+                'name' => 'required',
+                'status' => 'required'
+            ],$request,Attribute::getAttributeName()
+        );
+        
         $model = Attribute::firstOrCreate(['id' => $request->id]);
-        $model->name = $request->name;
-        $model->status = $request->status;
+        $model->ikey =\Str::slug($request->name);
+        $model->fill($request->all());
         $model->save();
 
         if($request->category_parent_id){
@@ -167,6 +163,33 @@ class AttributeController extends Controller
         }
         return response()->json(['message' => 'Lưu thành công' , 'status' => 'success']);
     }
+
+    // public function save(Request $request){
+    //     $rules = [
+    //         'name' => 'required',
+    //         // 'type' => 'required',
+    //         'status' => 'required',
+    //     ];
+    //     $messages = [
+    //         'name.required' => 'Tên danh mục không được bỏ trống',
+    //         // 'type.required' => 'Loại danh mục không được bỏ trống',
+    //         'status.required' => 'Trạng thái bắt buộc chọn',
+    //     ];
+    //     $validator = \Validator::make($request->all(), $rules, $messages);
+    //     if ($validator->fails()) {
+    //         return response()->json(['message' => $validator->errors()->all()[0] , 'status' => 'error']);
+    //     }
+    //     $model = Attribute::firstOrCreate(['id' => $request->id]);
+    //     $model->name = $request->name;
+    //     $model->status = $request->status;
+    //     $model->save();
+
+    //     if($request->category_parent_id){
+    //         $parent = Attribute::find($request->category_parent_id);
+    //         $parent->appendNode($model);
+    //     }
+    //     return response()->json(['message' => 'Lưu thành công' , 'status' => 'success']);
+    // }
 
 
  

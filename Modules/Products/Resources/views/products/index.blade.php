@@ -47,7 +47,7 @@
             <div class="">
                 <div class="row">
                   {{-- Tìm kiếm --}}
-                   <div class="col-md-8 form-inline">
+                   <div class="col-md-6 form-inline">
                       <form action="" class="form-inline w-100 form-search mb-3" id="form-search">
                            <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên sản phẩm --">
                            <div class="px-2" style="width: 28% !important;">
@@ -64,7 +64,7 @@
                    </div>
 
 
-                   <div class="col-md-4 text-right ">
+                   <div class="col-md-6 text-right ">
                          <div class="">
                             <div class="btn_group">
                                 <button class="btn" id="publish_on" onclick="changeStatus(1,'publish_on')" data-status="1">
@@ -74,10 +74,30 @@
                                     <i class="fa fa-check-circle"></i> &nbsp;Tắt
                                 </button>
                                 <a class="btn"><i class="fa fa-download"></i> Xuất file</a>
-                                <a href="{{route('private-system.product.create')}}" class="btn" href="#">
-                                    <i class="fa fa-plus"></i> 
-                                    Thêm mới
-                                </a>
+                                <div class="dropdown d-inline">
+                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownAddNew" aria-haspopup="true" aria-expanded="true">
+                                        Thêm mới
+                                    </button>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownAddNew" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(3px, 32px, 0px);">
+                                        <a href="{{route('private-system.product.create',['type' => 'laptop'])}}" class="dropdown-item" href="#">
+                                            <i class="fa fa-plus"></i> 
+                                             Laptop
+                                        </a>
+                                        <a href="{{route('private-system.product.create',['type' =>'electric'])}}" class="dropdown-item" href="#">
+                                            <i class="fa fa-plus"></i> 
+                                             Điện máy
+                                        </a>
+                                        <a href="{{route('private-system.product.create',['type' => 'accessory'])}}" class="dropdown-item" href="#">
+                                            <i class="fa fa-plus"></i> 
+                                             Phụ kiện
+                                        </a>
+                                        <a href="{{route('private-system.product.create',['type' => 'phone'])}}" class="dropdown-item" href="#">
+                                            <i class="fa fa-plus"></i> 
+                                             Điện thoại
+                                        </a>
+                                    </div>
+                                </div>
+                              
 
                                 <button class="btn" id="delete-item" disabled>
                                     <i class="fa fa-trash"></i> 

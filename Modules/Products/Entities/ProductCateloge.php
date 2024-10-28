@@ -13,7 +13,7 @@ class ProductCateloge extends Model
     protected $table = 'product_cateloge';
     protected $primaryKey = 'id';
     //dạng fillable mặc định cho model cataloge
-    protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name'];
+    protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name','ikey'];
 
 
 
@@ -36,5 +36,12 @@ class ProductCateloge extends Model
     public function setParentAttribute($value)
     {
         $this->setParentIdAttribute($value);   
+    }
+
+    public static function getAttributeName(){
+        return [
+            'name' => 'Tên danh mục sản phẩm',
+            'status' => 'Trạng thái sản phẩm',
+        ];
     }
 }

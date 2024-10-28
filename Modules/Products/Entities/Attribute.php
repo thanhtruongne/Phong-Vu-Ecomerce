@@ -44,4 +44,12 @@ class Attribute extends Model
     {
         $this->setParentIdAttribute($value);   
     }
+
+
+    public static function getAttributeName(){
+        return [
+            'name' => 'Tên thuộc tính',
+            'status' => 'Trạng thái thuộc tính'
+        ];
+    }
 }

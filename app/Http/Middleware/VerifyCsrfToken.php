@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         '/login',
         '/logout',
+        'ckfinder/*',
     ];
 
     protected function addCookieToResponse($request, $response)

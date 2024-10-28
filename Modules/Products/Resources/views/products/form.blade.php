@@ -96,7 +96,7 @@
                                                 Mô tả
                                             </label>
                                             <div class="col-md-8">
-                                                <textarea name="desc" class="editor" data-target="desc" id="desc" cols="30" rows="10">{{$model->desc}}</textarea>
+                                                <textarea name="desc" class="editor" data-target="desc" id="editor1" cols="30" rows="10">{{$model->desc}}</textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -225,6 +225,18 @@
 
                                         <div class="form-group">
                                             <label for="" class="col-sm-8 control-label">
+                                                Thuộc tính sản phẩm
+                                               <span class="text-danger">(*)</span>
+                                            </label>
+                                            <div class="col-md-8">
+                                               <div class="tree_select_demo_main_category"></div>
+                                               <input type="hidden" value="" name="categories_main_id" id="categories_main_id">
+                                            </div>
+                                        </div>
+
+                                        
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-8 control-label">
                                                Danh mục sản phẩm
                                                <span class="text-danger">(*)</span>
                                             </label>
@@ -233,6 +245,7 @@
                                                <input type="hidden" value="{{$model->product_cateloge_id}}" name="category_id" id="category_id">
                                             </div>
                                         </div>
+                                        
                                         <div class="form-group row">
                                             <div class="col-md-8 text-right">
                                                 <div class="dropdown">
@@ -292,8 +305,6 @@
             </div>
         </div> 
 
-
-
 @endsection
 
 @section('scripts')
@@ -303,7 +314,7 @@
     $(document).ready(function(){
         function load_attrbute(id = null){
             if(id){
-                $('#load-attribute-custom_'+id).select2({
+                $('.load-attribute-custom_'+id).select2({
                     allowClear: true,
                     dropdownAutoWidth : true,
                     width: '100%',
@@ -368,7 +379,6 @@
           if(@json($model) && @json($model->is_single) != 2){
               let render = $('.render_attribute_parent');
               $.each(@json($model->attributes),function(index,value){
-                  console.log(value);
                   render.append(`
                       <div class="form-group d-flex algin-items-center attribute_item">
                           <div style="width:65%">
@@ -377,14 +387,14 @@
                                   <span class="text-danger">(*)</span>
                               </label>
                               <div class="">
-                                  <select name="attribute[]" class="form-control" id="load-attribute-custom_${value.id}" data-parent="${value.parent_id}" data-placeholder="-- ${value.parent_name} --"> 
+                                  <select name="attribute[]" class="form-control load-attribute-custom" id="" data-parent="${value.parent_id}" data-placeholder="-- ${value.parent_name} --"> 
                                        <option value="${value.id}" selected>${value.name}</option>
                                   </select>
                               </div>
                           </div>
                           <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
                       </div>`);
-                      load_attrbute(value.id);
+                      load_attrbute();
                   })
           }
           else {
@@ -397,10 +407,10 @@
                 let html = '';
                 let arr = [];
                 //load attributes variant
-                $.each(variants.attribute,function(key,item){
+                $.each(value.attribute,function(key,item){
                     countStep++;
-                    arr.push(item.id)
-                    attributeHtml .= `
+                    arr.push(item.parent_id)
+                    attributeHtml += `
                         <div style="padding: 0 7.5px;" class="form-group d-flex align-items-center attribute_item_variant_${countStep}">
                             <div style="width:30%">
                                 <label for="" class="control-label fw-bold">
@@ -409,22 +419,26 @@
                                 </label>
                                 <div class="">
                                     <select name="attribute[${index}][]" class="form-control load-attribute-custom" data-parent="${item.parent_id}" data-placeholder="-- ${item.parent_name} --">
-                                        <option value=""${item.id}" selected>${item.name}</option>
+                                        <option value="${item.id}" selected>${item.name}</option>
                                     </select>
                                 </div>
                             </div>
-                            <div style="margin-left:20px;"> <a onclick="removeVariant(${countStep})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
+                            <div style="margin-left:20px;"> <a onclick="removeCustomVariant(${item.parent_id},${countStep})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
                         </div> `
+                    load_attrbute();
                 })
+            
                 // load variant
                 $.each(@json($attributes),function(calc,attribute){
-                    html += `<a class="dropdown-item ${arr.includes(attriubte['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${item['id']},${index})" data-id="${index}" data-parent="${item['id']}" >${item['name']}</a>`
+                    console.log(arr,attribute);
+                    html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
                 })
                 //load hình ảnh
                 // let album = JSON.parse()
                 let album = '';
-                $(value.album,function(i,image){
-                  album.=`
+     
+                $.each(value.album,function(i,image){
+                  album += `
                     <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
                         <img height="120" src="${image}" width="150" alt="">
                         <input type="hidden" name="variant_album[${index}][]" value="${image}"/>
@@ -444,7 +458,7 @@
                             </div>
                         <div class="col-md-8" style="border:1px solid #ccc; border-radius:8px;padding:15px;">
                             <div class="form-group item_variant_${index}">
-                            
+                                 ${attributeHtml}
                             </div>   
                             <div>
                                 <div class="form-group item_variant_attribute_${index}">
@@ -463,7 +477,7 @@
                                         <span class="text-danger">(*)</span>
                                     </label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control  value="${value.qualnity}" integerInput" name="qualnity[${index}]">
+                                        <input type="text" class="form-control integerInput" value="${value.qualnity}" name="qualnity[${index}]">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -481,7 +495,7 @@
                                     </label>
                                     <div class="col-md-12">
                                         <div class="text-center" style="border: 1px solid #ccc">
-                                            <div class="check_hidden_image_album">
+                                            <div class="check_hidden_image_album ${album != null ? 'hidden' :''}">
                                                 <img class="ckfinder" data-id="${index}" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
                                             </div>
                                             <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
@@ -505,7 +519,7 @@
                         </div>   
                     </div>
                 `)
-               
+                load_attrbute();
             })
           }
       }
@@ -544,7 +558,13 @@
           
            
         })
-
+        
+        function removeCustomVariant(id,parent){
+          let attribute = $('.attribute_item_variant_'+parent);
+          let parents = $(attribute).parents('.variant_item_attribute_pa');
+          let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
+          $(attribute).remove();
+        }
  
         
 
@@ -554,10 +574,11 @@
                 let find = $('body .attribute_choose[data-parent="'+id+'"]');
                 find.removeClass('disabled');
                 let menu = $('body .toggle_attribute');
-                arrIds = arrIds.filter(function(r){
-                    return r !== id;
-                })
-                _this.parents('.attribute_item').remove();
+                console.log(arrIds,id,_find,menu);
+                // arrIds = arrIds.filter(function(r){
+                //     return r !== id;
+                // })
+                // _this.parents('.attribute_item').remove();
         })
  
 
@@ -577,12 +598,26 @@
             parentHtmlContainer: domElement,
             value: @json($model) ? @json($model->product_cateloge_id) :  [],
             options: @json($categories),
-            placeholder: '-- Chon danh mục sản phẩm --',
+            placeholder:  '-- Chon danh mục sản phẩm --',
             isSingleSelect: true,
         })
 
         treeselect.srcElement.addEventListener('input', (e) => {
             $('#category_id').val(e.detail );
+        })
+
+
+        const domElement2 = document.querySelector('.tree_select_demo_main_category')
+        const treeselect2 = new Treeselect({
+            parentHtmlContainer: domElement2,
+            value: [],
+            options: @json($category_main),
+            placeholder: '-- Chon thuộc tính sản phẩm --',
+            isSingleSelect: false,
+        })
+
+        treeselect2.srcElement.addEventListener('input', (e) => {
+            $('#categories_main_id').val(e.detail );
         })
 
 
@@ -712,15 +747,43 @@
                     <div style="margin-left:20px;"> <a onclick="removeVariant(${id})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
                 </div>`);
             $(hrefItem).addClass('disabled');
-            load_attrbute();
+            loadCustom()
+       }
+       function loadCustom(){
+            $('.load-attribute-custom').select2({
+                allowClear: true,
+                dropdownAutoWidth : true,
+                width: '100%',
+                placeholder: function(params) {
+                    return {
+                        id: null,
+                        text: params.placeholder,
+                    }
+                },
+                ajax: {
+                    method: 'GET',
+                    url: base_url + '/load-ajax/loadAttribute',
+                    dataType: 'json',
+                    data: function (params) {
+
+                        var query = {
+                            search: $.trim(params.term),
+                            page: params.page,
+                            parent_id: $(this).data('parent'),
+                        };
+
+                        return query;
+                    }
+                }
+
+            })
        }
 
        function removeVariant(id){
           let attribute = $('.attribute_item_variant_'+id);
           let parents = $(attribute).parents('.variant_item_attribute_pa');
           let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
-          $(attribute).remove();
-
+            $(attribute).remove();
        }
 
        $('#form-create-product').submit(function(e){

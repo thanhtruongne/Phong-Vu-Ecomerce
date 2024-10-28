@@ -1,6 +1,7 @@
 <?php
 namespace  Modules\Products\Entities;
 
+use App\Models\Categories;
 use App\Trait\QueryScopes;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -52,6 +53,12 @@ class Products extends Model
     }
 
 
+    public function categories(){
+        return $this->belongsToMany(Categories::class,'product_cateloge_product','product_id','categories_id');
+    }
+
+
+
     public static function getAttributeName(){
         return [
             'name' => 'Tên sản phẩm',
@@ -59,7 +66,8 @@ class Products extends Model
             'desc' => 'Mô tả sản phẩm',
             'content' => 'Nội dung sản phẩm',
             'album'=> 'Ảnh sản phẩm',
-            'category_id' => 'Danh mục sản phẩm'
+            'category_id' => 'Thuộc tính sản phẩm',
+            'categories_main_id' => 'Danh mục sản phẩm',
         ];
     }
 }

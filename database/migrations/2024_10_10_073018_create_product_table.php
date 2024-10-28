@@ -23,6 +23,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_cateloge_id')->index();
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('price');
+            $table->tinyInteger('type')->nullable();
             $table->timestamps();
         });
     }

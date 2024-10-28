@@ -142,11 +142,17 @@
                                         <label>Tên danh mục<span class="text-danger">*</span></label>
                                     </div>
                                     <div class="col-md-7">
-                                        <input name="name" type="text" class="form-control" value=""
-                                            required>
+                                        <input name="name" type="text" class="form-control" value="" required>
                                     </div>
                                 </div>
-
+                                <div class="form-group row">
+                                    <div class="col-sm-4 control-label">
+                                        <label>Đường dẫn<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <input name="url" type="text" class="form-control" value="">
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
                                         <label>Danh mục cha</label>
@@ -375,6 +381,7 @@
                 $('#exampleModalLabel').html('Chỉnh sửa');
                 $("input[name=id]").val(data.model.id);
                 $("input[name=name]").val(data.model.name);
+                $("input[name=url]").val(data.model.url);
                 treeSelect(data.model.parent_id);
 
                 if (data.model.type) {

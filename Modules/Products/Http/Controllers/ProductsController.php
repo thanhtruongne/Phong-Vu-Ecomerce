@@ -61,7 +61,7 @@ class ProductsController extends Controller
         foreach($rows as $row) {
             $attribute = array_keys(get_object_vars(json_decode($row->attributeFilter)));
             $nameAttribute = Attribute::whereIn('id',$attribute)->pluck('name')->toArray();
-            $row->edit_url = route('private-system.product.edit',['id' => $row->id]);
+            // $row->edit_url = route('private-system.product.edit',['id' => $row->id,'type' => ]);
             $row->price = numberFormat($row->price);
             $row->category_name = ProductCateloge::whereId($row->product_cateloge_id)->value('name');
             $row->attribute_name = implode(' - ',$nameAttribute);
@@ -77,9 +77,14 @@ class ProductsController extends Controller
     }
 
 
-    public function form($id = null){
-        $data = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
-        $categories = $this->rebuildTree($data);
+    public function form(Request $request,$id = null){
+        if(!$request->type || is_numeric($request->type) || !in_array($request->type,['laptop','phone','electric','accessory'])){
+            abort(404);
+        }
+        $type = $request->type;
+        $dataId = ProductCateloge::where('ikey',$type)->value('id');
+        $categories = ProductCateloge::descendantsOf($dataId)->toTree($dataId)->toArray();
+        $data = $this->rebuildTree($categories);
         $model = Products::firstOrNew(['id' => $id]);
         if($model){
             $model->price = numberFormat($model->price);
@@ -96,12 +101,14 @@ class ProductsController extends Controller
                             'parent_id' => $val->parent_id
                         ];
                     }
-                    $model->attribute = $data;
+                    $item->attribute = $data;
+                    $item->album = json_decode($item->album);
                 }
-                $model->album = json_decode($model->album);
             }
         }
-        return view('products::products.form',['categories' => $categories , 'model' => $model]);
+        $categories_main = Categories::where('ikey',$type)->value('id');
+        $dataMain = $this->rebuildTree(Categories::descendantsOf($categories_main)->toTree($categories_main)->toArray());
+        return view('products::products.form',['categories' => $data ,'category_main' => $dataMain, 'model' => $model]);
     }
 
     private function renderHTML($row){
@@ -143,7 +150,8 @@ class ProductsController extends Controller
                 'content' => 'required',
                 'album' => 'required',
                 'image' => 'required',
-                'category_id' => 'required'
+                'category_id' => 'required',
+                'categories_main_id' => 'required'
              ],$request,Products::getAttributeName());
          }
          $model = Products::firstOrNew(['id' => $request->id]);
@@ -180,9 +188,16 @@ class ProductsController extends Controller
         }
          
          else {
+            dd($request->all());
              $model = Products::firstOrNew(['id' => $request->id]);
+             $categories_main = explode(',',$request->categories_main_id);
+             foreach($categories_main as $item){
+                 dd(Categories::where('id',$item)->first()->toTree());
+                 // if(!$check = Categories::where('id',$item)->first()->toTree())
+             }
              $model->fill($request->except(['attribute']));
              $model->product_cateloge_id = $request->category_id;
+             $model->type = $this->getNameType($request->type);
              $attribute = Attribute::whereIn('id',$request->attribute)->get(['id','name','parent_id']);
              if($request->id){
                 $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
@@ -198,6 +213,10 @@ class ProductsController extends Controller
              $model->galley = json_encode($request->album);    
              if($model->save()){
                 $model->attributes()->sync((array_unique($request->attribute ?: [])));
+                if($request->categories_main_id){
+                   
+                    //   $model->categories->sync()
+                }
              }
 
          }
@@ -230,6 +249,16 @@ class ProductsController extends Controller
         // }
         return response()->json(['status' => 'success','message' => 'Xóa sản phẩm variant thành công']);
       
+    }
+
+    private function getNameType($type){
+        if(is_numeric($type) && is_int($type)){
+            return $type == 'laptop' ? 1 : ($type == 'electric' ? 2 : ($type == 'accessory' ? 3 : 4));
+        }
+        else {
+            return $type == 1 ? 'laptop' : ($type == 2 ? 'electric' : ($type == 3 ? 'accessory' : 'phone'));
+        }
+       
     }
 
 }
