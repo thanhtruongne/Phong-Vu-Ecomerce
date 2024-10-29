@@ -63,30 +63,20 @@
     @include('backends.layouts.components.scirpts')
     <script>
         $(document).ready(function(){
-            // ck finder start
-            CKFinder.start();
-            if ( typeof CKEDITOR !== 'undefined' ) {
-                CKEDITOR.disableAutoInline = true;
-                CKEDITOR.addCss( 'img {max-width:100%; height: auto;}' );
-                var editor = CKEDITOR.replace( 'editor1', {
-                    extraPlugins: 'uploadimage,image2',
-                    removePlugins: 'image',
-                    height:250
-                });
-                CKFinder.setupCKEditor( editor );
-            } else {
-                document.getElementById( 'editor1' ).innerHTML =
-                    '<div class="tip-a tip-a-alert">Loading.....ckeditor.</div>'
-            }
-
-
+                $('.editor').each(function() {
+                    let editor = $(this);
+                    let id = editor.data('target');
+                    console.log(id);
+                    CKEDITOR.replace(id);
+                })
+              
+            // });
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
 
                 }
             });
-        
             $('.sortable').sortable();
 
                 var scrollTrigger = 60,
@@ -98,19 +88,19 @@
                     backToTop();
                 });    
 
-                $('.editor').each(function() {
-                    let editor = $(this);
-                    let id = editor.data('target');
-                    CKEDITOR.replace(id);
-                })
+                // $('.editor').each(function() {
+                //     let editor = $(this);
+                //     let id = editor.data('target');
+                //     CKEDITOR.replace(id);
+                // })
 
                 $('body').on('click','.ckfinder_3',function() {
                     let element = $(this);
                     let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
                     CKFinder.modal({
                     chooseFiles: true,
-                    width: 800,
-                    height: 600,
+                    // width: 800,
+                    // height: 1000,
                     onInit: function( finder ) {
                         finder.on( 'files:choose', function( evt ){
                             var files = evt.data.files;
@@ -180,8 +170,8 @@
                 let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
                 CKFinder.modal({
                     chooseFiles: true,
-                    width: 800,
-                    height: 600,
+                    // width: 800,
+                    // height: 1000,
                     onInit: function( finder ) {
                         finder.on( 'files:choose', function( evt ){
                             var file = evt.data.files.first();

@@ -57,8 +57,10 @@
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
 <script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script>
 {{-- CkFinder --}}
-<script src="{{asset('backend2/plugins/ckfinder/ckfinder.js')}}"></script>
-<script>CKFinder.config( { connectorPath: '/ckfinder/connector' } );</script>
+<script src="{{asset('js/ckfinder/ckfinder.js')}}"></script>
+{{-- <script>CKFinder.config( { connectorPath: '/ckfinder/connector' } );</script> --}}
+<script src="{{asset('js/run_prettify.js')}}"></script>
+<script>CKFinder.config( { connectorPath: @json(route('ckfinder_connector')) } )</script>
 
 
 

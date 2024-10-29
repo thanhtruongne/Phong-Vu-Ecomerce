@@ -13,6 +13,12 @@ use Modules\Products\Entities\ProductVariant;
 
 class ProductsController extends Controller
 {
+
+    private $type_params = [];
+
+    // public function __contructor(){
+    //     $this->type_params = ['laptop','phone','electric','accessory'];
+    // }
     public function index(){
         $data = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
         $productCateloge = $this->rebuildTree($data);
@@ -61,7 +67,7 @@ class ProductsController extends Controller
         foreach($rows as $row) {
             $attribute = array_keys(get_object_vars(json_decode($row->attributeFilter)));
             $nameAttribute = Attribute::whereIn('id',$attribute)->pluck('name')->toArray();
-            // $row->edit_url = route('private-system.product.edit',['id' => $row->id,'type' => ]);
+            $row->edit_url = route('private-system.product.edit',['id' => $row->id,'type' => $this->getNameType($row->type) ]);
             $row->price = numberFormat($row->price);
             $row->category_name = ProductCateloge::whereId($row->product_cateloge_id)->value('name');
             $row->attribute_name = implode(' - ',$nameAttribute);
@@ -78,10 +84,12 @@ class ProductsController extends Controller
 
 
     public function form(Request $request,$id = null){
-        if(!$request->type || is_numeric($request->type) || !in_array($request->type,['laptop','phone','electric','accessory'])){
+        // dd($request->type,$this->type_params);
+        if(!$request->type || is_numeric($request->type) || !in_array($request->type,$this->type_params())){
             abort(404);
         }
         $type = $request->type;
+        //get product-cateloge
         $dataId = ProductCateloge::where('ikey',$type)->value('id');
         $categories = ProductCateloge::descendantsOf($dataId)->toTree($dataId)->toArray();
         $data = $this->rebuildTree($categories);
@@ -106,9 +114,16 @@ class ProductsController extends Controller
                 }
             }
         }
-        $categories_main = Categories::where('ikey',$type)->value('id');
+        $categories_main = Categories::where(function($query) use($type){
+            $query->where('ikey',$type);
+            // $query->where('ikey','!=','');
+        })->value('id');
+        //get categories
         $dataMain = $this->rebuildTree(Categories::descendantsOf($categories_main)->toTree($categories_main)->toArray());
-        return view('products::products.form',['categories' => $data ,'category_main' => $dataMain, 'model' => $model]);
+         //get attribute
+        $parent_attribute = Attribute::where('ikey',$type)->first();
+        $attributes = Attribute::descendantsOf($parent_attribute->id)->toTree($parent_attribute->id);
+        return view('products::products.form',['categories' => $data ,'category_main' => $dataMain, 'model' => $model , 'attributes' => $attributes]);
     }
 
     private function renderHTML($row){
@@ -153,8 +168,12 @@ class ProductsController extends Controller
                 'category_id' => 'required',
                 'categories_main_id' => 'required'
              ],$request,Products::getAttributeName());
-         }
-         $model = Products::firstOrNew(['id' => $request->id]);
+        }
+        if($request->type && !in_array($request->type,$this->type_params())){
+            json_result(['message' => 'Có lỗi xảy ra vui lòng thử lại','status' => 'error']);
+        }
+
+        $model = Products::firstOrNew(['id' => $request->id]);
         //  tạo variant
         if($request->is_single){
             $attribute = $request->attribute;
@@ -170,6 +189,19 @@ class ProductsController extends Controller
             if($model->save()){
                 $model->attributes()->sync(($arrAttribute ?: []));
                 foreach($attribute as $key => $item){
+                    if($request->categories_main_variant[$key]){
+                        $attribiute_variants = $request->categories_main_variant[$key] ? explode(',',$request->categories_main_variant[$key]) : [];
+                        $checkArr = [];
+                        foreach($attribiute_variants as $attribute_variant){
+                            $check = Categories::where('id',$attribute_variant)->whereNotNull('parent_id')->first();
+                            if(!$check) 
+                               json_result(['message' => 'Vui lòng chọn thuộc tính filter sản phẩm có nội dung','status' => 'error']); 
+                            if(in_array($check->parent_id,$checkArr))
+                               json_result(['message' => 'Vui lòng chọn thuộc tính filter mỗi danh mục attribute có 1 chủ đề','status' => 'error']);
+                            else
+                               $checkArr[] = $check->parent_id;
+                        }
+                    }
                     $variant = ProductVariant::firstOrNew(['id' => $request->attribute_id[$key] ?? null]);
                     $attribute = Attribute::whereIn('id',$item)->get(['id','name','parent_id']);
                     $variant->name = $request->name.' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
@@ -187,15 +219,30 @@ class ProductsController extends Controller
 
         }
          
-         else {
-            dd($request->all());
+        else {
+                
              $model = Products::firstOrNew(['id' => $request->id]);
-             $categories_main = explode(',',$request->categories_main_id);
+             $categories_main = explode(',',$request->categories_main_id) ?? [];
+             $checkArr = [];
+             //check categories_main để filter data
              foreach($categories_main as $item){
-                 dd(Categories::where('id',$item)->first()->toTree());
-                 // if(!$check = Categories::where('id',$item)->first()->toTree())
+                $check = Categories::where('id',$item)->whereNotNull('parent_id')->first();
+                if(!$check) 
+                   json_result(['message' => 'Vui lòng chọn thuộc tính filter sản phẩm có nội dung','status' => 'error']); 
+                if(in_array($check->parent_id,$checkArr))
+                   json_result(['message' => 'Vui lòng chọn thuộc tính filter mỗi danh mục attribute có 1 chủ đề','status' => 'error']);
+                else
+                   $checkArr[] = $check->parent_id;
+            }
+
+             $model->fill($request->except(['attribute'])); 
+             //check data category có n6ội dung
+             $checkCategoriesId = ProductCateloge::find($request->category_id);
+            //  dd($checkCategoriesId->descendants);
+          
+             if($checkCategoriesId->descendants && count($checkCategoriesId->descendants) > 0){
+                json_result(['message' => 'Vui lòng chọn danh mục sản phẩm có chủ đề ','status' => 'error']);
              }
-             $model->fill($request->except(['attribute']));
              $model->product_cateloge_id = $request->category_id;
              $model->type = $this->getNameType($request->type);
              $attribute = Attribute::whereIn('id',$request->attribute)->get(['id','name','parent_id']);
@@ -213,13 +260,13 @@ class ProductsController extends Controller
              $model->galley = json_encode($request->album);    
              if($model->save()){
                 $model->attributes()->sync((array_unique($request->attribute ?: [])));
-                if($request->categories_main_id){
-                   
-                    //   $model->categories->sync()
+                if(isset($categories_main) && is_array($categories_main)){
+                    //lưu data categde963 filter
+                   $model->categories()->sync($categories_main);
                 }
              }
 
-         }
+        }
         json_result(['message' => 'Lưu thành công','status' => 'success','redirect' => route('private-system.product')]);
     }
 
@@ -252,13 +299,17 @@ class ProductsController extends Controller
     }
 
     private function getNameType($type){
-        if(is_numeric($type) && is_int($type)){
+        if(!is_int($type)){
             return $type == 'laptop' ? 1 : ($type == 'electric' ? 2 : ($type == 'accessory' ? 3 : 4));
         }
         else {
             return $type == 1 ? 'laptop' : ($type == 2 ? 'electric' : ($type == 3 ? 'accessory' : 'phone'));
         }
        
+    }
+
+    private function type_params(){
+        return ['laptop','phone','electric','accessory'];
     }
 
 }

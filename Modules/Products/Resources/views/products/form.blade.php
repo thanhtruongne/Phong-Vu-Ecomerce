@@ -96,7 +96,7 @@
                                                 Mô tả
                                             </label>
                                             <div class="col-md-8">
-                                                <textarea name="desc" class="editor" data-target="desc" id="editor1" cols="30" rows="10">{{$model->desc}}</textarea>
+                                                <textarea name="desc" class="editor" data-target="desc" id="desc" cols="30" rows="10">{{$model->desc}}</textarea>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -253,8 +253,8 @@
                                                         Thêm attribute
                                                     </button>
                                                     <div class="dropdown-menu toggle_attribute">
-                                                        @php
-                                                            $attributes = \Modules\Products\Entities\Attribute::whereNull('parent_id')->get();
+                                                        @php        
+                                                            $categories_main = $model->id && $model->categories ? $model->categories->pluck('id')->toArray() : [];
                                                             if($model && $model->id > 0){
                                                                 foreach ($model->attributes as $key => $item) {
                                                                     $attribute = \Modules\Products\Entities\Attribute::where('id',$item->id)->first();
@@ -309,9 +309,9 @@
 
 @section('scripts')
 <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
-<script>
+<script type="text/javascript">
 
-    $(document).ready(function(){
+    // $(document).ready(function(){
         function load_attrbute(id = null){
             if(id){
                 $('.load-attribute-custom_'+id).select2({
@@ -373,6 +373,28 @@
             }
         
         }
+
+        function onClickCreateAttributeVariant(id,parent_id){
+            let parent = $('.item_variant_attribute_'+ parent_id);
+            let render = parent.find('.item_variant_'+ parent_id);
+            let hrefItem = parent.find('.toggle_variant').find('a.dropdown-item[data-parent="'+id+'"]');
+            let name = $(hrefItem).text();
+            render.append(`
+                <div style="padding: 0 7.5px;" class="form-group d-flex align-items-center attribute_item_variant_${id}">
+                    <div style="width:30%">
+                        <label for="" class="control-label fw-bold">
+                            ${name}
+                            <span class="text-danger">(*)</span>
+                        </label>
+                        <div class="">
+                            <select name="attribute[${parent_id}][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
+                        </div>
+                    </div>
+                    <div style="margin-left:20px;"> <a onclick="removeVariant(${id})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
+                </div>`);
+            $(hrefItem).addClass('disabled');
+            loadCustom()
+        }
         //trường hợp edit
         if($('input[name="id"]').val()){
        
@@ -430,11 +452,9 @@
             
                 // load variant
                 $.each(@json($attributes),function(calc,attribute){
-                    console.log(arr,attribute);
                     html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
                 })
                 //load hình ảnh
-                // let album = JSON.parse()
                 let album = '';
      
                 $.each(value.album,function(i,image){
@@ -522,8 +542,8 @@
                 load_attrbute();
             })
           }
-      }
-    })
+        }
+   
         let attribute_parent = $('.render_attribute_parent')
         let arrIds = [];
         $('body .attribute_choose').on('click',function(){
@@ -553,38 +573,31 @@
                     </div>
                     <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
                 </div>`);
-            load_attrbute();
+                load_attrbute();
             }
           
            
         })
         
         function removeCustomVariant(id,parent){
-          let attribute = $('.attribute_item_variant_'+parent);
-          let parents = $(attribute).parents('.variant_item_attribute_pa');
-          let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
-          $(attribute).remove();
+            let attribute = $('.attribute_item_variant_'+parent);
+            let parents = $(attribute).parents('.variant_item_attribute_pa');
+            let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
+            $(attribute).remove();
         }
  
-        
-
         $('body').on('click','.remove_item_attribute',function(){
                 let _this = $(this);
                 let id = _this.parents('.attribute_item').find('select').data('parent');
                 let find = $('body .attribute_choose[data-parent="'+id+'"]');
                 find.removeClass('disabled');
                 let menu = $('body .toggle_attribute');
-                console.log(arrIds,id,_find,menu);
-                // arrIds = arrIds.filter(function(r){
-                //     return r !== id;
-                // })
-                // _this.parents('.attribute_item').remove();
+                arrIds = arrIds.filter(function(r){
+                    return r !== id;
+                })
+                _this.parents('.attribute_item').remove();
         })
  
-
-
-
-   
         $('body').on('click','.trash_album',function(e) {       
             $(this).parents('.item_album').remove();
             if($('.ul_upload_view_album li.item_album').length == 0) {
@@ -593,6 +606,8 @@
             }
             e.preventDefault();
         })
+
+
         const domElement = document.querySelector('.tree_select_demo_main')
         const treeselect = new Treeselect({
             parentHtmlContainer: domElement,
@@ -610,7 +625,7 @@
         const domElement2 = document.querySelector('.tree_select_demo_main_category')
         const treeselect2 = new Treeselect({
             parentHtmlContainer: domElement2,
-            value: [],
+            value: @json($model) ? @json($categories_main) : [],
             options: @json($category_main),
             placeholder: '-- Chon thuộc tính sản phẩm --',
             isSingleSelect: false,
@@ -627,6 +642,7 @@
                 $('input[name="sku"]').prop('disabled',true);
                 $('input[name="cost"]').prop('disabled',true);
                 $('input[name="qualnity"]').prop('disabled',true);
+                $('input[name="categories_main_id"]').prop('disabled',true);
                 $('.render_attribute_parent').addClass('hidden');
                 $('.render_attribute_parent .attribute_item select').prop('disabled',true);
                 $('body .add_attribute').prop('disabled',true);
@@ -641,6 +657,7 @@
                 $('.render_attribute_parent').removeClass('hidden');
                 $('.render_attribute_parent .attribute_item select').prop('disabled',false);
                 $('body .add_attribute').prop('disabled',false);
+                $('input[name="categories_main_id"]').prop('disabled',false);
                 $('.variant_child').addClass('hidden')
                 $('body .create_variant').prop('disabled',true)
             }
@@ -667,6 +684,17 @@
                        
                     </div>   
                     <div>
+                         <div class="form-group item_variant_attribute_${sumAvg}">
+                            <div class="form-group">
+                                <label for="" class="col-sm-8 control-label">
+                                    Thuộc tính sản phẩm Variant ${sumAvg}
+                                </label>
+                                <div class="col-md-8">
+                                    <div class="tree_select_demo_main_category_variant_${sumAvg}"></div>
+                                    <input type="hidden" class="" id="categories_main_variant_${sumAvg}" name="categories_main_variant[${sumAvg}]">
+                                </div>
+                            </div>
+                        </div>  
                         <div class="form-group item_variant_attribute_${sumAvg}">
                             <div class="form-group">
                                 <label for="" class="col-sm-3 control-label">
@@ -725,30 +753,81 @@
                 </div>   
             </div>
           `)
+
+          treeSelect2I(sumAvg);
        })
 
 
-       function onClickCreateAttributeVariant(id,parent_id){
-            let parent = $('.item_variant_attribute_'+ parent_id);
-            let render = parent.find('.item_variant_'+ parent_id);
-            let hrefItem = parent.find('.toggle_variant').find('a.dropdown-item[data-parent="'+id+'"]');
-            let name = $(hrefItem).text();
-            render.append(`
-                <div style="padding: 0 7.5px;" class="form-group d-flex align-items-center attribute_item_variant_${id}">
-                    <div style="width:30%">
-                        <label for="" class="control-label fw-bold">
-                            ${name}
-                            <span class="text-danger">(*)</span>
-                        </label>
-                        <div class="">
-                            <select name="attribute[${parent_id}][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
-                        </div>
-                    </div>
-                    <div style="margin-left:20px;"> <a onclick="removeVariant(${id})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
-                </div>`);
-            $(hrefItem).addClass('disabled');
-            loadCustom()
+ 
+
+       function removeVariant(id){
+          let attribute = $('.attribute_item_variant_'+id);
+          let parents = $(attribute).parents('.variant_item_attribute_pa');
+          let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
+            $(attribute).remove();
        }
+
+       $('#form-create-product').submit(function(e){
+           e.preventDefault();
+           let searchParams = new URLSearchParams(window.location.search)
+           var formData = $(this).serialize();
+            // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
+            var content = CKEDITOR.instances['content'].getData();
+            var desc = CKEDITOR.instances['desc'].getData();
+            formData += '&content=' + encodeURIComponent(content) + '&desc=' + encodeURIComponent(desc) + '&type=' + searchParams.get('type')
+
+            $('#submit-btn').html('<i class="fa fa-spinner fa-spin"></i> '+'Lưu').attr("disabled", true);
+
+            saveProduct(formData);
+       })
+
+       function saveProduct(formData){
+        $.ajax({
+            type: 'POST',
+            url: '{{ route('private-system.product.save') }}',
+            data: formData,
+            dataType: 'json',
+            success: function(result) {
+                if(result.status == 'success'){
+                    show_message(result.message,result.status)
+                    window.location.href = result.redirect;
+                }
+                else if(result.status == 'error'){
+                    $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
+                    show_message(result.message,result.status);
+                    return false;
+                }
+
+                $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
+            }
+        }).fail(function(result) {
+            $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
+            show_message('Lỗi dữ liệu', 'error');
+            return false;
+        });
+       }
+
+       function treeSelect2I(id){
+            const domElement2 = document.querySelector('.tree_select_demo_main_category_variant_'+id)
+            const treeselect2 = new Treeselect({
+                parentHtmlContainer: domElement2,
+                value: @json($model) ? @json($categories_main) : [],
+                options: @json($category_main),
+                placeholder: '-- Chon thuộc tính sản phẩm variant ' + id + ' --',
+                isSingleSelect: false,
+            })
+
+            treeselect2.srcElement.addEventListener('input', (e) => {
+                $('#categories_main_variant_'+id).val(e.detail );
+            })
+       }
+
+       $('#btn_edit_attribute').on('click',function(){
+           let _this = $(this);
+           let id = _this.data('id');
+           let find = $('.item_variant_'+id);
+       })
+      
        function loadCustom(){
             $('.load-attribute-custom').select2({
                 allowClear: true,
@@ -778,61 +857,7 @@
 
             })
        }
-
-       function removeVariant(id){
-          let attribute = $('.attribute_item_variant_'+id);
-          let parents = $(attribute).parents('.variant_item_attribute_pa');
-          let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
-            $(attribute).remove();
-       }
-
-       $('#form-create-product').submit(function(e){
-           e.preventDefault();
-           var formData = $(this).serialize();
-            // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
-            var content = CKEDITOR.instances['content'].getData();
-            var desc = CKEDITOR.instances['desc'].getData();
-            formData += '&content=' + encodeURIComponent(content) + '&desc=' + encodeURIComponent(desc)
-
-            $('#submit-btn').html('<i class="fa fa-spinner fa-spin"></i> '+'Lưu').attr("disabled", true);
-
-            saveProduct(formData);
-       })
-
-       function saveProduct(formData){
-        $.ajax({
-            type: 'POST',
-            url: '{{ route('private-system.product.save') }}',
-            data: formData,
-            dataType: 'json',
-            success: function(result) {
-                console.log(result)
-                if(result.status == 'success'){
-                    show_message(result.message,result.status)
-                    window.location.href = result.redirect;
-                }
-                else if(result.status == 'error'){
-                    $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
-                    show_message(result.message,result.status);
-                    return false;
-                }
-
-                $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
-            }
-        }).fail(function(result) {
-            $('#submit-btn').html('<i class="fa fa-save"></i> Lưu').attr("disabled", false);
-            show_message('Lỗi dữ liệu', 'error');
-            return false;
-        });
-       }
-
-
-
-       $('#btn_edit_attribute').on('click',function(){
-           let _this = $(this);
-           let id = _this.data('id');
-           let find = $('.item_variant_'+id);
-       })
-
+    // })
+     
 </script>
 @endsection

@@ -19,18 +19,19 @@
 
 /*============================ General Settings =======================================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html
-
 $config = array();
 
 $config['loadRoutes'] = true;
 
-$config['authentication'] = '\App\Http\Middleware\Authenticate';
-
+// $config['authentication'] = '\App\Http\Middleware\CkFinderMiddleware';
+$config['authentication'] = function(){
+    return true;
+};
 /*============================ License Key ============================================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_licenseKey
 
-$config['licenseName'] = '';
-$config['licenseKey']  = '';
+$config['licenseName'] = 'localhost';
+$config['licenseKey']  = '9R7RMMXVYYT33ZCH4CG443WHY7RL3';
 
 /*============================ CKFinder Internal Directory ============================*/
 // http://docs.cksource.com/ckfinder3-php/configuration.html#configuration_options_privateDir
@@ -82,7 +83,7 @@ $config['backends']['laravel_logs'] = array(
 $config['backends']['default'] = array(
     'name'         => 'default',
     'adapter'      => 'local',
-    'baseUrl'      => config('app.url').'/userfiles/upload',
+    'baseUrl'      => config('app.url_original').'upload',
     'root'         => public_path('/upload/'),
     'chmodFiles'   => 0777,
     'chmodFolders' => 0755,
