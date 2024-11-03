@@ -5,14 +5,14 @@ namespace Modules\Products\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Modules\Products\Entities\ProductCateloge;
+use Modules\Products\Entities\ProductCategory;
 
 class ProductCatelogeController extends Controller
 {
 
 
     public function index(){
-        $categories = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
+        $categories = ProductCategory::whereNotNull('name')->get()->toTree()->toArray();
         $data = $this->rebuildTree($categories);
         // $categories = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
         // $data = $this->rebuildTree($categories);
@@ -29,7 +29,7 @@ class ProductCatelogeController extends Controller
         // $offset = $request->input('offset',0);
         // $limit = $request->input('limit',20);
         
-        $query = ProductCateloge::query();
+        $query = ProductCategory::query();
         // $query->select(['name','status','parent_id','id']);
         if($search){
             $query->where('name','like','%'.$search.'%');
@@ -83,19 +83,19 @@ class ProductCatelogeController extends Controller
         if($request->type && $request->type == 'all'){
             $ids = $request->input('ids', null);
             foreach ($ids as $id){
-                if(!$check = ProductCateloge::descendantsOf($id)->isEmpty()){
+                if(!$check = ProductCategory::descendantsOf($id)->isEmpty()){
                     return response()->json(['status' => 'error','message' => 'Danh mục chứa hoặc tồn tại danh mục con']);
                 }
-                $remove = ProductCateloge::find($id);
+                $remove = ProductCategory::find($id);
                 $remove->delete();
             }
         }
         else {
             $id = $request->id;
-            if(!$check = ProductCateloge::descendantsOf($id)->isEmpty()){
+            if(!$check = ProductCategory::descendantsOf($id)->isEmpty()){
                 return response()->json(['status' => 'error','message' => 'Danh mục chứa hoặc tồn tại danh mục con']);
             }
-            $remove = ProductCateloge::find($id);
+            $remove = ProductCategory::find($id);
             $remove->delete();
         }
         return response()->json(['status' => 'success','message' => 'Xóa danh mục thành công']);
@@ -115,13 +115,13 @@ class ProductCatelogeController extends Controller
         $status = $request->input('status') ?? 0;
         if(is_array($ids)) {
             foreach ($ids as $id) {
-                $model = ProductCateloge::find($id);
+                $model = ProductCategory::find($id);
                 $model->status = $status;
                 $model->save();
             }
             return response()->json(['status' => 'success','message' => 'Thay đổi trạng thái thành công']);
         } elseif(isset($id) && !empty($id)) {
-            $model = ProductCateloge::find($id);
+            $model = ProductCategory::find($id);
             $model->status = $status;
             $model->save();
             return response()->json(['status' => 'success','message' => 'Thay đổi trạng thái thành công']);
@@ -133,11 +133,12 @@ class ProductCatelogeController extends Controller
     }
 
 
+    
     public function form(Request $request){
-        $categories = ProductCateloge::whereNotNull('name')->get()->toTree()->toArray();
+        $categories = ProductCategory::whereNotNull('name')->get()->toTree()->toArray();
         $data = $this->rebuildTree($categories);
         if($request->id){
-            $model = ProductCateloge::find($request->id);
+            $model = ProductCategory::find($request->id);
             return response()->json(['status' => 'success','model' => $model,'categories' => $data]);
             // return view('pages.categories.form',['model' => $model, 'ancestor' => $ancestor,'categories' => $data]);
         }
@@ -149,17 +150,18 @@ class ProductCatelogeController extends Controller
         $this->validateRequest(
             [   
                 'name' => 'required',
-                'status' => 'required'
-            ],$request,ProductCateloge::getAttributeName()
+                'status' => 'required',
+                // 'description' => 'required'
+            ],$request,ProductCategory::getAttributeName()
         );
-        $model = ProductCateloge::firstOrCreate(['id' => $request->id]);
+        $model = ProductCategory::firstOrCreate(['id' => $request->id]);
         $model->name = $request->name;
         $model->ikey =\Str::slug($request->name);
         $model->status = $request->status;
         $model->save();
 
         if($request->category_parent_id){
-            $parent = ProductCateloge::find($request->category_parent_id);
+            $parent = ProductCategory::find($request->category_parent_id);
             $parent->appendNode($model);
         }
         return response()->json(['message' => 'Lưu thành công' , 'status' => 'success']);

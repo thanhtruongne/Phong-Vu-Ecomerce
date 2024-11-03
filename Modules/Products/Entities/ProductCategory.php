@@ -6,16 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Kalnoy\Nestedset\NodeTrait;
-class ProductCateloge extends Model
+class ProductCategory extends Model
 {
     use NodeTrait;
     
-    protected $table = 'product_cateloge';
+    protected $table = 'product_category';
     protected $primaryKey = 'id';
-    //dạng fillable mặc định cho model cataloge
-    protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name','ikey'];
-
-
+    protected $fillable = ['description','icon','status','parent_id','_lft','_rgt','name','ikey'];
 
     public function getLftName()
     {
@@ -42,6 +39,7 @@ class ProductCateloge extends Model
         return [
             'name' => 'Tên danh mục sản phẩm',
             'status' => 'Trạng thái sản phẩm',
+            'description' => 'Mô tả sản phẩm'
         ];
     }
 }

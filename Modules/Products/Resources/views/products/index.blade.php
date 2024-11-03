@@ -121,7 +121,7 @@
                             <th data-field="name" data-width="50%" data-formatter="name_formatter">Tên sản phẩm</th>
                             <th data-field="price" data-width="10%" >Giá tiền</th>
                             <th data-field="views" data-width="10%" >Lượt xem</th>
-                            <th data-field="qualnity" data-width="10%">Số lượng</th>
+                            <th data-field="quantity" data-width="10%">Số lượng</th>
                             <th data-field="category_name">Danh mục</th>
                             {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
                             <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
@@ -216,11 +216,10 @@
 
 
         function name_formatter(value,row,index){
-            console.log(row)
             return `<div>
                         <a class="" href="${row.edit_url}">${row.name}</a>
                         <div>
-                             <span class="fw-bold">Sku: ${row.sku}</span>
+                             <span class="fw-bold">Sku: ${row.sku_code}</span>
                         </div>
                          <div>
                              <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>

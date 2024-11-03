@@ -21,5 +21,6 @@
 <link rel="stylesheet" href="{{asset('backend2/plugins/summernote/summernote-bs4.min.css')}}">
 {{-- load bootstrap table --}}
 <link rel="stylesheet" href="{{asset('backend2/css/bootstrap-table.min.css')}}">
-
+{{--bootstrap-iconpicker.css  --}}
+<link rel="stylesheet" href="{{asset('backend2/plugins/boostrap-iconpicker/boostrap-iconpicker.min.css')}}">
 

@@ -64,6 +64,28 @@ class AjaxLoaderController extends Controller
     return json_result($data);
   }
 
+  private function loadAttributeByType(Request $request){
+    $search = $request->search;
+    $type = $request->type;
+    $parent_id = Attribute::where('ikey',$type)->value('id');
+    $query = Attribute::query();
+    if ($search) {
+      $query->where('name', 'like', '%'. $search .'%');
+    }
+    $query->where(function($subquery) use($parent_id){
+        $subquery->where('parent_id',$parent_id);
+        $subquery->where('status',1);
+    });
+    $query->orderBy('id', 'desc');
+    $paginate = $query->paginate(10);
+    $data['results'] = $query->select('id', 'name AS text')->get();
+    if ($paginate->nextPageUrl()) {
+        $data['pagination'] = ['more' => true];
+    }
+
+    return json_result($data);
+  }
+
 
 
 }

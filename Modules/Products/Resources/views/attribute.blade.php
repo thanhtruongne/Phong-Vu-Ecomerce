@@ -310,6 +310,7 @@
             $('#form_save').trigger("reset");
             $("input[name=id]").val('');
             $('.tree_select_demo').html(' ');
+            $('#category_parent_id').val('');
             let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
             $("#type_id").html(position)
             treeSelect();
@@ -328,7 +329,7 @@
                 })
 
                 treeselect.srcElement.addEventListener('input', (e) => {
-                console.log('Selected value:', e.detail)
+                    console.log(e);
                     $('#category_parent_id').val(e.detail );
                 })
             }

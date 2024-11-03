@@ -63,14 +63,12 @@
     @include('backends.layouts.components.scirpts')
     <script>
         $(document).ready(function(){
-                $('.editor').each(function() {
-                    let editor = $(this);
-                    let id = editor.data('target');
-                    console.log(id);
-                    CKEDITOR.replace(id);
-                })
-              
-            // });
+            $('.editor').each(function() {
+                let editor = $(this);
+                let id = editor.data('target');
+                CKEDITOR.replace(id);
+            })
+
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),

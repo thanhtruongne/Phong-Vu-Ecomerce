@@ -158,7 +158,14 @@
                                         <input type="hidden" id="category_parent_id" name="category_parent_id" value="">
                                     </div>
                                 </div>
-
+                                <div class="form-group row">
+                                    <div class="col-sm-4 control-label">
+                                        <label>Icon</label>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <button class="btn btn-dark" style="color:#fff !important;"  role="iconpicker"></button>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
                                         <label>Trạng thái <span class="text-danger">*</span></label>
@@ -172,6 +179,14 @@
                                             <input id="disable" required type="radio" name="status"
                                                 value="0"> Tắt
                                         </label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-4 control-label">
+                                        <label>Mô tả<span class="text-danger">*</span></label>
+                                    </div>
+                                    <div class="col-md-7">
+                                       <textarea class="editor" data-target="description" id="description" cols="30" rows="10"></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -311,6 +326,7 @@
             $('#form_save').trigger("reset");
             $("input[name=id]").val('');
             $('.tree_select_demo').html(' ');
+            $('#category_product_main').val('');
             let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
             $("#type_id").html(position)
             treeSelect();
@@ -355,11 +371,14 @@
                 let oldtext = item.html();
                 item.html('<i class="fa fa-spinner fa-spin"></i>');
                 item.attr('disabled', true);
+                let formData = $("#form_save").serialize();
+                let description =  CKEDITOR.instances['description'].getData();
+                formData += '&description=' +  encodeURIComponent(description);
                 event.preventDefault();
                 $.ajax({
                     url: "{{ route('private-system.product-cateloge.save') }}",
                     type: 'POST',
-                    data: $("#form_save").serialize(),
+                    data: formData,
                 }).done(function(data) {
                     console.log(data);
                     item.html(oldtext);

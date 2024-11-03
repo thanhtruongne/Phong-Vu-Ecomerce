@@ -12,7 +12,7 @@ class Attribute extends Model
 {
     use NodeTrait;
     
-    protected $table = 'attribute';
+    protected $table = 'attributes';
     protected $primaryKey = 'id';
     //dạng fillable mặc định cho model cataloge
     protected $fillable = ['image','icon','status','parent_id','_lft','_rgt','name'];
@@ -52,4 +52,5 @@ class Attribute extends Model
             'status' => 'Trạng thái thuộc tính'
         ];
     }
+
 }

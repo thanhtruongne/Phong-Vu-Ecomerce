@@ -11,6 +11,9 @@ use App\Http\Controllers\Frontend\Shipping\ShippingGHTK;
 use Modules\Products\Http\Controllers\AttributeController;
 use Modules\Products\Http\Controllers\ProductCatelogeController;
 use Modules\Products\Http\Controllers\ProductsController;
+use Modules\Products\Http\Controllers\AttributeCatelogeController;
+
+
 
 //admin login
 
@@ -62,6 +65,16 @@ use Modules\Products\Http\Controllers\ProductsController;
          Route::post('/product/attribute/change-status',[AttributeController::class,'changeStatus'])->name('product-attribute.change.status');
          Route::post('/product/attribute/remove',[AttributeController::class,'remove'])->name('product-attribute.remove');
          Route::post('/product/attribute/removeSelectAll',[AttributeController::class,'removeSelectAll'])->name('product-attribute.remove.select');
+        
+         Route::get('/product/categories/attribute',[AttributeCatelogeController::class,'index'])->name('product-attribute-catgories');
+         Route::get('/product/categories/attribute/get-data',[AttributeCatelogeController::class,'getData'])->name('product-attribute-catgories.getdata'); 
+         Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove'); 
+         Route::post('/product/categories/attribute/save',[AttributeCatelogeController::class,'save'])->name('product-attribute-catgories.save');       
+         Route::get('/product/categories/attribute/edit',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.edit');    
+         Route::get('/product/categories/attribute/create',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.create');    
+         Route::post('/product/categories/attribute/change-status',[AttributeCatelogeController::class,'changeStatus'])->name('product-attribute-catgories.change.status');
+         Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove');
+         Route::post('/product/categories/attribute/removeSelectAll',[AttributeCatelogeController::class,'removeSelectAll'])->name('product-attribute-catgories.remove.select');
         
         
         

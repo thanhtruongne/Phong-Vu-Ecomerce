@@ -80,7 +80,7 @@
                         <div class="tab-content">
                             <form action="" id="form-create-product" class="form-horizontal form-ajax" enctype="multipart/form-data">
                                   <input type="hidden" name="id" value="{{$model->id}}">
-                                  <div class="row">
+                                <div class="row">
                                     <div class="col-md-9">
                                         <div class="form-group row">
                                             <label for="" class="col-sm-2 control-label">
@@ -140,7 +140,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="form-group row">
+                                        {{-- <div class="form-group row">
                                             <label for="" class="col-sm-2 control-label">
                                                Sản phẩm variant
                                             </label>
@@ -154,14 +154,12 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- render variant --}}
-                                        <div class="form-group variant_child {{$model && $model->is_single == 2 ? '' : 'hidden'}} ">
-                                             {{-- @if (isset($model->product_variant) && count($model->product_variant) > 0)
-                                                 @foreach ($model->product_variant as $variant)
-                                                     
-                                                 @endforeach
-                                             @endif --}}
-                                        </div>
+                                        {{-- render variant {{$model && $model->is_single == 2 ? '' : 'hidden'}}  --}}
+                                        {{-- <div class="form-group variant_child">
+                                             <div class="">
+
+                                             </div>
+                                        </div>  --}}
 
 
 
@@ -208,7 +206,7 @@
                                                 <span class="text-danger">(*)</span>
                                             </label>
                                             <div class="col-md-8">
-                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="qualnity" value="{{$model->qualnity}}">
+                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="quantity" value="{{$model->qualnity}}">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -220,20 +218,6 @@
                                                 <input  class="form-control number-format" {{$model && $model->is_single == 2 ? 'disabled' : ''}} value="{{$model->price ?: null}}" name="cost" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                             </div>
                                         </div>
-
-
-
-                                        <div class="form-group">
-                                            <label for="" class="col-sm-8 control-label">
-                                                Thuộc tính sản phẩm
-                                               <span class="text-danger">(*)</span>
-                                            </label>
-                                            <div class="col-md-8">
-                                               <div class="tree_select_demo_main_category"></div>
-                                               <input type="hidden" value="" name="categories_main_id" id="categories_main_id">
-                                            </div>
-                                        </div>
-
                                         
                                         <div class="form-group">
                                             <label for="" class="col-sm-8 control-label">
@@ -254,7 +238,6 @@
                                                     </button>
                                                     <div class="dropdown-menu toggle_attribute">
                                                         @php        
-                                                            $categories_main = $model->id && $model->categories ? $model->categories->pluck('id')->toArray() : [];
                                                             if($model && $model->id > 0){
                                                                 foreach ($model->attributes as $key => $item) {
                                                                     $attribute = \Modules\Products\Entities\Attribute::where('id',$item->id)->first();
@@ -264,7 +247,7 @@
                                                        @endphp
                                                         @if (isset($attributes))
                                                             @foreach ($attributes as $attribute)
-                                                                <a class="dropdown-item attribute_choose" data-parent="{{$attribute->id}}" >{{ $attribute->name }}</a>
+                                                                <a class="dropdown-item attribute_choose" data-parent="{{$attribute['id']}}" >{{ $attribute['name'] }}</a>
                                                             @endforeach
                                                         @endif   
                                                     </div>
@@ -292,13 +275,54 @@
                                                             </div>
                                                             <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
                                                         </div>
-                                                  @endforeach
-                                              @endif --}}
+                                                  @endforeach --}}
+                                              {{-- @endif --}}
                                         </div>
+                                    </div>
+
+
+                                    <div class="col-md-9">
+                                        <div class="form-group row">
+                                            <label for="" class="control-label col-sm-2">
+                                               Sản phẩm variant
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <div class="d-flex align-items-center justify-content-between">
+                                                    <div class="d-flex align-items-center">
+                                                        <input type="checkbox" {{$model && $model->is_single == 2 ? 'checked' : ''}} id="is_single" name="is_single" class="form-control mt-1">
+                                                        <span class="ml-3">( Sản phẩm đơn hoặc có nhiều phần variants con. )</span>
+                                                    </div>
+                                                    {{-- <button class="btn create_variant" disabled type="button"><i class="fa fa-plus"></i> </button> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- render variant {{$model && $model->is_single == 2 ? '' : 'hidden'}}   --}}
+                                        <div class="variant_child form-group row">
+                                            <div class="col-sm-2"></div>
+                                            <div class="col-md-8">
+                                                 <div class="">
+                                                    <div class="text-cap">Chọn các thuộc tính variants <span class="text-danger">(*)</span></div>
+                                                    <div class="render_variant_thourgh">
+                                                        {{-- <div class="row mb-4">
+                                                            <div class="col-md-4 mb-2 mb-sm-0">
+                                                                <select name="" class="select2" id=""></select>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <select name="" class="select2" id=""></select>
+                                                            </div>
+                                                        </div>   --}}
+                                                    </div>
+                                                    <button class="btn toogle_render_variant" type="button">
+                                                        <i class="fa fa-plus"></i> 
+                                                        Thêm variants
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div> 
                                     </div>
  
                              
-                                  </div>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -310,6 +334,14 @@
 @section('scripts')
 <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
 <script type="text/javascript">
+       
+       //variant
+
+
+
+
+
+
 
     // $(document).ready(function(){
         function load_attrbute(id = null){
@@ -373,6 +405,7 @@
             }
         
         }
+        
 
         function onClickCreateAttributeVariant(id,parent_id){
             let parent = $('.item_variant_attribute_'+ parent_id);
@@ -387,7 +420,7 @@
                             <span class="text-danger">(*)</span>
                         </label>
                         <div class="">
-                            <select name="attribute[${parent_id}][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --"></select>
+                            <select name="attribute[${parent_id}][]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --" multiple></select>
                         </div>
                     </div>
                     <div style="margin-left:20px;"> <a onclick="removeVariant(${id})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
@@ -395,154 +428,230 @@
             $(hrefItem).addClass('disabled');
             loadCustom()
         }
-        //trường hợp edit
-        if($('input[name="id"]').val()){
-       
-          if(@json($model) && @json($model->is_single) != 2){
-              let render = $('.render_attribute_parent');
-              $.each(@json($model->attributes),function(index,value){
-                  render.append(`
-                      <div class="form-group d-flex algin-items-center attribute_item">
-                          <div style="width:65%">
-                              <label for="" class="control-label fw-bold">
-                                  ${value.parent_name}
-                                  <span class="text-danger">(*)</span>
-                              </label>
-                              <div class="">
-                                  <select name="attribute[]" class="form-control load-attribute-custom" id="" data-parent="${value.parent_id}" data-placeholder="-- ${value.parent_name} --"> 
-                                       <option value="${value.id}" selected>${value.name}</option>
-                                  </select>
-                              </div>
-                          </div>
-                          <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
-                      </div>`);
-                      load_attrbute();
-                  })
-          }
-          else {
-           //render variant
-            let variants = @json($model->product_variant);
-            let renderAttribute = $('.variant_child');
-            let countStep = 0;
-            $.each(variants,function(index,value){
-                let attributeHtml = '';
-                let html = '';
-                let arr = [];
-                //load attributes variant
-                $.each(value.attribute,function(key,item){
-                    countStep++;
-                    arr.push(item.parent_id)
-                    attributeHtml += `
-                        <div style="padding: 0 7.5px;" class="form-group d-flex align-items-center attribute_item_variant_${countStep}">
-                            <div style="width:30%">
-                                <label for="" class="control-label fw-bold">
-                                    ${item.parent_name}
-                                    <span class="text-danger">(*)</span>
-                                </label>
-                                <div class="">
-                                    <select name="attribute[${index}][]" class="form-control load-attribute-custom" data-parent="${item.parent_id}" data-placeholder="-- ${item.parent_name} --">
-                                        <option value="${item.id}" selected>${item.name}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div style="margin-left:20px;"> <a onclick="removeCustomVariant(${item.parent_id},${countStep})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
-                        </div> `
-                    load_attrbute();
-                })
-            
-                // load variant
-                $.each(@json($attributes),function(calc,attribute){
-                    html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
-                })
-                //load hình ảnh
-                let album = '';
-     
-                $.each(value.album,function(i,image){
-                  album += `
-                    <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
-                        <img height="120" src="${image}" width="150" alt="">
-                        <input type="hidden" name="variant_album[${index}][]" value="${image}"/>
-                        <button type="button" class="trash_album btn bg-red" >
-                            <i class="fas fa-trash text-white" ></i>
-                        </button >
-                    </li>
-                  `
-                })
+        let array_data_select2 = [];
+        let searchParams = new URLSearchParams(window.location.search)
+        let render = $('.render_variant_thourgh');
+        $('body').on('click','.toogle_render_variant',function(){
+            let _this = $(this);
+            render_variant();
+        })
 
-                renderAttribute.append(`
-                    <div class="form-group row variant_item_attribute_pa item_variant_attribute_${index}" >
-                        <div class="col-sm-2">
-                                <div>
-                                    Variant <span class="text-danger">(*)</span> 
-                                </div>  
-                            </div>
-                        <div class="col-md-8" style="border:1px solid #ccc; border-radius:8px;padding:15px;">
-                            <div class="form-group item_variant_${index}">
-                                 ${attributeHtml}
-                            </div>   
-                            <div>
-                                <div class="form-group item_variant_attribute_${index}">
-                                    <div class="form-group">
-                                        <label for="" class="col-sm-3 control-label">
-                                            Mã SKU
-                                        </label>
-                                        <div class="col-md-8">
-                                            <input type="text" class="form-control integerInput" value="${value.sku}" name="sku[${index}]">
-                                        </div>
-                                    </div>
-                                </div>  
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">
-                                        Số lượng
-                                        <span class="text-danger">(*)</span>
-                                    </label>
-                                    <div class="col-md-8">
-                                        <input type="text" class="form-control integerInput" value="${value.qualnity}" name="qualnity[${index}]">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-4 control-label">
-                                        Giá tiền
-                                        <span class="text-danger">(*)</span>
-                                    </label>
-                                    <div class="col-md-8">
-                                        <input  class="form-control number-format" value="${value.price}" name="cost[${index}]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="" class="col-sm-2 control-label">
-                                        Galley Image
-                                    </label>
-                                    <div class="col-md-12">
-                                        <div class="text-center" style="border: 1px solid #ccc">
-                                            <div class="check_hidden_image_album ${album != null ? 'hidden' :''}">
-                                                <img class="ckfinder" data-id="${index}" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
-                                            </div>
-                                            <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
-                                                    ${album}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                            </div>
-                        
-                        </div>    
-                        <div class="dropdown ml-2">
-                            <button class="btn dropdown-toggle" type="button" data-id="${index}" data-toggle="dropdown" aria-expanded="false">
-                                    <i class="fa fa-plus"></i> 
-                                    Attribute
-                            </button>
-                            <div class="dropdown-menu toggle_variant">
-                                ${html}
-                            </div>
-                        </div>   
-                    </div>
-                `)
-                load_attrbute();
+        function render_variant(){
+            let html = '';
+            $.each(@json($attributes ?? []),function(calc,attribute){
+                html += `<option value="${attribute?.id}" ${array_data_select2.includes(attribute?.id) ? 'disabled' : ''} data-check="${attribute?.id}" data-parent="${attribute?.parent_id}">${attribute?.name}</option>`
+                // html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
             })
-          }
+            render.append(`
+                <div class="row mb-4">
+                    <div class="col-md-4 mb-2 mb-sm-0">
+                        <select name="attributes_parent[]" class="select2 form-control on_change_load" id="" data-placeholder="-- Chọn thuộc tính --">
+                            <option value=""></option>
+                            ${html}
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <select name="" class="select2" id=""></select>
+                    </div>
+                </div>  `)
+            load_select2();
         }
+
+        $('body').on('change','select.on_change_load',function(e){
+            let _this = $(this);
+            let val = _this.val();
+            let check = _this.attr('data-check');
+            $('.on_change_load').each(function() {
+                let _this = $(this);
+                let selected = _this.find(':selected').val();
+                if( +selected != 0 && +selected != NaN) {
+                    array_data_select2.push(+selected);
+                }   
+                
+            })
+            $('.on_change_load').find('option').removeAttr('disabled');
+            for(let i = 0 ; i < array_data_select2.length ; i++) {
+                $('.on_change_load').find('option[value='+ array_data_select2[i] +']').prop('disabled',true);
+            }
+            // if(!$.isNumeric(val)){
+            //     array_data_select2 = array_data_select2.filter(function(r){
+            //         return r !== check;
+            //     })
+            //     $('.on_change_load').each(function(i,item){
+            //         let items = $(item);
+            //         items.change(function(){
+            //             $.each(this.options, function (i, item) {
+            //                 console.log(item,$(item).val(),$(item).attr('data-select2-id'))
+            //                 // if (item.selected) {
+            //                 //     $(item).prop("disabled", true);
+            //                 // } else {
+            //                 //     $(item).prop("disabled", false);
+            //                 // }
+            //             });
+            //         })
+            //             // let attributes = '';
+            //             // $.each(@json($attributes ?? []),function(calc,attribute){
+            //             //     attributes += `<option value="${attribute?.id}" ${id_item == attribute?.id ? 'selected' : ''} ${array_data_select2.includes(attribute?.id) ? 'disabled' : ''} data-check="${attribute?.id}" data-parent="${attribute?.parent_id}">${attribute?.name}</option>`
+            //             // })  
+            //             // items.html(attributes)
+                    
+      
+            //     })
+                
+            // }else{
+            //     array_data_select2.push(+val); 
+            //     // render_variant();
+            // }
+        })
+
+        //trường hợp edit
+        // if($('input[name="id"]').val()){
+       
+        //   if(@json($model) && @json($model->is_single) != 2){
+        //       let render = $('.render_attribute_parent');
+        //       $.each(@json($model->attributes),function(index,value){
+        //           render.append(`
+        //               <div class="form-group d-flex algin-items-center attribute_item">
+        //                   <div style="width:65%">
+        //                       <label for="" class="control-label fw-bold">
+        //                           ${value.parent_name}
+        //                           <span class="text-danger">(*)</span>
+        //                       </label>
+        //                       <div class="">
+        //                           <select name="attribute[]" class="form-control load-attribute-custom" id="" data-parent="${value.parent_id}" data-placeholder="-- ${value.parent_name} --"> 
+        //                                <option value="${value.id}" selected>${value.name}</option>
+        //                           </select>
+        //                       </div>
+        //                   </div>
+        //                   <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
+        //               </div>`);
+        //               load_attrbute();
+        //           })
+        //   }
+        //   else {
+        //    //render variant
+        //     let variants = @json($model->product_variant);
+        //     let renderAttribute = $('.variant_child');
+        //     let countStep = 0;
+        //     $.each(variants,function(index,value){
+        //         let attributeHtml = '';
+        //         let html = '';
+        //         let arr = [];
+        //         //load attributes variant
+        //         $.each(value.attribute,function(key,item){
+        //             countStep++;
+        //             arr.push(item.parent_id)
+        //             attributeHtml += `
+        //                 <div style="padding: 0 7.5px;" class="form-group d-flex align-items-center attribute_item_variant_${countStep}">
+        //                     <div style="width:30%">
+        //                         <label for="" class="control-label fw-bold">
+        //                             ${item.parent_name}
+        //                             <span class="text-danger">(*)</span>
+        //                         </label>
+        //                         <div class="">
+        //                             <select name="attribute[${index}][]" class="form-control load-attribute-custom" data-parent="${item.parent_id}" data-placeholder="-- ${item.parent_name} --">
+        //                                 <option value="${item.id}" selected>${item.name}</option>
+        //                             </select>
+        //                         </div>
+        //                     </div>
+        //                     <div style="margin-left:20px;"> <a onclick="removeCustomVariant(${item.parent_id},${countStep})" class="btn remove_variant_item"><i class="fas fa-trash" ></i></a></div>
+        //                 </div> `
+        //             load_attrbute();
+        //         })
+            
+        //         // load variant
+        //         $.each(@json($attributes ?? []),function(calc,attribute){
+        //             html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
+        //         })
+        //         //load hình ảnh
+        //         let album = '';
+     
+        //         $.each(value.album,function(i,image){
+        //           album += `
+        //             <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
+        //                 <img height="120" src="${image}" width="150" alt="">
+        //                 <input type="hidden" name="variant_album[${index}][]" value="${image}"/>
+        //                 <button type="button" class="trash_album btn bg-red" >
+        //                     <i class="fas fa-trash text-white" ></i>
+        //                 </button >
+        //             </li>
+        //           `
+        //         })
+
+        //         renderAttribute.append(`
+        //             <div class="form-group row variant_item_attribute_pa item_variant_attribute_${index}" >
+        //                 <div class="col-sm-2">
+        //                         <div>
+        //                             Variant <span class="text-danger">(*)</span> 
+        //                         </div>  
+        //                     </div>
+        //                 <div class="col-md-8" style="border:1px solid #ccc; border-radius:8px;padding:15px;">
+        //                     <div class="form-group item_variant_${index}">
+        //                          ${attributeHtml}
+        //                     </div>   
+        //                     <div>
+        //                         <div class="form-group item_variant_attribute_${index}">
+        //                             <div class="form-group">
+        //                                 <label for="" class="col-sm-3 control-label">
+        //                                     Mã SKU
+        //                                 </label>
+        //                                 <div class="col-md-8">
+        //                                     <input type="text" class="form-control integerInput" value="${value.sku}" name="sku[${index}]">
+        //                                 </div>
+        //                             </div>
+        //                         </div>  
+        //                         <div class="form-group">
+        //                             <label for="" class="col-sm-4 control-label">
+        //                                 Số lượng
+        //                                 <span class="text-danger">(*)</span>
+        //                             </label>
+        //                             <div class="col-md-8">
+        //                                 <input type="text" class="form-control integerInput" value="${value.qualnity}" name="qualnity[${index}]">
+        //                             </div>
+        //                         </div>
+        //                         <div class="form-group">
+        //                             <label for="" class="col-sm-4 control-label">
+        //                                 Giá tiền
+        //                                 <span class="text-danger">(*)</span>
+        //                             </label>
+        //                             <div class="col-md-8">
+        //                                 <input  class="form-control number-format" value="${value.price}" name="cost[${index}]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+        //                             </div>
+        //                         </div>
+        //                         <div class="form-group">
+        //                             <label for="" class="col-sm-2 control-label">
+        //                                 Galley Image
+        //                             </label>
+        //                             <div class="col-md-12">
+        //                                 <div class="text-center" style="border: 1px solid #ccc">
+        //                                     <div class="check_hidden_image_album ${album != null ? 'hidden' :''}">
+        //                                         <img class="ckfinder" data-id="${index}" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
+        //                                     </div>
+        //                                     <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
+        //                                             ${album}
+        //                                     </div>
+        //                                 </div>
+        //                             </div>
+        //                         </div>
+                                
+        //                     </div>
+                        
+        //                 </div>    
+        //                 <div class="dropdown ml-2">
+        //                     <button class="btn dropdown-toggle" type="button" data-id="${index}" data-toggle="dropdown" aria-expanded="false">
+        //                             <i class="fa fa-plus"></i> 
+        //                             Attribute
+        //                     </button>
+        //                     <div class="dropdown-menu toggle_variant">
+        //                         ${html}
+        //                     </div>
+        //                 </div>   
+        //             </div>
+        //         `)
+        //         load_attrbute();
+        //     })
+        //   }
+        // }
    
         let attribute_parent = $('.render_attribute_parent')
         let arrIds = [];
@@ -574,17 +683,15 @@
                     <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
                 </div>`);
                 load_attrbute();
-            }
-          
-           
+            }  
         })
         
-        function removeCustomVariant(id,parent){
-            let attribute = $('.attribute_item_variant_'+parent);
-            let parents = $(attribute).parents('.variant_item_attribute_pa');
-            let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
-            $(attribute).remove();
-        }
+        // function removeCustomVariant(id,parent){
+        //     let attribute = $('.attribute_item_variant_'+parent);
+        //     let parents = $(attribute).parents('.variant_item_attribute_pa');
+        //     let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
+        //     $(attribute).remove();
+        // }
  
         $('body').on('click','.remove_item_attribute',function(){
                 let _this = $(this);
@@ -612,7 +719,7 @@
         const treeselect = new Treeselect({
             parentHtmlContainer: domElement,
             value: @json($model) ? @json($model->product_cateloge_id) :  [],
-            options: @json($categories),
+            options: @json($categories ?? []),
             placeholder:  '-- Chon danh mục sản phẩm --',
             isSingleSelect: true,
         })
@@ -622,27 +729,15 @@
         })
 
 
-        const domElement2 = document.querySelector('.tree_select_demo_main_category')
-        const treeselect2 = new Treeselect({
-            parentHtmlContainer: domElement2,
-            value: @json($model) ? @json($categories_main) : [],
-            options: @json($category_main),
-            placeholder: '-- Chon thuộc tính sản phẩm --',
-            isSingleSelect: false,
-        })
-
-        treeselect2.srcElement.addEventListener('input', (e) => {
-            $('#categories_main_id').val(e.detail );
-        })
-
 
         $('#is_single').on('click',function(){
             let _this = $(this);
             if(_this.prop('checked')){
                 $('input[name="sku"]').prop('disabled',true);
                 $('input[name="cost"]').prop('disabled',true);
-                $('input[name="qualnity"]').prop('disabled',true);
+                $('input[name="quantity"]').prop('disabled',true);
                 $('input[name="categories_main_id"]').prop('disabled',true);
+                
                 $('.render_attribute_parent').addClass('hidden');
                 $('.render_attribute_parent .attribute_item select').prop('disabled',true);
                 $('body .add_attribute').prop('disabled',true);
@@ -653,11 +748,12 @@
             else {
                 $('input[name="sku"]').prop('disabled',false);
                 $('input[name="cost"]').prop('disabled',false);
-                $('input[name="qualnity"]').prop('disabled',false);
+                $('input[name="quantity"]').prop('disabled',false);
                 $('.render_attribute_parent').removeClass('hidden');
                 $('.render_attribute_parent .attribute_item select').prop('disabled',false);
                 $('body .add_attribute').prop('disabled',false);
                 $('input[name="categories_main_id"]').prop('disabled',false);
+                
                 $('.variant_child').addClass('hidden')
                 $('body .create_variant').prop('disabled',true)
             }
@@ -665,111 +761,99 @@
         let count = 1;
 
        //variant
-       $('body .create_variant').on('click',function(){
-          let parent = $('.variant_child');
-          let sumAvg = count++;
-          let html = '';
-          $.each(@json($attributes),function(index,item){
-            html += `<a class="dropdown-item " onclick="onClickCreateAttributeVariant(${item['id']},${sumAvg})" data-id="${sumAvg}" data-parent="${item['id']}" >${item['name']}</a>`
-          })
-          parent.append(`
-           <div class="form-group row variant_item_attribute_pa item_variant_attribute_${sumAvg}" >
-                <div class="col-sm-2">
-                        <div>
-                            Variant <span class="text-danger">(*)</span> 
-                        </div>  
-                    </div>
-                <div class="col-md-8" style="border:1px solid #ccc; border-radius:8px;padding:15px;">
-                    <div class="form-group item_variant_${sumAvg}">
+    //    $('body .create_variant').on('click',function(){
+    //       let parent = $('.variant_child');
+    //       let sumAvg = count++;
+    //       let html = '';
+    //     $.each(@json($attributes ?? []),function(index,item){
+    //         html += `<a class="dropdown-item " onclick="onClickCreateAttributeVariant(${item['id']},${sumAvg})" data-id="${sumAvg}" data-parent="${item['id']}" >${item['name']}</a>`
+    //       })
+    //       parent.append(`
+    //         <div class="form-group row variant_item_attribute_pa item_variant_attribute_${sumAvg}" >
+    //             <div class="col-sm-2">
+    //                     <div>
+    //                         Variant <span class="text-danger">(*)</span> 
+    //                     </div>  
+    //                 </div>
+    //             <div class="col-md-8" style="border:1px solid #ccc; border-radius:8px;padding:15px;">
+    //                 <div class="form-group item_variant_${sumAvg}">
                        
-                    </div>   
-                    <div>
-                         <div class="form-group item_variant_attribute_${sumAvg}">
-                            <div class="form-group">
-                                <label for="" class="col-sm-8 control-label">
-                                    Thuộc tính sản phẩm Variant ${sumAvg}
-                                </label>
-                                <div class="col-md-8">
-                                    <div class="tree_select_demo_main_category_variant_${sumAvg}"></div>
-                                    <input type="hidden" class="" id="categories_main_variant_${sumAvg}" name="categories_main_variant[${sumAvg}]">
-                                </div>
-                            </div>
-                        </div>  
-                        <div class="form-group item_variant_attribute_${sumAvg}">
-                            <div class="form-group">
-                                <label for="" class="col-sm-3 control-label">
-                                    Mã SKU
-                                </label>
-                                <div class="col-md-8">
-                                    <input type="text" class="form-control integerInput" name="sku[${sumAvg}]">
-                                </div>
-                            </div>
-                        </div>  
-                        <div class="form-group">
-                            <label for="" class="col-sm-4 control-label">
-                                Số lượng
-                                <span class="text-danger">(*)</span>
-                            </label>
-                            <div class="col-md-8">
-                                <input type="text" class="form-control integerInput" name="qualnity[${sumAvg}]">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="" class="col-sm-4 control-label">
-                                Giá tiền
-                                <span class="text-danger">(*)</span>
-                            </label>
-                            <div class="col-md-8">
-                                <input  class="form-control number-format" name="cost[${sumAvg}]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="" class="col-sm-2 control-label">
-                                Galley Image
-                            </label>
-                            <div class="col-md-12">
-                                <div class="text-center" style="border: 1px solid #ccc">
-                                    <div class="check_hidden_image_album">
-                                        <img class="ckfinder" data-id="${sumAvg}" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
-                                    </div>
-                                    <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
+    //                 </div>   
+    //                 <div> 
+    //                     <div class="form-group item_variant_attribute_${sumAvg}">
+    //                         <div class="form-group">
+    //                             <label for="" class="col-sm-3 control-label">
+    //                                 Mã SKU
+    //                             </label>
+    //                             <div class="col-md-8">
+    //                                 <input type="text" class="form-control integerInput" name="sku[${sumAvg}]">
+    //                             </div>
+    //                         </div>
+    //                     </div>  
+    //                     <div class="form-group">
+    //                         <label for="" class="col-sm-4 control-label">
+    //                             Số lượng
+    //                             <span class="text-danger">(*)</span>
+    //                         </label>
+    //                         <div class="col-md-8">
+    //                             <input type="text" class="form-control integerInput" name="qualnity[${sumAvg}]">
+    //                         </div>
+    //                     </div>
+    //                     <div class="form-group">
+    //                         <label for="" class="col-sm-4 control-label">
+    //                             Giá tiền
+    //                             <span class="text-danger">(*)</span>
+    //                         </label>
+    //                         <div class="col-md-8">
+    //                             <input  class="form-control number-format" name="cost[${sumAvg}]" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+    //                         </div>
+    //                     </div>
+    //                     <div class="form-group">
+    //                         <label for="" class="col-sm-2 control-label">
+    //                             Galley Image
+    //                         </label>
+    //                         <div class="col-md-12">
+    //                             <div class="text-center" style="border: 1px solid #ccc">
+    //                                 <div class="check_hidden_image_album">
+    //                                     <img class="ckfinder_3" data-id="${sumAvg}" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
+    //                                 </div>
+    //                                 <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
                                                   
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    //                                 </div>
+    //                             </div>
+    //                         </div>
+    //                     </div>
                         
-                    </div>
+    //                 </div>
                   
-                </div>    
-                <div class="dropdown ml-2">
-                    <button class="btn dropdown-toggle" type="button" data-id="${sumAvg}" data-toggle="dropdown" aria-expanded="false">
-                            <i class="fa fa-plus"></i> 
-                            Attribute
-                    </button>
-                    <div class="dropdown-menu toggle_variant">
-                        ${html}
-                    </div>
-                </div>   
-            </div>
-          `)
+    //             </div>    
+    //             <div class="dropdown ml-2">
+    //                 <button class="btn dropdown-toggle" type="button" data-id="${sumAvg}" data-toggle="dropdown" aria-expanded="false">
+    //                         <i class="fa fa-plus"></i> 
+    //                         Attribute
+    //                 </button>
+    //                 <div class="dropdown-menu toggle_variant">
+    //                     ${html}
+    //                 </div>
+    //             </div>   
+    //         </div>
+    //       `)
 
-          treeSelect2I(sumAvg);
-       })
+    //       treeSelect2I(sumAvg);
+    //    })
 
 
  
 
-       function removeVariant(id){
-          let attribute = $('.attribute_item_variant_'+id);
-          let parents = $(attribute).parents('.variant_item_attribute_pa');
-          let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
-            $(attribute).remove();
-       }
+    //    function removeVariant(id){
+    //       let attribute = $('.attribute_item_variant_'+id);
+    //       let parents = $(attribute).parents('.variant_item_attribute_pa');
+    //       let toggle = $(parents).find('.toggle_variant').find('a[data-parent="'+id+'"]').removeClass('disabled');
+    //         $(attribute).remove();
+    //    }
 
        $('#form-create-product').submit(function(e){
-           e.preventDefault();
-           let searchParams = new URLSearchParams(window.location.search)
+           e.preventDefault();   
            var formData = $(this).serialize();
             // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
             var content = CKEDITOR.instances['content'].getData();
@@ -811,8 +895,8 @@
             const domElement2 = document.querySelector('.tree_select_demo_main_category_variant_'+id)
             const treeselect2 = new Treeselect({
                 parentHtmlContainer: domElement2,
-                value: @json($model) ? @json($categories_main) : [],
-                options: @json($category_main),
+                value: @json($model) ? @json($categories_main ?? []) : [],
+                options: @json($category_main ?? []),
                 placeholder: '-- Chon thuộc tính sản phẩm variant ' + id + ' --',
                 isSingleSelect: false,
             })
@@ -857,7 +941,9 @@
 
             })
        }
-    // })
+
+       
+
      
 </script>
 @endsection
