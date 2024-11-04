@@ -16,10 +16,11 @@
 <!-- Bootstrap 4 -->
 <script src="{{asset('backend2/plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 
-<script src="{{asset('backend2/plugins/bootstrap/js/bootstrap.min.js')}}"></script>
+{{-- <script src="{{asset('backend2/plugins/bootstrap/js/bootstrap.min.js')}}"></script> --}}
 
 <script src="{{asset('backend2/plugins/select2/js/select2.min.js')}}"></script>
 
+<script src="{{asset('backend2/js/popper.min.js')}}"></script>
 {{-- LoadBootstrapTable --}}
 <script src="{{asset('backend2/js/bootstrap-table.min.js')}}"></script>
 <script src="{{asset('backend2/js/bootstrap-table-vi-VN.js')}}"></script>
@@ -53,9 +54,19 @@
 
 <script src="{{asset('backend2/js/backend2.js')}}"></script>
 
-<script src="{{asset('backend2/plugins/ckfinder/ckfinder.js')}}"></script>
-<script src="{{asset('backend2/plugins/ckeditor/config.js')}}"></script>
+{{-- boostrap-iconpicker --}}
+<script src="{{asset('backend2/plugins/boostrap-iconpicker/boostrap-iconpicker.js')}}"></script>
+
+{{-- Ckeditor --}}
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
+<script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script>
+{{-- CkFinder --}}
+<script src="{{asset('js/ckfinder/ckfinder.js')}}"></script>
+{{-- <script>CKFinder.config( { connectorPath: '/ckfinder/connector' } );</script> --}}
+<script src="{{asset('js/run_prettify.js')}}"></script>
+<script>CKFinder.config( { connectorPath: @json(route('ckfinder_connector')) } )</script>
+
+
 
 <script src="{{asset('backend2/js/load-ajax.js')}}"></script>
 

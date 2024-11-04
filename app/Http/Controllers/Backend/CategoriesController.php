@@ -17,15 +17,12 @@ class CategoriesController extends Controller
 
     public function __construct(){
         $categories = Categories::whereNotNull('name')->get()->toTree()->toArray();
-        $this->tree =  Categories::rebuildTree($categories);
+        $this->tree =  $this->rebuildTree($categories);
     }
 
     public function index(){
         return view('backends.pages.categories.index',['categories' => $this->tree]);
     }
-
-   
-
 
     public function getData(Request $request){
         $search = $request->input('search');
@@ -36,7 +33,7 @@ class CategoriesController extends Controller
         // $limit = $request->input('limit',20);
         
         $query = Categories::query();
-        $query->select(['name','status','parent_id','id']);
+        // $query->select(['name','status','parent_id','id']);
         if($search){
             $query->where('name','like','%'.$search.'%');
         }
@@ -142,23 +139,31 @@ class CategoriesController extends Controller
 
 
     public function save(Request $request){
-        $rules = [
-            'name' => 'required',
-            // 'type' => 'required',
-            'status' => 'required',
-        ];
-        $messages = [
-            'name.required' => 'Tên danh mục không được bỏ trống',
-            // 'type.required' => 'Loại danh mục không được bỏ trống',
-            'status.required' => 'Trạng thái bắt buộc chọn',
-        ];
-        $validator = \Validator::make($request->all(), $rules, $messages);
-        if ($validator->fails()) {
-            return response()->json(['message' => $validator->errors()->all()[0] , 'status' => 'error']);
-        }
+        $this->validateRequest(
+            [   
+                'name' => 'required',
+                'url' => 'required',
+                'status' => 'required'
+            ],$request,Categories::getAttributeName()
+        );
+        
         $model = Categories::firstOrCreate(['id' => $request->id]);
-        $model->name = $request->name;
-        $model->status = $request->status;
+        
+
+        if((!$model->id && $model->isDirty('name'))|| ($model->id && $model->isDirty('name'))){
+            $parentSlug = $model->ancestors[0]->url ?? '/';
+            $slug = \Str::slug($request->name);
+            $model->ikey = $slug;
+            if(str_contains($parentSlug,$slug))
+                $model->url = $slug;
+            else
+                $model->url = $parentSlug.'-'.$slug;
+        }
+        else{
+            $model->url = \Str::slug($request->url);
+            $model->ikey =\Str::slug($request->name);
+        }
+        $model->fill($request->all());
         $model->save();
 
         if($request->category_parent_id){
@@ -167,9 +172,4 @@ class CategoriesController extends Controller
         }
         return response()->json(['message' => 'Lưu thành công' , 'status' => 'success']);
     }
-
-
- 
-
-
 }
