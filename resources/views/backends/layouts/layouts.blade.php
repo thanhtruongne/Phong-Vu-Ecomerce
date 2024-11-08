@@ -95,6 +95,7 @@
                 $('body').on('click','.ckfinder_3',function() {
                     let element = $(this);
                     let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
+                    let data_name = element.data('parent');
                     CKFinder.modal({
                     chooseFiles: true,
                     // width: 800,
@@ -107,7 +108,7 @@
                                 html += `
                                 <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
                                     <img height="120" src="${file.getUrl()}" width="150" alt="">
-                                    <input type="hidden" name="album[]" value="${file.getUrl()}"/>
+                                    <input type="hidden" name="${data_name ? data_name : 'album'}[]" value="${file.getUrl()}"/>
                                     <button type="button" class="trash_album btn bg-red" >
                                         <i class="fas fa-trash text-white" ></i>
                                     </button >
@@ -115,7 +116,11 @@
                                 `
                             });
                             
-                            element.parents('.check_hidden_image_album').addClass('hidden');
+                    
+                            if(element.parents('.check_hidden_image_album').hasClass('hidden')){
+                                element.parents('.check_hidden_image_album').removeClass('hidden')
+                            }
+                            else element.parents('.check_hidden_image_album').addClass('hidden');
                             render.html(html);               
                         });
 

@@ -218,9 +218,11 @@
         function name_formatter(value,row,index){
             return `<div>
                         <a class="" href="${row.edit_url}">${row.name}</a>
-                        <div>
+                        ${row.sku_code  ? 
+                        `<div>
                              <span class="fw-bold">Sku: ${row.sku_code}</span>
-                        </div>
+                        </div>` : '' }
+                        
                          <div>
                              <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>
                         </div>

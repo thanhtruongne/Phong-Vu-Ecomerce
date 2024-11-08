@@ -29,33 +29,37 @@
 
     })
 
-    $('.load-attribute').select2({
-        allowClear: true,
-        dropdownAutoWidth : true,
-        width: '100%',
-        placeholder: function(params) {
-            return {
-                id: null,
-                text: params.placeholder,
-            }
-        },
-        ajax: {
-            method: 'GET',
-            url: base_url + '/load-ajax/loadAttribute',
-            dataType: 'json',
-            data: function (params) {
 
-                var query = {
-                    search: $.trim(params.term),
-                    page: params.page,
-                    parent_id: $(this).data('parent'),
-                };
-
-                return query;
-            }
-        }
-
-    })
+    function load_attribute_parent(){
+        $('.load-attribute').select2({
+            allowClear: true,
+            dropdownAutoWidth : true,
+            width: '100%',
+            placeholder: function(params) {
+                return {
+                    id: null,
+                    text: params.placeholder,
+                }
+            },
+            ajax: {
+                method: 'GET',
+                url: base_url + '/load-ajax/loadAttribute',
+                dataType: 'json',
+                data: function (params) {
+    
+                    var query = {
+                        search: $.trim(params.term),
+                        page: params.page,
+                        parent_id: $(this).data('parent'),
+                    };
+    
+                    return query;
+                }
+            },
+    
+        })
+    }
+  
 
     function load_attribute_by_type(){
         $('.load-attributes-type').select2({
@@ -96,7 +100,7 @@
     }
 
     function load_select2(){
-        $('.select2').select2({
+        $('.select_custom').select2({
             allowClear: true,
             dropdownAutoWidth : true,
             width: '100%',
@@ -107,19 +111,6 @@
                 }
             },
         })
-        // .on("select2:change", function (e) {
-        //     var selected_element = $(e.currentTarget);
-        //     var select_val = selected_element.val();
-        //     console.log(selected_element,select_val)
-        //     $.each(this.options, function (i, item) {
-        //         console.log($(item).val())   
-        //         if($(item).val() == ""){
-        //             console.log(item);
-        //         }
-        //         // if (item.checked) {
-        //         //     $(item).prop("disabled", true); 
-        //         // }
-        //     });
-        // });
     }
     load_select2();
+    // load_attribute_parent();

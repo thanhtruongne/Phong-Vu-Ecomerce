@@ -9,7 +9,7 @@ use Illuminate\Http\Response;
 use Modules\Products\Entities\Attribute;
 use Modules\Products\Entities\ProductCategory;
 use Modules\Products\Entities\Products;
-use Modules\Products\Entities\ProductVariant;
+use Modules\Products\Entities\SkuVariants;
 
 class ProductsController extends Controller
 {
@@ -64,16 +64,18 @@ class ProductsController extends Controller
         $query->disableCache();
         $count = $query->count();
         $rows = $query->get();
+      
         foreach($rows as $row) {
             $row->edit_url = route('private-system.product.edit',['id' => $row->id,'type' => $this->getNameType($row->type) ]);
-            $row->price = numberFormat($row->price);
-            // $row->category_name = ProductCategory::whereId($row->product_category_id)->value('name');
-            $row->attribute_name = implode(' - ',$row->attributes->pluck('name')->toArray());
-            // $row->variant_name = $this->renderHTML($row);
-            // if(!$row->product_variant->isEmpty()) {
-            //     $row->sku = implode(' - ',$row->product_variant->pluck('sku')->toArray());
-            //     $row->price = null;
-            // }       
+            if($row->is_single){
+                $row->price =null;      
+                $row->quantity =null;      
+            }
+            else 
+                $row->price = numberFormat($row->price);      
+               
+            $row->attribute_name = $this->renderAttribute($row);
+            $row->variant_name = $this->renderHTML($row);
       
         }
         // dd($rows);
@@ -119,35 +121,12 @@ class ProductsController extends Controller
         return view('products::products.form',['model' => $model , 'categories' => $data , 'attributes' => $attributes]);
     }
 
-    private function renderHTML($row){
-        $html = '';
-        $data = $row->product_variant ?? [];
-         if($row){
-            foreach($data as $key => $item){
-                $html .= 
-                  '<details class="tree-nav__item" open>
-                        <summary class="tree-nav__item-title ">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div class="node" style="min-width:98%">
-                                    <a class="overide" href="#">'.$item->name.' - '.$item->sku.' - '.numberFormat($item->price).' VND - '.$item->qualnity.'</a>
-                                </div>
-                                <button id="row_'.$item->id.'" onClick="deleteRow('.$item->id.')" class="btn"><i class="fas fa-trash"></i></button>
-                            </div>
-                          
-                        </summary>
-                    </details> ';
-            }
-         }
-         return $html;
-        
-    }
+
 
     public function save(Request $request){
         if($request->is_single && $request->is_single == 'on'){
             $this->validateRequest([
-                'cost' => 'required',
                 'category_id' => 'required',
-                'image' => 'required',
                 'name' => 'required|string',
              ],$request,Products::getAttributeName());
          }
@@ -164,47 +143,54 @@ class ProductsController extends Controller
         if($request->type && !in_array($request->type,$this->type_params())){
             json_result(['message' => 'Có lỗi xảy ra vui lòng thử lại','status' => 'error']);
         }
-
+          
         $model = Products::firstOrNew(['id' => $request->id]);
         //  tạo variant
         if($request->is_single){
-            $attribute = $request->attribute;
             $model->fill($request->except(['sku','quantity','attribute']));
             $model->is_single = 2;
-            // $model->sku_code = \Str::random(10);
-            // $arrAttribute = array_unique(array_merge(...$attribute ?: []));
-            // $model->attributeFilter = json_encode($arrAttribute);
             $model->price = null;
-            $model->quantity = array_sum($request->quantity);
+            $model->type = $this->getNameType($request->type);
             $model->product_category_id = $request->category_id;
-
-
-            if($model->save()){
-                $model->attributes()->sync((array_unique($attribute) ?: []));
-
-                // foreach($attribute as $key => $item){
-                //     $variant = ProductVariant::firstOrNew(['id' => $request->attribute_id[$key] ?? null]);
-                //     $attribute = Attribute::whereIn('id',$item)->get(['id','name','parent_id']);
-                //     if(!$attribute || $request->sku[$key] || $request->qualnity[$key] || $request->variant_album[$key] || count($request->attribute[$key]) <= 0 || $request->cost[$key]){
-                //         json_result(['message' => 'Các field trong các ô attribute '.$key.' không được bỏ trống','status' => 'error']); 
-                //     }
-                //     $variant->name = $request->name.' ('.implode('/',$attribute->pluck('name')->toArray()) .')';
-                //     $variant->user_id = profile()->id;
-                //     $variant->sku = $request->sku[$key];
-                //     $variant->product_id = $model->id;
-                //     $variant->album = json_encode($request->variant_album[$key]);
-                //     $variant->image = (string)$request->variant_album[$key][0];
-                //     $variant->qualnity = $request->qualnity[$key];
-                //     $variant->price = (int)str_replace('.','',$request->cost[$key]);
-                //     $variant->attribute = json_encode($request->attribute[$key]);
-                //     $variant->save();
-                // }
+            $attributes_ids = $request->attribute_id;
+            $attributes = [];
+            $sku_idx = [];
+            ksort($attributes_ids);
+            $sku_idx = json_decode($request->attribute_varian_idx);
+            foreach($attributes_ids as $key =>  $attribute_item){
+                // compare các giá trị gán chúng vào index của item
+                $attribute_cateloge = Attribute::where('id',$key)->first(['name','id']);
+                $variants_attribute = [];
+                foreach($attribute_item as $index => $val){
+                    //gán data vào variantts
+                    $variants_attribute[$index] = Attribute::where('id',$val)->value('name');
+                }
+                $attributes[] = [
+                    'id' => $attribute_cateloge->id,
+                    'name' => $attribute_cateloge->name,
+                    'options' => $variants_attribute
+                ];
             }
+            $model->variants = $attributes;
+            if($model->save()){
+                $model->sku_variants()->delete();
+                foreach($sku_idx as $key => $sku){
+                    $variant = new SkuVariants();
+                    $variant->product_id = $model->id;
+                    $variant->sku_idx = $sku;
+                    $variant->sku_code = $request->variants['sku'][$key];
+                    $variant->name = $request->name .'('.str_replace(',','/',$request->productVariants['name'][$key]).')';
+                    $variant->slug =\Str::slug($variant->name);
+                    $variant->price = (int)str_replace('.','',$request->variants['price'][$key]);
+                    $variant->stock = $request->variants['qualnity'][$key];
+                    $variant->album = $request->variants['album'][$key];
+                    $variant->save();
+                }
+            }
+         
 
         }
-         
-        else {
-                
+        else {    
              $model = Products::firstOrNew(['id' => $request->id]);
              $model->fill($request->except(['attribute'])); 
              
@@ -238,12 +224,13 @@ class ProductsController extends Controller
     }
 
 
+
     public function remove(Request $request){
         if($request->type && $request->type == 'all'){
             $ids = $request->input('ids', null);
             foreach ($ids as $id){
                $model = Products::find($id);
-               if(!$model->product_variant->isEmpty()){
+               if(!$model->sku_variants->isEmpty()){
                     json_result(['message' => 'Sản phẩm còn tồn tại các variant con','status' => 'error']);
                }
                $model->delete();
@@ -278,4 +265,39 @@ class ProductsController extends Controller
     private function type_params(){
         return ['laptop','phone','electric','accessory'];
     }
+
+    private function renderHTML($row){
+        $html = '';
+        $data = $row->sku_variants ?? [];
+         if($row){
+            foreach($data as $key => $item){
+                $html .= 
+                  '<details class="tree-nav__item" open>
+                        <summary class="tree-nav__item-title ">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="node" style="min-width:98%">
+                                    <a class="overide" href="#">'.$item->name.' - '.$item->sku_code.' - '.numberFormat($item->price).' VND - '.$item->stock.'</a>
+                                </div>
+                                <button id="row_'.$item->id.'" onClick="deleteRow('.$item->id.')" class="btn"><i class="fas fa-trash"></i></button>
+                            </div>
+                          
+                        </summary>
+                    </details> ';
+            }
+         }
+         return $html;
+        
+    }
+
+    private function renderAttribute($row){
+      $html = '';
+      if($row->variants){
+        foreach($row->variants as $variant){
+            $html .= $variant['name'].': '.implode(', ',$variant['options']).' ; <br>';
+          }
+      }
+    
+      return $html;
+    }
 }
+

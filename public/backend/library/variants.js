@@ -717,17 +717,17 @@
        $('body').on('change','.vartiant_choose',function() {
         //viết hàm choose variant
         let attributeCatelogeId = $(this).val();
-            if(attributeCatelogeId != 0) {
-                $(this).parent('.col-lg-3').siblings('.col-lg-7').html( Data.Select2variants(attributeCatelogeId));
-                $('.selectVariants').each(function() {
-                    Data.getSelect2($(this));
-                })
-            }
-            else {
-                $(this).parent('.col-lg-3').siblings('.col-lg-7').html(
-                    ' <input type="text" class="form-control" disabled style="height: 42px">'
-                );
-            }
+        if(attributeCatelogeId != 0) {
+            $(this).parent('.col-lg-3').siblings('.col-lg-7').html( Data.Select2variants(attributeCatelogeId));
+            $('.selectVariants').each(function() {
+                Data.getSelect2($(this));
+            })
+        }
+        else {
+            $(this).parent('.col-lg-3').siblings('.col-lg-7').html(
+                ' <input type="text" class="form-control" disabled style="height: 42px">'
+            );
+        }
          Data.DisabledChooseItemAttribute();
          Data.CheckLengthTheAttribute();
        })
