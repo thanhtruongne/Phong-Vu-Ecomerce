@@ -30,7 +30,6 @@ class Products extends Model
     ];
 
     protected $casts = [
-    //    'attributes' => 'json',
        'variants' => 'json'
     ];
     
@@ -47,6 +46,9 @@ class Products extends Model
     // public function product_variant() {
     //     return $this->hasMany(ProductVariant::class,'product_id','id');
     // }
+    public function sku_variants(){
+        return $this->hasMany(SkuVariants::class,'product_id','id');
+    }
 
     public function attributes(){
         return $this->belongsToMany(Attribute::class,'product_attribute_relation','product_id','attribute_id');

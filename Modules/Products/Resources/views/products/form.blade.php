@@ -292,6 +292,7 @@
                                                         <input type="checkbox" {{$model && $model->is_single == 2 ? 'checked' : ''}} id="is_single" name="is_single" class="form-control mt-1">
                                                         <span class="ml-3">( Sản phẩm đơn hoặc có nhiều phần variants con. )</span>
                                                     </div>
+                                                    <input type="hidden" name="attribute_varian_idx">
                                                     {{-- <button class="btn create_variant" disabled type="button"><i class="fa fa-plus"></i> </button> --}}
                                                 </div>
                                             </div>
@@ -312,13 +313,27 @@
                                                             </div>
                                                         </div>   --}}
                                                     </div>
-                                                    <button class="btn toogle_render_variant" type="button">
-                                                        <i class="fa fa-plus"></i> 
-                                                        Thêm variants
-                                                    </button>
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn toogle_render_variant" type="button">
+                                                            <i class="fa fa-plus"></i> 
+                                                            Thêm variants
+                                                        </button>
+                                                        <button type="button" class="btn" onclick="createVariants()">
+                                                            <i class="fa fa-check-circle"></i>
+                                                            Tạo variants
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div> 
+                                    </div>
+
+                                    {{-- render variant table --}}
+                                    <div class="col-md-9">
+                                        <table class="table table-bordered variantsTable" style="margin: 20px 0px;">
+                                            <thead></thead>
+                                            <tbody></tbody>
+                                          </table>
                                     </div>
  
                              
@@ -334,16 +349,6 @@
 @section('scripts')
 <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
 <script type="text/javascript">
-       
-       //variant
-
-
-
-
-
-
-
-    // $(document).ready(function(){
         function load_attrbute(id = null){
             if(id){
                 $('.load-attribute-custom_'+id).select2({
@@ -405,7 +410,6 @@
             }
         
         }
-        
 
         function onClickCreateAttributeVariant(id,parent_id){
             let parent = $('.item_variant_attribute_'+ parent_id);
@@ -431,78 +435,470 @@
         let array_data_select2 = [];
         let searchParams = new URLSearchParams(window.location.search)
         let render = $('.render_variant_thourgh');
+        let count = 1;
+
+        function removeVariants(id){
+            let _this = $('#remove_variant_'+id);
+            let parent =  _this.parents('.wrapper_row_' + id);
+            parent.remove();         
+        }
+
+        function trigger() {
+            $('.on_change_load').each(function(i,item){
+                $(item).trigger('change');
+            })
+        }
+
         $('body').on('click','.toogle_render_variant',function(){
-            let _this = $(this);
-            render_variant();
+            let _this = $(this);    
+            let parent_render = _this.siblings('.render_variant_thourgh');
+            if($(parent_render).find('.wrapper_row').length){
+                let last_item = $(parent_render).find('.wrapper_row:last');
+                if($(last_item).find('select.on_change_load').val() == ""){
+                    show_message('Vui lòng chọn dữ liệu attribute trước khi thêm mới', 'warning');
+                    return false;
+                }
+            }   
+            render_variant();   
         })
 
+    
+
         function render_variant(){
+            let ac_sum = count++;
             let html = '';
             $.each(@json($attributes ?? []),function(calc,attribute){
                 html += `<option value="${attribute?.id}" ${array_data_select2.includes(attribute?.id) ? 'disabled' : ''} data-check="${attribute?.id}" data-parent="${attribute?.parent_id}">${attribute?.name}</option>`
                 // html += `<a class="dropdown-item ${arr.includes(attribute['id']) ? 'disabled' : ''}" onclick="onClickCreateAttributeVariant(${attribute['id']},${index})" data-id="${index}" data-parent="${attribute['id']}" >${attribute['name']}</a>`
             })
+
             render.append(`
-                <div class="row mb-4">
-                    <div class="col-md-4 mb-2 mb-sm-0">
-                        <select name="attributes_parent[]" class="select2 form-control on_change_load" id="" data-placeholder="-- Chọn thuộc tính --">
+                <div class="row mb-4 wrapper_row_${ac_sum} catch_item">
+                    <div class="col-md-4 mb-2 mb-sm-0 get_element" data-id="${ac_sum}">
+                        <select name="attributes_parent[]" class="select_custom form-control on_change_load" id="" data-placeholder="-- Chọn thuộc tính --">
                             <option value=""></option>
                             ${html}
                         </select>
                     </div>
-                    <div class="col-md-8">
-                        <select name="" class="select2" id=""></select>
+                    <div class="col-md-6 render_child_${ac_sum}" >
+                         <input type="text" class="form-control" disabled>
                     </div>
+                    <div  class="col-md-2">
+                        <button type="button" class="btn" id="remove_variant_${ac_sum}" onclick="removeVariants(${ac_sum})"><i class="fas fa-trash"></i></button>
+                    </div>
+                 
                 </div>  `)
             load_select2();
         }
-
         $('body').on('change','select.on_change_load',function(e){
             let _this = $(this);
             let val = _this.val();
-            let check = _this.attr('data-check');
-            $('.on_change_load').each(function() {
-                let _this = $(this);
-                let selected = _this.find(':selected').val();
-                if( +selected != 0 && +selected != NaN) {
-                    array_data_select2.push(+selected);
-                }   
-                
-            })
-            $('.on_change_load').find('option').removeAttr('disabled');
-            for(let i = 0 ; i < array_data_select2.length ; i++) {
-                $('.on_change_load').find('option[value='+ array_data_select2[i] +']').prop('disabled',true);
+            let data_id = _this.parent('.get_element').data('id');
+
+            if(val != 0) {
+                _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(variants_select(val,data_id));
+                getSelect2(val,data_id) 
+                // trigger();
             }
-            // if(!$.isNumeric(val)){
-            //     array_data_select2 = array_data_select2.filter(function(r){
-            //         return r !== check;
-            //     })
-            //     $('.on_change_load').each(function(i,item){
-            //         let items = $(item);
-            //         items.change(function(){
-            //             $.each(this.options, function (i, item) {
-            //                 console.log(item,$(item).val(),$(item).attr('data-select2-id'))
-            //                 // if (item.selected) {
-            //                 //     $(item).prop("disabled", true);
-            //                 // } else {
-            //                 //     $(item).prop("disabled", false);
-            //                 // }
-            //             });
-            //         })
-            //             // let attributes = '';
-            //             // $.each(@json($attributes ?? []),function(calc,attribute){
-            //             //     attributes += `<option value="${attribute?.id}" ${id_item == attribute?.id ? 'selected' : ''} ${array_data_select2.includes(attribute?.id) ? 'disabled' : ''} data-check="${attribute?.id}" data-parent="${attribute?.parent_id}">${attribute?.name}</option>`
-            //             // })  
-            //             // items.html(attributes)
-                    
-      
-            //     })
-                
-            // }else{
-            //     array_data_select2.push(+val); 
-            //     // render_variant();
-            // }
+            else {
+                _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(
+                    '<input type="text" class="form-control" disabled>'
+                );
+            }
+            // reloadAttribute(val,_this,data_check_id)
         })
+
+        function variants_select(val,id){
+            let html = '<select id="load_custom_att_'+id+'" class="variants-'+val+' form-control get_val_attribute" name="attribute_id['+val+'][]" multiple data-catid='+val+'></select>';
+            return html;
+        }
+
+        function  getSelect2(val,data_id){
+            $('#load_custom_att_' + data_id).select2({
+                placeholder: 'Nhập ký tự để tìm kiếm',
+                allowClear: true,
+                ajax: {
+                    url: base_url + '/load-ajax/loadAttribute',
+                    dataType: 'json',
+                    delay: 100,
+                    data: function(params) {
+                        return {
+                            search: params.term,
+                            page: params.page,
+                            parent_id :val
+                        }
+                    },
+                    processResults : function(data) {
+                        return {
+                            results : $.map(data,function(obj,i) {
+                                return obj;
+                            })
+                        }
+                    }
+                }
+            })
+        }
+
+        function createVariants(){
+            let main = $('.render_variant_thourgh');
+            let attributeVariants = [];
+            let attributeTitle = [];
+            let attribute = [];
+            let attrCatelogeID = []; //check duplicate
+            let attribute_idxs = [];
+            if($('.render_variant_thourgh').find('.catch_item').length == 0) {
+                show_message('Vui lòng chọn thuộc tính','warning');
+                attributeVariants = [];
+                return false;
+            }
+            $(main).children('.catch_item').each(function(i,item){
+                let attribute_cateloge_id = $(item).find('.select_custom').val();
+                let attributre_cateloge_name = $(item).find('.get_element select').select2('data');
+                let attribute_variant_ids = $(item).find('select.get_val_attribute').select2('data')
+                let variants = {};
+              
+                if(attribute_cateloge_id == ""){
+                    show_message('Vui lòng không bỏ trống thuộc tính '+attributre_cateloge_name[0].text+' đã tạo','warning');
+                    attributeVariants = [];
+                    return false;
+                }
+                if(attribute_variant_ids.length == 0){
+                    show_message('Vui lòng không bỏ trống dữ liệu thuộc tính ' + attributre_cateloge_name[0].text +' đã tạo','error');
+                    attributeVariants = [];
+                    attrCatelogeID = [];
+                    attribute = [];
+                    attribute_idxs = [];
+                    attributeVariants = [];
+                    attributeTitle = []
+                    return false;
+                }
+
+                let attr = [];
+                let attributeIdVariants = [];
+                let attribute_idx = [];
+                attrCatelogeID.push(attribute_cateloge_id);
+                for(let i = 0 ; i < attribute_variant_ids?.length ; i++ ) {    
+                    let variants = {};
+                    let item = {};
+                    variants[attribute_cateloge_id] = attribute_variant_ids[i].id;  
+                    item[attributre_cateloge_name[0].text] = attribute_variant_ids[i].text;
+                    attr.push(item);  
+                    attributeIdVariants.push(variants);
+                    attribute_idx.push(attribute_variant_ids[i].id)
+                }         
+                attributeTitle.push(attributre_cateloge_name[0].text);
+                attribute.push(attr);
+                attributeVariants.push(attributeIdVariants);
+                attribute_idxs[attribute_cateloge_id] = attribute_idx
+                
+            });
+
+            // //check duplicate attribute_cateloge_id
+            if(checkIfDuplicateExists(attrCatelogeID)){
+                show_message('Trùng các thuộc tính cateloge','error');
+                attributeVariants = [];
+                attrCatelogeID = [];
+                attribute = [];
+                attributeTitle = []
+                return false;
+            }
+            
+
+            attribute = attribute?.reduce((previous,current) => {
+                return previous.flatMap(item => current.map(val => ({...item , ...val })));
+            })
+
+            attributeVariants =  attributeVariants?.reduce((previous , current) =>  {
+                return previous.flatMap(val => current.map(cur => ({...val ,...cur}) ));
+            });
+            
+            let set_data = []
+            attributeVariants?.map(function(temp,index){
+                let keys = Object.keys(temp);
+                let value_arr = Object.values(temp);
+                let arr_data_set = [];
+                // console.log(temp,Object.values(temp).join(', '),);
+                attribute_idxs?.map(function(val_child,index_child){
+                    if(keys.indexOf(index_child.toString()) !== -1){ // có giá trị trong array keys
+                        val_child.map(function(child_temp,prefix){
+                            if(value_arr.indexOf(child_temp) !== -1){
+                                arr_data_set.push(prefix);
+                            }
+                        })
+                    }
+                })
+                set_data.push(arr_data_set)
+            })
+
+            let input_idx = $('input[name="attribute_varian_idx"]');
+            if(input_idx){
+                input_idx.val(JSON.stringify(set_data));
+            }
+            createRowTableHead(attributeTitle)
+            let trClass = [];
+            attribute.forEach((val,index) =>  {
+                let row = createVariantsRow(val,attributeVariants[index]);        
+                //lặp qua các tr class sau đó push vào mảng
+                let classModify = "tr-variant-" + Object.values(attributeVariants[index]).join(', ').replace(/, /g,'-');
+                
+                trClass.push(classModify);
+            
+                //trường hợp tránh các row trùng nhau từ variants_id và text
+                if(!$("table.variantsTable tbody tr").hasClass(classModify)) {
+                    $('table.variantsTable tbody').append(row);
+                }
+            })
+            $('table.variantsTable tbody tr').each(function() {
+                const row = $(this);
+                const classRow = row.attr('class');
+                //chuyển về thành mảnh
+                if(classRow) {
+                    let arrayRow = classRow.split(' ');
+                    let check = false;
+                    arrayRow.forEach((val , index) => {
+                        if(val === 'variant-row') return;
+                        else if(!trClass.includes(val)) check = true;
+                    })
+                    if(check == true) row.remove();
+
+                }
+            })
+        }
+
+        function createRowTableHead(attributeTitle)  {
+            let $thead = $('table.variantsTable thead');
+            let $row = $('<tr>');
+            $row.append($('<td>').text('Hình ảnh'));
+            for(let i = 0 ;i < attributeTitle.length ; i++) {
+                $row.append($('<td>').text(attributeTitle[i]));
+            }
+            $row.append($('<td>').text('Số lượng'));
+            $row.append($('<td>').text('Giá tiền'));
+            $row.append($('<td>').text('Sku'));
+            // $row.append($('<td>').text('Code'));
+            $thead.html($row);
+            
+            return $thead
+        }
+
+        function createVariantsRow(arrtributeItem,variantsId){
+            let attributeString = Object.values(arrtributeItem).join(', ');
+            let td;
+            let variantAttribute = Object.values(variantsId).join(', ');
+            //chuyển vể dạng 1-2-3 để set vào class tr để dễ filter các bảng
+            let replaceModifyClassTable = variantAttribute.replace(/, /g,'-');
+            let $row = $('<tr>').addClass('variant-row tr-variant-'+ replaceModifyClassTable);
+            td = $('<td>').addClass('variants-album').append(
+                $('<span>').append($('<img>').attr('src','http://localhost:8000/public/ckfinder/userfiles/images/Post/433610459-1399019177654607-8456780266104156853-n-1711118388-214344.jpg').attr('width','80'))
+                )
+                $row.append(td);
+                Object.values(arrtributeItem).forEach((val , index) => {
+                    td = $('<td>').text(val);   
+                    $row.append(td);
+                })
+
+            td = $('<td>').addClass('hidden variants');
+            let price = $('input[name=price]').val() ;
+            let code = $('input[name=code_product]').val() + '-' + replaceModifyClassTable;
+       
+            let option = [
+                    {name : 'variants[qualnity][]' , class : 'variants_qualnity'},
+                    {name : 'variants[price][]' , class : 'variants_price'},
+                    {name : 'variants[sku][]' , class : 'variants_sku'},
+                    // {name : 'variants[code][]' , class : 'variants_code','regex' :code },
+                    {name : 'variants[file_name][]' , class : 'variants_file_name'},
+                    {name : 'variants[file_url][]' , class : 'variants_file_url'},
+                    {name : 'variants[album][]' , class : 'variants_album'},
+                    {name : 'productVariants[name][]' , val : attributeString},
+                    {name : 'productVariants[id][]' , val : variantAttribute},
+            ]
+            
+            $.each(option , function(index , value) {
+                let input = $('<input>').attr('type','text').attr('name',value.name)?.addClass(value?.class);
+                if(value.regex) {
+                    input.val(value.regex)
+                }
+                if(value.val) {
+                    input?.val(value.val);
+                }
+                td.append(input);
+            })
+            $row.append(td);
+            
+            $row.append($('<td>').addClass('variants-qualnity').text('-'))
+                .append($('<td>').addClass('variants-price').text('-'))
+                .append($('<td>').addClass('variants-sku').text(price))
+                // .append($('<td>').addClass('variants-code').text(code));
+            return $row;
+        }
+
+        function checkIfDuplicateExists(arr) {
+            return new Set(arr).size !== arr.length
+        }
+
+        $('body').on('click','.variant-row',function(){
+            let _this = $(this);
+            let variants = {};
+            _this.find('td.variants input[type=text][class^="variants_"]').each(function() {
+               let className = $(this).attr('class');
+               variants[className] = $(this).val();
+            });
+            if($('.check_length_variants').length === 0) {
+                _this.after(dataVariantsDyynamic(variants));
+                // Data.createAlbumVariants();
+                $('#sortable_books').sortable();       
+            }
+        })
+
+        function mySort(x, y)
+        {
+            return ((x.length < y.length) ? -1 : ((x.length > y.length) ? 1 : 0));
+        }
+
+        function dataVariantsDyynamic(variants){
+            let html = '';
+            let imageArray =  variants.variants_album == "" ? [] : variants?.variants_album?.split(',') ;
+            let price = $('input[name=price]').val();
+            let code = $('input[name=code]').val();
+            let LisetImage = updateImageVariantsTable(imageArray);
+            html = `
+            <tr class="check_length_variants">
+                <td colspan="6" style="border: none;padding-top:20px">
+                    <div style="display:flex;justify-content: space-between">
+                        <div >
+                            <h3 class="text-success">Hình ảnh sản phẩm</h3> 
+                        </div>
+                        <div>
+                            <button type="button" class="btn remove_variants_data" style="margin-right: 8px">
+                                <i class="fas fa-times"></i>
+                                Hủy
+                            </button>
+                            <button type="button" class="btn saveVariantsData">
+                                <i class="fa fa-save"></i>
+                                Lưu dữ liệu
+                            </button>
+                        </div>
+                    </div>       
+                    <div class="render_store_data_variants">
+                        <div class="updateVariants" style="font-size:16px;margin:2rem 0;">
+                            <div class="font_title_album text-center">
+                                <div class="check_hidden_image_album ${(imageArray?.length == 0) ? '' : 'hidden'} ">
+                                    <img class="ckfinder_3" data-parent="variantsalbum" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
+                                    <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div>
+                                </div>
+                                <div class="ul_upload_view_album clearfix sortable" style="list-style-type: none" id="sortable_books">
+                                    ${LisetImage == undefined ? ' ' : LisetImage}
+                                </div>
+                            </div>
+                            <div style="margin-top: 20px">
+                                    <div class="col-lg-10">
+                                        <div class="row">
+                                                <div class="col-lg-3">
+                                                <label style="font-size: 14px;font-weight:500" for="">Số lượng</label>
+                                                <input type="text"  value="${variants?.variants_qualnity }" class="form-control integerInput" name="qualnity" data-target="variantsQualnity"/>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                <label style="font-size: 14px;font-weight:500" for="">SKU</label>
+                                                <input type="text" class="form-control integerInput" value="${variants?.variants_sku}" name="variantsSKU" data-target="variantsSKU"/>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                <label style="font-size: 14px;font-weight:500" for="">Giá</label>
+                                                    <input type="text" class="form-control number-format" value="${variants?.variants_price == undefined ? price : variants?.variants_price}" value="0" name="price" oninput="this.value=this.value.replace(/[^0-9]/g,'')" data-target="variantsPrice"/>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div
+                </td>
+            </tr>
+            `
+            return html;
+        }
+
+        function updateImageVariantsTable(album){
+            let html = '';
+            if(album?.length && album != 0) {
+                for(let i = 0 ; i < album?.length ; i++) {
+                        html = html + '<li class="list_item" style="float:left;margin: 0 12px 12px 12px">'
+                        html = html + '<img height="120" src="'+ album[i] +'" width="150" alt="">'
+                        html = html + '<input type="hidden" name="variantsalbum[]" value="'+ album[i] +'"/>'
+                        html = html + '<button type="button" class="btn bg-red delete_item_trash" >'
+                        html = html + '<i class="fa-solid fa-trash text-white"></i>'
+                        html = html + '</button >'
+                        html = html + '</li>'
+                }
+                return html;
+            }
+    
+        }
+
+        $(document).on('click','.remove_variants_data',function(e) {
+            $(this).parents('div .check_length_variants').remove();
+        })
+
+        $(document).on('click','.saveVariantsData',function(e) {
+            let variants = {
+                'qualnity' : $('input[name="qualnity"]').val() ?? '',
+                'sku' : $('input[name="variantsSKU"]').val() ?? '',
+                'price' : $('input[name="price"]').val() ?? '',
+                'album' : $('input[name="variantsalbum[]"]').map(function() {
+                    return $(this).val();
+                }).get(),
+            }
+            $.each(variants,function(index , val) {
+                $('.check_length_variants').prev().find('.variants_'+index).val(val);
+            })
+            updateVartiantsTable(variants);
+            removeUpdateData();
+            e.preventDefault();
+        })
+
+        function updateVartiantsTable(variants) {
+            let option =  {
+                'qualnity' : variants.qualnity,
+                'sku' : variants.sku,
+                'price' : variants.price,
+            }
+            $.each(option,function(index ,val) {
+                $('.check_length_variants').prev().find('td.variants-'+index).html(val);
+            })
+            $('.check_length_variants').prev().find('td.variants-album').find('span img').attr('src',variants.album[0])
+        }
+
+        function removeUpdateData(){
+            $('.check_length_variants').remove();
+        }
+        // function reloadAttribute(id,element,parent){
+        //     let child = $(parent).find('.render_child').find('select.form-control');
+        //     $(child).attr('multiple',true).html(' ');
+        //     $(child).select2({
+        //         placeholder: 'Nhập ký tự để tìm kiếm',
+        //         ajax: {
+        //             url:  base_url + '/load-ajax/loadAttribute',
+        //             dataType: 'json',
+        //             delay: 100,
+        //             data: function(params) {
+        //                 return {
+        //                     search: $.trim(params.term),
+        //                     page: params.page,
+        //                     parent_id : id,
+        //                 }
+        //             },
+        //             processResults : function(data) {
+        //             return {
+        //                 results : $.map(data,function(obj,i) {
+        //                     return obj;
+        //                 })
+        //             }
+        //             },
+        //             cache: true
+        //         }
+        //     })         
+        // }
+
+
 
         //trường hợp edit
         // if($('input[name="id"]').val()){
@@ -694,15 +1090,15 @@
         // }
  
         $('body').on('click','.remove_item_attribute',function(){
-                let _this = $(this);
-                let id = _this.parents('.attribute_item').find('select').data('parent');
-                let find = $('body .attribute_choose[data-parent="'+id+'"]');
-                find.removeClass('disabled');
-                let menu = $('body .toggle_attribute');
-                arrIds = arrIds.filter(function(r){
-                    return r !== id;
-                })
-                _this.parents('.attribute_item').remove();
+            let _this = $(this);
+            let id = _this.parents('.attribute_item').find('select').data('parent');
+            let find = $('body .attribute_choose[data-parent="'+id+'"]');
+            find.removeClass('disabled');
+            let menu = $('body .toggle_attribute');
+            arrIds = arrIds.filter(function(r){
+                return r !== id;
+            })
+            _this.parents('.attribute_item').remove();
         })
  
         $('body').on('click','.trash_album',function(e) {       
@@ -758,7 +1154,6 @@
                 $('body .create_variant').prop('disabled',true)
             }
         })
-        let count = 1;
 
        //variant
     //    $('body .create_variant').on('click',function(){
