@@ -8,5 +8,7 @@ return [
     'manager_order' => 'QL đơn hàng',
     'manager_categories' => 'QL danh mục',
     'manager_product_item' => 'Sản phẩm',
+    'manager_menu' => 'Menu sản phẩm',
+    'manager_menu_cateloge' => 'DM Menu sản phẩm',
     'setting' => 'Cài đặt',
 ];

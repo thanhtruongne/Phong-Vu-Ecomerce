@@ -61,7 +61,6 @@ class ProductsController extends Controller
         $query->offset($offset);
         $query->limit($limit);
         $query->distinct();
-        $query->disableCache();
         $count = $query->count();
         $rows = $query->get();
       
@@ -73,7 +72,7 @@ class ProductsController extends Controller
             }
             else 
                 $row->price = numberFormat($row->price);      
-               
+            
             $row->attribute_name = $this->renderAttribute($row);
             $row->variant_name = $this->renderHTML($row);
       
@@ -94,31 +93,30 @@ class ProductsController extends Controller
         $categories = ProductCategory::descendantsOf($dataId)->toTree($dataId)->toArray();
         $data = $this->rebuildTree($categories);
         $model = Products::firstOrNew(['id' => $id]);
-        // if($model){
-        //     $model->price = numberFormat($model->price);
-        //     if($model->product_variant){
-        //         foreach($model->product_variant as $item){
-        //             $attributes = json_decode($item->attribute);
-        //             $data = [];
-        //             foreach($attributes as $attribute){
-        //                 $val = Attribute::where('id',$attribute)->first();
-        //                 $data[] = [
-        //                     'parent_name' => $val->ancestors->first()->name,
-        //                     'id' => $val->id,
-        //                     'name' => $val->name,
-        //                     'parent_id' => $val->parent_id
-        //                 ];
-        //             }
-        //             $item->attribute = $data;
-        //             $item->album = json_decode($item->album);
-        //         }
-        //     }
-        // }
+        $sku_idxs = [];
+        $attributes_model = [];
+        if($model && !is_null($model->is_single)){
+            $sku_idxs = $model->sku_variants->pluck('sku_idx')->toArray();
+            foreach($model->attributes as $key => $attribute){
+                $attri_ids = [];    
+                $attribute_parent = Attribute::where(['id' => $key , 'status' => 1])->first(['name','id']);
+                $attri_ids['name'] = $attribute_parent->name;$attri_ids['id'] = $attribute_parent->id;
+                foreach($attribute as $item){
+                    $attri_ids['option'][] = [
+                        'name' => Attribute::where(['id' => $item , 'status' => 1])->value('name'),
+                        'id' => $item
+                    ];
+                }
+               $attributes_model[] = $attri_ids;
+            }
+            $model->attributes = $attributes_model;
+        }
+ 
         //  //get attribute
         $parent_attribute = Attribute::where('ikey',$type)->first();
         $attributes = $parent_attribute->children->select(['name','id','parent_id']);
         // return view('products::products.form',['categories' => $data ,'category_main' => $dataMain, 'model' => $model , 'attributes' => $attributes]);
-        return view('products::products.form',['model' => $model , 'categories' => $data , 'attributes' => $attributes]);
+        return view('products::products.form',['model' => $model , 'categories' => $data , 'attributes' => $attributes , 'sku_idxs'=> $sku_idxs]);
     }
 
 
@@ -133,10 +131,11 @@ class ProductsController extends Controller
          else {
             $this->validateRequest([
                 'name' => 'required|string',
-                'desc' => 'required',
+                'description' => 'required',
                 'content' => 'required',
                 'album' => 'required',
                 'image' => 'required',
+                'attribute' => 'required',
                 'category_id' => 'required',
              ],$request,Products::getAttributeName());
         }
@@ -153,7 +152,7 @@ class ProductsController extends Controller
             $model->type = $this->getNameType($request->type);
             $model->product_category_id = $request->category_id;
             $attributes_ids = $request->attribute_id;
-            $attributes = [];
+            $variants = [];
             $sku_idx = [];
             ksort($attributes_ids);
             $sku_idx = json_decode($request->attribute_varian_idx);
@@ -165,13 +164,14 @@ class ProductsController extends Controller
                     //gán data vào variantts
                     $variants_attribute[$index] = Attribute::where('id',$val)->value('name');
                 }
-                $attributes[] = [
+                $variants[] = [
                     'id' => $attribute_cateloge->id,
                     'name' => $attribute_cateloge->name,
                     'options' => $variants_attribute
                 ];
             }
-            $model->variants = $attributes;
+            $model->variants = $variants;
+            $model->attributes = $attributes_ids;
             if($model->save()){
                 $model->sku_variants()->delete();
                 foreach($sku_idx as $key => $sku){
@@ -200,10 +200,14 @@ class ProductsController extends Controller
              if($checkCategoriesId->descendants && count($checkCategoriesId->descendants) > 0){
                 json_result(['message' => 'Vui lòng chọn danh mục sản phẩm có chủ đề ','status' => 'error']);
              }
+            //  if($request-.attribute)
              $model->product_category_id = $request->category_id;
              $model->type = $this->getNameType($request->type);
             //  $attribute = Attribute::whereIn('id',$request->attribute)->get(['id','name','parent_id']);
-             $attribute_name_convert = Attribute::whereIn('id',array_unique($request->attribute))->get()->pluck('name')->toArray();
+            if($request->attribute){
+                $attribute_name_convert = Attribute::whereIn('id',array_unique($request->attribute))->get()->pluck('name')->toArray();
+            }
+           
              
              if($request->id){
                 $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
@@ -217,7 +221,7 @@ class ProductsController extends Controller
              $model->price = (int)str_replace([',','.'],'',$request->cost);
              $model->album = json_encode($request->album);    
              if($model->save()){
-                $model->attributes()->sync((array_unique($request->attribute ?: [])));
+                $model->attributes_item()->sync((array_unique($request->attribute ?: [])));
              }
         }
         json_result(['message' => 'Lưu thành công','status' => 'success','redirect' => route('private-system.product')]);
@@ -291,10 +295,18 @@ class ProductsController extends Controller
 
     private function renderAttribute($row){
       $html = '';
-      if($row->variants){
+      if( !is_null($row->is_single) && $row->variants){
         foreach($row->variants as $variant){
             $html .= $variant['name'].': '.implode(', ',$variant['options']).' ; <br>';
-          }
+        }
+      }
+      else {
+        if($row->attributes_item) {
+            foreach($row->attributes_item as $attribute){
+                $html .= $attribute->name.'- ';
+            }
+        }
+      
       }
     
       return $html;

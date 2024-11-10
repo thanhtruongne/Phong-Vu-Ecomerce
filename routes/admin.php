@@ -19,17 +19,10 @@ use Modules\Products\Http\Controllers\AttributeCatelogeController;
 
     Route::get('/login',[AuthencateController::class,'index'])->name('be.login.template');
     Route::post('/login',[AuthencateController::class,'login'])->name('be.login');
-
-    Route::match(['get', 'post'], 'logout',[AuthencateController::class,'logout'] )->name('logout');
-
-
-
-    // Route::post('/logout',[AuthencateController::class,'logout'])->name('logout');
     Route::middleware(['auth','isAdmin'])->group(function(){
 
-       
+        Route::match(['get', 'post'], 'logout',[AuthencateController::class,'logout'] )->name('logout');
         Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
-        // Route::post('/logout',[AuthencateController::class,'logout'])->name('logout');
 
         //categories boa gồm các danh mcu5 sản phẩm
         Route::get('/categories',[CategoriesController::class,'index'])->name('categories');
@@ -66,15 +59,15 @@ use Modules\Products\Http\Controllers\AttributeCatelogeController;
          Route::post('/product/attribute/remove',[AttributeController::class,'remove'])->name('product-attribute.remove');
          Route::post('/product/attribute/removeSelectAll',[AttributeController::class,'removeSelectAll'])->name('product-attribute.remove.select');
         
-         Route::get('/product/categories/attribute',[AttributeCatelogeController::class,'index'])->name('product-attribute-catgories');
-         Route::get('/product/categories/attribute/get-data',[AttributeCatelogeController::class,'getData'])->name('product-attribute-catgories.getdata'); 
-         Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove'); 
-         Route::post('/product/categories/attribute/save',[AttributeCatelogeController::class,'save'])->name('product-attribute-catgories.save');       
-         Route::get('/product/categories/attribute/edit',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.edit');    
-         Route::get('/product/categories/attribute/create',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.create');    
-         Route::post('/product/categories/attribute/change-status',[AttributeCatelogeController::class,'changeStatus'])->name('product-attribute-catgories.change.status');
-         Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove');
-         Route::post('/product/categories/attribute/removeSelectAll',[AttributeCatelogeController::class,'removeSelectAll'])->name('product-attribute-catgories.remove.select');
+        //  Route::get('/product/categories/attribute',[AttributeCatelogeController::class,'index'])->name('product-attribute-catgories');
+        //  Route::get('/product/categories/attribute/get-data',[AttributeCatelogeController::class,'getData'])->name('product-attribute-catgories.getdata'); 
+        //  Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove'); 
+        //  Route::post('/product/categories/attribute/save',[AttributeCatelogeController::class,'save'])->name('product-attribute-catgories.save');       
+        //  Route::get('/product/categories/attribute/edit',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.edit');    
+        //  Route::get('/product/categories/attribute/create',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.create');    
+        //  Route::post('/product/categories/attribute/change-status',[AttributeCatelogeController::class,'changeStatus'])->name('product-attribute-catgories.change.status');
+        //  Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove');
+        //  Route::post('/product/categories/attribute/removeSelectAll',[AttributeCatelogeController::class,'removeSelectAll'])->name('product-attribute-catgories.remove.select');
         
         
         
