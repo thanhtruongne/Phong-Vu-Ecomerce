@@ -27,7 +27,7 @@ class CreateProductTable extends Migration
             $table->decimal('price',10)->nullable();
             $table->integer('quantity')->default(0);
             $table->integer('type')->default(1);
-            // $table->string('attributes')->nullable()->comment('[{attribute_cate -> 1 , attribute : [1,2,3]},...]');
+            $table->string('attributes')->nullable()->comment('[{attribute_cate -> 1 , attribute : [1,2,3]},...]');
             $table->string('variants')->nullable()->comment('[
                 {
                    name : color,

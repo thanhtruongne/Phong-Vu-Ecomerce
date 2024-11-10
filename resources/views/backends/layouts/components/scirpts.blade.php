@@ -57,6 +57,8 @@
 {{-- boostrap-iconpicker --}}
 <script src="{{asset('backend2/plugins/boostrap-iconpicker/boostrap-iconpicker.js')}}"></script>
 
+{{-- nestable --}}
+<script src="{{asset('backend2/js/plugins/nestable/jquery.nestable.js')}}"></script>
 {{-- Ckeditor --}}
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
 <script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script>

@@ -7,12 +7,12 @@
     @php
         $breadcum = [
             [
-                'name' => 'Quản lý sản phâm',
-                'url' => ''
+                'name' => 'Quản lý menus',
+                'url' => '/'
             ],
             [
-                'name' => 'Sản phẩm',
-                'url' => ''
+                'name' => 'Danh mục menus',
+                'url' => '/'
             ],
         ];
 
@@ -25,18 +25,12 @@
     
 @endsection
 
-@section('links')
-{{-- <link href="{{asset('css/iconIconic.css')}}" rel="stylesheet" type="text/css"> --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.css" rel="stylesheet" type="text/css"/>
-    <link rel="stylesheet" href="{{asset('backend2/css/cusomTreeCategory.css')}}">
-    <link rel="stylesheet" href="{{asset('backend2/css/treeSelect.min.css')}}">
-
-@endsection
 
 @section('content')
 <style>
     .bootstrap-table .fixed-table-container .table thead th.detail {
     width: 30px;
+
     }
 </style>
 
@@ -46,24 +40,16 @@
             <div class="">
                 <div class="row">
                   {{-- Tìm kiếm --}}
-                   <div class="col-md-6 form-inline">
+                   <div class="col-md-8 form-inline">
                       <form action="" class="form-inline w-100 form-search mb-3" id="form-search">
-                           <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên sản phẩm --">
-                           <div class="px-2" style="width: 28% !important;">
-                                <div class="tree_select_demo_main"></div>
-                                <input type="hidden" value="" id="category_product_main" name="category_product_main">
-                           </div>
-                            <div class="px-2" style="width: 28% !important;">
-                                <div class="tree_select_attribute"></div>
-                                <input type="hidden" value="" id="attribute_ids" name="attribute_ids">
-                            </div>
-                           {{-- <input type="hidden" name="category_id" id="category_id"> --}}
+                           <input type="text" name="search" class="form-control w-30 mr-1" placeholder="-- Tên danh mục --">
+                           <input type="hidden" name="category_id" id="category_id">
                            <button type="submit" class="btn"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                       </form>
                    </div>
 
 
-                   <div class="col-md-6 text-right ">
+                   <div class="col-md-4 text-right ">
                          <div class="">
                             <div class="btn_group">
                                 <button class="btn" id="publish_on" onclick="changeStatus(1,'publish_on')" data-status="1">
@@ -73,31 +59,14 @@
                                     <i class="fa fa-check-circle"></i> &nbsp;Tắt
                                 </button>
                                 <a class="btn"><i class="fa fa-download"></i> Xuất file</a>
-                                <div class="dropdown d-inline">
-                                    <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" id="dropdownAddNew" aria-haspopup="true" aria-expanded="true">
-                                        Thêm mới
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="dropdownAddNew" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(3px, 32px, 0px);">
-                                        <a href="{{route('private-system.product.create',['type' => 'laptop'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
-                                             Laptop
-                                        </a>
-                                        <a href="{{route('private-system.product.create',['type' =>'electric'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
-                                             Điện máy
-                                        </a>
-                                        <a href="{{route('private-system.product.create',['type' => 'accessory'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
-                                             Phụ kiện
-                                        </a>
-                                        <a href="{{route('private-system.product.create',['type' => 'phone'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
-                                             Điện thoại
-                                        </a>
-                                    </div>
-                                </div>
-                              
-
+                                <a onclick="create()" class="btn" href="#">
+                                    <i class="fa fa-plus"></i> 
+                                    Thêm mới
+                                </a>
+                                <a  href="{{route('private-system.menus.create')}}"  class="btn" href="#">
+                                    <i class="fa fa-plus"></i> 
+                                    Thêm mới menus
+                                </a>
                                 <button class="btn" id="delete-item" disabled>
                                     <i class="fa fa-trash"></i> 
                                     Xóa
@@ -108,21 +77,17 @@
                 </div>
                 <br>
 
-                <table class="tDefault table table-bordered bootstrap-table" 
-                    data-detail-view="true"
-                    data-detail-formatter="detailFormatter"
+                <table
+                    class="tDefault table table-bordered bootstrap-table"
+                    data-pagination="false"
                 >
                     <thead>
                         <tr>    
                           <th data-field="index" data-align="center" data-width="5%" data-formatter="index_formatter">#</th> 
                             <th data-field="check" data-checkbox="true" data-width="4%"></th>
-                            <th data-field="image" data-width="10%" data-formatter="image_formatted">Hình ảnh</th>
-                            <th data-field="name" data-width="50%" data-formatter="name_formatter">Tên sản phẩm</th>
-                            <th data-field="price" data-width="10%" >Giá tiền</th>
-                            <th data-field="views" data-width="10%" >Lượt xem</th>
-                            <th data-field="quantity" data-width="10%">Số lượng</th>
-                            <th data-field="category_name">Danh mục</th>
-                            {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
+                            <th data-field="name" data-width="20%" data-formatter="name_formatter">Tên danh mục menus</th>
+                            <th data-field="keyword" >Keyword</th>
+                            <th data-field="generate" data-formatter="getModalCategory">Số lượng menus</th>
                             <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
                         </tr>
                     </thead>
@@ -134,7 +99,8 @@
     <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="form_save" onsubmit="return false;" method="post" class="form-validate form-ajax" role="form"
+                <form id="form_save" onsubmit="return false;" method="post"
+                    action="{{ route('private-system.categories.save') }}" class="form-validate form-ajax" role="form"
                     enctype="multipart/form-data">
                     <input type="hidden" name="id" value="">
                     <div class="modal-header">
@@ -155,21 +121,18 @@
                             <div class="col-md-12">
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
-                                        <label>Tên thuộc tính <span class="text-danger">*</span></label>
+                                        <label>Tên danh mục menus<span class="text-danger">*</span></label>
                                     </div>
                                     <div class="col-md-7">
-                                        <input name="name" type="text" class="form-control" value=""
-                                            required>
+                                        <input name="name" type="text" class="form-control" value="" required>
                                     </div>
                                 </div>
-
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
-                                        <label>Thuộc tính cha</label>
+                                        <label>Keyword<span class="text-danger">*</span></label>
                                     </div>
                                     <div class="col-md-7">
-                                        <div class="tree_select_demo"></div>
-                                        <input type="hidden" id="category_parent_id" name="category_parent_id" value="">
+                                        <input name="keyword" type="text" class="form-control" value="">
                                     </div>
                                 </div>
 
@@ -200,44 +163,27 @@
 @endsection
 
 @section('scripts')
-    <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
     <script>
         function index_formatter(value, row, index) {
             return (index+1);
         }
 
-        function detailFormatter(index, row) {
-            var html = []
-            var rows = $('<nav>').addClass('tree-nav');
-            rows.html(row.variant_name ?? [])
-            return rows;
-        }
-
-
         function name_formatter(value,row,index){
-            return `<div>
-                        <a class="" href="${row.edit_url}">${row.name}</a>
-                        ${row.sku_code  ? 
-                        `<div>
-                             <span class="fw-bold">Sku: ${row.sku_code}</span>
-                        </div>` : '' }
-                        
-                         <div>
-                             <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>
-                        </div>
-                    </div>`;
+            return '<a class="overide" id="edit_'+row.id+'" href="#" onClick="edit('+row.id+')">'+ row.name +'</a>';
+        }
+        function getModalCategory(value,row,index){
+            return '<a id="row_'+row.id+'" class="overide" href="#" onClick="getModal('+ row.id +')">'+ row.category_child +'</a>';
         }
 
-
-        function image_formatted(value,row,index){
-            return '<img src="'+value+'" width="100" height="100" class=""/>';
+        function getModalCategory(value,row,index){
+            return '<a id="row_'+row.id+'" class="overide btn" href="'+row?.edit_child_url+'"> <i class="fa fa-plus"></i></a>';
         }
 
 
          function status_formatter(value, row, index) {
             var status = row.status == 1 ? 'checked' : '';
             var html = `<div class="custom-control custom-switch">
-                            <input type="checkbox" `+ status +` onclick="change_single_status(`+row.id+`)" class="custom-control-input" id="customSwitch_`+row.id+`">
+                            <input type="checkbox" `+ status +` onclick="changeStatus(`+row.id+`)" class="custom-control-input" id="customSwitch_`+row.id+`">
                             <label class="custom-control-label" for="customSwitch_`+row.id+`"></label>
                         </div>`;
             return html;
@@ -245,11 +191,14 @@
 
         var table = new LoadBootstrapTable({
             locale: '{{ \App::getLocale() }}',
-            url: '{{ route('private-system.product.getdata') }}',
-            remove_url: '{{route('private-system.product.remove',['type' => 'all'])}}'
+            url: '{{route('private-system.menus.cateloge.getData')}}',
+            remove_url: '{{route('private-system.menus.cateloge.remove')}}',
         });
 
         function deleteRow(id){
+          let _this = $('#row_'.id);
+          let html = _this.html();
+          _this.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
           Swal.fire({
                 title: '',
                 text: 'Bạn có muốn xóa dữ liệu này ?',
@@ -263,44 +212,29 @@
                 if (result.value) {
                     $.ajax({
                         type: 'POST',
-                        url: '{{route('private-system.product.remove_variant')}}',
+                        url: '{{route('private-system.categories.remove')}}',
                         dataType: 'json',
                         data : {
                         'id' : id
                         }
                     }).done(function(result){
+                        console.log(result);
                         show_message(result.message, result.status);
                         $(table.table).bootstrapTable('refresh');
+                        _this.prop('disabled', false).html(html); 
                     }).fail(function(data) {
+                        _this.prop('disabled', false).html(html);
                         show_message('Lỗi hệ thống', 'error');
                         return false;
                     });
                 }
             });
-        }
 
-        function change_single_status(id){
-            let _this = $('#customSwitch_'+id);
-            let status = _this.prop('checked') == true ? 1 : 0;
-            $.ajax({
-                url: '{{route('private-system.product-attribute.change.status')}}',
-                type: 'post',
-                data: {
-                    id: id,
-                    status: status
-                }
-            }).done(function(data) {
-                $(table.table).bootstrapTable('refresh');
-                return false;   
-            }).fail(function(data) {
-                show_message('Lỗi hệ thống', 'error');
-                return false;
-            });
+    
         }
 
          function changeStatus(status,type) {
             var ids = $("input[name=btSelectItem]:checked").map(function(){return $(this).val();}).get();
-         
             let _this = $('#'+type);
             let html = _this.html();
             _this.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
@@ -309,7 +243,7 @@
                 return false;
             }
             $.ajax({
-                url: '{{route('private-system.product-attribute.change.status')}}',
+                url: '{{route('private-system.categories.change.status')}}',
                 type: 'post',
                 data: {
                     ids: ids,
@@ -336,13 +270,11 @@
             $('.tree_select_demo').html(' ');
             let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
             $("#type_id").html(position)
-            treeSelect();
             $('#myModal2').modal();
 
         }
 
-            
-          
+      
 
             function save(){
                 let item = $('.save');
@@ -351,7 +283,7 @@
                 item.attr('disabled', true);
                 event.preventDefault();
                 $.ajax({
-                    url: "{{ route('private-system.product-attribute.save') }}",
+                    url: "{{ route('private-system.menus.cateloge.save') }}",
                     type: 'POST',
                     data: $("#form_save").serialize(),
                 }).done(function(data) {
@@ -386,7 +318,7 @@
                 let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
                 $("#type_id").html(position)
                 $.ajax({
-                url: "{{ route('private-system.product-attribute.edit') }}",
+                url: "{{ route('private-system.categories.edit') }}",
                 type: 'get',
                 data: {
                     id: id,
@@ -398,7 +330,7 @@
                 $('#exampleModalLabel').html('Chỉnh sửa');
                 $("input[name=id]").val(data.model.id);
                 $("input[name=name]").val(data.model.name);
-                treeSelect(data.model.parent_id);
+                $("input[name=url]").val(data.model.url);
 
                 if (data.model.type) {
                     $("#position_modal select").val(data.model.type);
@@ -427,30 +359,7 @@
 
             }
 
-            const domElement1 = document.querySelector('.tree_select_demo_main')
-            const treeselect1 = new Treeselect({
-                parentHtmlContainer: domElement1,
-                value: [],
-                options: @json($productCateloge),
-                placeholder: '-- Chon danh mục sản phẩm --',
-                isSingleSelect: false,
-            })
-
-            treeselect1.srcElement.addEventListener('input', (e) => {
-                $('#category_product_main').val(e.detail );
-            })
-            const domElement2 = document.querySelector('.tree_select_attribute')
-            const treeselect2 = new Treeselect({
-                parentHtmlContainer: domElement2,
-                value: [],
-                options: @json($attributes),
-                placeholder: '-- Chon thuộc tính sản phẩm --',
-                isSingleSelect: false,
-            })
-
-            treeselect2.srcElement.addEventListener('input', (e) => {
-                $('#attribute_ids').val(e.detail );
-            })
+    
 
 
     </script>
