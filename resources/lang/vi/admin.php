@@ -10,5 +10,6 @@ return [
     'manager_product_item' => 'Sản phẩm',
     'manager_menu' => 'Menu sản phẩm',
     'manager_menu_cateloge' => 'DM Menu sản phẩm',
+    'manager_promotion' => 'QL khuyến mãi',
     'setting' => 'Cài đặt',
 ];

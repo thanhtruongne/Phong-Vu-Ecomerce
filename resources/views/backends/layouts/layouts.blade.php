@@ -46,20 +46,6 @@
 
          
     </div>
-    <script>
-       
-
-        // $(document).ajaxError(function (event, jqxhr, settings, thrownError) {
-        //     if (jqxhr.status === 401) {
-        //         window.location = "/";
-        //     }
-
-        //     if (jqxhr.status === 419 ) {
-        //         alert('Token đã hết hạn!!!');
-        //         window.location = "";
-        //     }
-        // });
-    </script>
     @include('backends.layouts.components.scirpts')
     <script>
         $(document).ready(function(){

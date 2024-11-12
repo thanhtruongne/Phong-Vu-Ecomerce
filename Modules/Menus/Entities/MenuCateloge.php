@@ -12,6 +12,10 @@ class MenuCateloge extends Model
         'name','keyword','status'
     ];
 
+    public function menus(){
+        return $this->hasMany(Menu::class,'menu_cateloge_id','id');
+    }
+
 
     public static function getAttributeName(){
         return [

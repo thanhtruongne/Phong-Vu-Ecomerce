@@ -689,7 +689,6 @@
                 if(debounce)  clearTimeout(debounce);
                 debounce = setTimeout(() => {
                     Data.AjaxUsingPromotion(option);
-   
                },1000)
             }
         })
@@ -702,7 +701,6 @@
             let option = {
                 'model' : model
             }
-          
             Data.AjaxUsingPromotion(option,promotion);
             Data.renderProductQualnitySub(model)
             $('.render_while_choose_product_promotion').html(Data.loadBadgeProductPromotion(promotion,model))
@@ -733,14 +731,14 @@
             .attr('rel','prev')
             .attr('aria-label','pagination.previous')
             .attr('data-model',model)
-            .addClass('page-links')
+            .addClass('page-link')
             .text('<');
             li.append(span)
          }
          else if(val?.label == 'pagination.next') {
             let span = $('<a>')
                         .attr('href',nextTurnPage?.url)
-                        .addClass('page-links')
+                        .addClass('page-link')
                         .attr('rel','next')
                         .attr('data-id',nextTurnPage?.label)
                         .attr('aria-label','pagination.next')
@@ -749,7 +747,7 @@
             li.append(span)
          }
          else if(val?.url) {
-            let a = $('<a>').attr('href',val?.url).attr('data-model',model).addClass('page-links').text(val?.label);
+            let a = $('<a>').attr('href',val?.url).attr('data-model',model).addClass('page-link').text(val?.label);
             li.append(a);
          }
          ul.append(li);

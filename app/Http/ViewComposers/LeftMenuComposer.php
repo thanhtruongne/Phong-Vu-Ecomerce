@@ -45,7 +45,6 @@ class LeftMenuComposer {
                 'id' => 5,
                 'name' => trans('admin.manager_menu'),
                 'url' => '#',
-                'url_name'=> 'manager_menu',
                 'is_open' => 1,
                 'icon' => '<i class="fas fa-tachometer-alt"></i>',
                 'url_name' => 'menu',
@@ -151,6 +150,17 @@ class LeftMenuComposer {
                         'icon' => '<i class="fa fa-archive"></i>',
                         // 'permission' => User::canPermissionCompetencyReport(),
                     ],
+                ],
+            ],
+            'manager_promotions' => [
+                'id' => 5,
+                'name' => trans('admin.manager_promotion'),
+                'url' => route('private-system.promotions.index'),
+                'icon' => '<i class="fas fa-tachometer-alt"></i>',
+                'url_name' => 'promotion',
+                // 'url_item_child' => ['menus_cateloge','menus'],
+                'item_childs' => [
+                   
                 ],
             ],
             'manager_order' => [

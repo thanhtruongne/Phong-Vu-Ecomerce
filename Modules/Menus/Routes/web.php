@@ -15,9 +15,10 @@ use Modules\Menus\Http\Controllers\MenusController;
 
 Route::prefix('private/system')->as('private-system.')->middleware(['web','auth','isAdmin'])->group(function() {
     
-    Route::get('/menus/child',[MenusController::class,'form'])->name('menus.form');
     Route::get('/menus/create',[MenusController::class,'create'])->name('menus.create');
     Route::post('/menus/save',[MenusController::class,'save'])->name('menus.save');
+    Route::post('/menus/child/save',[MenusController::class,'childSave'])->name('menus.child.save');
+
 
     Route::prefix('/menus')->group(function(){
         //cateloge
@@ -26,6 +27,12 @@ Route::prefix('private/system')->as('private-system.')->middleware(['web','auth'
             Route::get('/getData',[MenusCatelogeController::class,'getData'])->name('menus.cateloge.getData');
             Route::post('/remove',[MenusCatelogeController::class,'remove'])->name('menus.cateloge.remove');
             Route::post('/save',[MenusCatelogeController::class,'save'])->name('menus.cateloge.save');
+            Route::get('/child/{id}',[MenusCatelogeController::class,'children'])
+            ->name('menus.cateloge.children')
+            ->where('id', '[0-9]+');
+
+            Route::post('/child/attemps',[MenusCatelogeController::class,'attemps_child'])
+            ->name('menus.cateloge.attemps_child');
         });
     });
    

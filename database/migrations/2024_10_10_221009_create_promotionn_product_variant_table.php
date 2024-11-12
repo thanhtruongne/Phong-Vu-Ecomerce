@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promotionn_product_variant', function (Blueprint $table) {
-            $table->unsignedBigInteger('product_id')->index()->comment('trg hợp để variant null thì toàn bộ sp giảm theo');
-            $table->unsignedBigInteger('product_variant_id')->index();
-            $table->unsignedBigInteger('promotions_id')->index();
-            $table->timestamps();
-        });
+        // Schema::create('promotionn_product_variant', function (Blueprint $table) {
+        //     $table->unsignedBigInteger('product_id')->index()->comment('trg hợp để variant null thì toàn bộ sp giảm theo');
+        //     $table->unsignedBigInteger('product_variant_id')->index();
+        //     $table->unsignedBigInteger('promotions_id')->index();
+        //     $table->timestamps();
+        // });
     }
 
     /**
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promotionn_product_variant');
+        // Schema::dropIfExists('promotionn_product_variant');
     }
 };

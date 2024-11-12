@@ -30,7 +30,7 @@ class MenusCatelogeController extends Controller
         $count = $query->count();
         $rows = $query->get();
         foreach($rows as $row){
-            $row->edit_child_url = route('private-system.menus.form',['cateloge' => $row->id]);
+            $row->edit_child_url = route('private-system.menus.cateloge.children',['id' => $row->id]);
         }
         return response()->json(['rows' => $rows , 'total' => $count]);
     }
@@ -46,10 +46,19 @@ class MenusCatelogeController extends Controller
        $model->save();
 
        return response()->json(['message' => 'Thêm dữ liệu thành công','status' => 'success']);
-    }   
+    }  
+    
+    public function children($id){
+       $menu_cateloge = MenuCateloge::findOrFail($id);
+       return view('menus::form',['menu_cateloge' => $menu_cateloge]);
+    }
 
     public function remove(Request $request){
 
+    }
+
+    public function attemps_child(Request $request){
+        dd($request->id);
     }
 
 }

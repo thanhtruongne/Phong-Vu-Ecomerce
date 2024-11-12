@@ -326,9 +326,7 @@
             $('#form_save').trigger("reset");
             $("input[name=id]").val('');
             $('.tree_select_demo').html(' ');
-            $('#category_product_main').val('');
-            let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
-            $("#type_id").html(position)
+            $('#category_product_main').val('');)
             treeSelect();
             $('#myModal2').modal();
 

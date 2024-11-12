@@ -29,7 +29,7 @@ class Products extends Model
        'attributes' => 'json'
     ];
 
-    public function sku_variants(){
+    public function sku_variant(){
         return $this->hasMany(SkuVariants::class,'product_id','id');
     }
 
