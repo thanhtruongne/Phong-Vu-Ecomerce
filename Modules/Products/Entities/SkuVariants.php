@@ -23,11 +23,13 @@ class SkuVariants extends Model
         'stock',
         'default',
         'album',
+        'attributes'
     ];
 
     protected $casts = [
         'sku_idx' => 'json',
-        'album' => 'json'
+        'album' => 'json',
+        'attributes' => 'json'
     ];
 
     public static function getAttributeName(){

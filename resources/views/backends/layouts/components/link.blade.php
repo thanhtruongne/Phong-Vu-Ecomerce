@@ -23,4 +23,6 @@
 <link rel="stylesheet" href="{{asset('backend2/css/bootstrap-table.min.css')}}">
 {{--bootstrap-iconpicker.css  --}}
 <link rel="stylesheet" href="{{asset('backend2/plugins/boostrap-iconpicker/boostrap-iconpicker.min.css')}}">
+{{--bootstrap-datepicker.css  --}}
+<link rel="stylesheet" href="{{asset('backend2/css/bootstrap-datetimepicker.min.css')}}"></link>
 

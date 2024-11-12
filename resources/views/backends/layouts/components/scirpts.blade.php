@@ -62,6 +62,8 @@
 {{-- Ckeditor --}}
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
 <script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script>
+
+<script src="{{asset('backend2/js/boostrapdatepicker.min.js')}}"></script>
 {{-- CkFinder --}}
 <script src="{{asset('js/ckfinder/ckfinder.js')}}"></script>
 {{-- <script>CKFinder.config( { connectorPath: '/ckfinder/connector' } );</script> --}}

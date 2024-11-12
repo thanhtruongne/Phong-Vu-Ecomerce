@@ -171,9 +171,6 @@
         function name_formatter(value,row,index){
             return '<a class="overide" id="edit_'+row.id+'" href="#" onClick="edit('+row.id+')">'+ row.name +'</a>';
         }
-        function getModalCategory(value,row,index){
-            return '<a id="row_'+row.id+'" class="overide" href="#" onClick="getModal('+ row.id +')">'+ row.category_child +'</a>';
-        }
 
         function getModalCategory(value,row,index){
             return '<a id="row_'+row.id+'" class="overide btn" href="'+row?.edit_child_url+'"> <i class="fa fa-plus"></i></a>';

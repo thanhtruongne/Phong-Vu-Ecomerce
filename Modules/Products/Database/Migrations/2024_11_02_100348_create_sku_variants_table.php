@@ -25,6 +25,7 @@ class CreateSkuVariantsTable extends Migration
             $table->integer('stock')->default(0);
             $table->integer('default')->default(0);
             $table->text('album')->nullable();
+            $table->string('attributes')->nullable();
             $table->timestamps();
         });
     }
