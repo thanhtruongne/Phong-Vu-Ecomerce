@@ -1,16 +1,14 @@
-@if (isset($data) && !empty($data))
- 
-@foreach ($data as $key => $products)
-        @if (in_array($key,$fields))
+@if (isset($widgets) && !empty($widgets))
+@foreach ($widgets as $key => $widget)
             <div class="loading" style="margin-top: 30px">
                 <div class="css-k9y40f">
                     <div class="position-relative" style="min-height: 416px">
                         <img class="position-absolute w-100 h-100" style="top:0px"
-                        src="{{ $products->album[0] ?? '' }}" alt="">
+                        src="{{ $widget->image ?? '' }}" alt="">
                         
                         <div class="css-1ld3dfv">
                             <a href="" style="text-decoration: none;olor: unset;cursor: pointer;">
-                                <div class="css-t2k8cn" style="padding: 0px 8px;">{!! $products->desc !!}</div>
+                                <div class="css-t2k8cn" style="padding: 0px 8px;">{!! $widget->content !!}</div>
                             </a>
             
                             <a href="" style="text-decoration: none;color: unset;cursor: pointer;">
@@ -32,191 +30,104 @@
                         <div class="glide_{{ $key }}" style="padding: 12px">
                             <div class="glide__track" data-glide-el="track">
                                 <ul class="glide__slides">
-                                    {{-- @dd($products->object) --}}
-                                    {{-- @dd($products) --}}
-                                    @foreach ($products->object as $index => $product)
-                                    {{-- @dd($product->variant) --}}
-                                        {{-- Sẽ render các variant sản phẩm --}}
-                                            @if (isset($product->product_variant) && !empty($product->product_variant) && count($product->product_variant) > 0)
-                                            {{-- @dd($product->variant)--}}
-                                                @foreach ($product->product_variant as $item)                      
-                                                {{-- @dd($item->attributes,$item) --}}
-                                                    @php
-                                                        $sort = $item->attributes->pluck('id')->toArray();
-                                                        sort($sort,SORT_NUMERIC);                
-                                                        $name_slug = [];
-                                                        if(isset($item) && !empty($item)); {
-                                                            $name_variant = $item->name;        
-                                                            $name = $product->name.' ('.$name_variant.')';
-                                                            foreach(explode(', ',$name_variant) as $variant) {
-                                                                $name_slug[] = Str::slug($variant);
-                                                            }
-                                                            $product_price_after_discount = 0;
-                                                            if(!empty($item->promotions)) {     
-                                                                $product_price_after_discount = 
-                                                                $item->promotions['product_variant_price'] - $item->promotions['discount'] ;                       
-                                                            }
-                                                            else $product_price_after_discount = $item->price;
-                                                            
-                                                            
-                                                            $url = $product->canonical.'---'.implode('--',$name_slug).'?sku='.$item->sku;
-                                                            $canonical = makeTheURL($url,true); 
-                                                        }
-                                                        
-                                                    @endphp
-                                                    {{-- Use Foreach load widget --}}
-                                                    <li class="glide__slide" style="width: 20%" >
-                                                        <div  class="css-1ei4kcr">
-                                                            <div class="css-1msrncq">
-                                                                <a href="{{ $canonical }}" style="text-decoration: none">
-                                                                    <div class="css-4rhdrh">
-                                                                        <div style="margin-bottom: 0.25rem;position: relative;">
-                                                                            <div class="position-relative" style="padding-bottom: 100%;">
-                                                                                <div style="width:100%;height:100%"  class="hover-zoom bg-image">
-                                                                                    <img src="{{ $product->image ?? '' }}" 
-                                                                                    style="width: 100%;height: 100%;object-fit: contain;position: absolute;top: 0px;left: 0px">
-                                                                                    @if (!empty($item->promotions))
-                                                                                        <div class="position-absolute" style="width: 94px;bottom:0;left:0">
-                                                                                            <div class="css-zb7zul">
-                                                                                                <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
-                                                                                                <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
-                                                                                                
-                                                                                                    {{ convert_price($item->promotions['discount'],true) }} đ
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    @endif
+                                    @foreach ($widget->data as $index => $data)
+                                        
+                                         @php
+                                            // $sort = $item->attributes->pluck('id')->toArray();
+                                            // sort($sort,SORT_NUMERIC);                
+                                            // $name_slug = [];
+                                            // if(isset($item) && !empty($item)); {
+                                            //     $name_variant = $item->name;        
+                                            //     $name = $product->name.' ('.$name_variant.')';
+                                            //     foreach(explode(', ',$name_variant) as $variant) {
+                                            //         $name_slug[] = Str::slug($variant);
+                                            //     }
+                                            //     $product_price_after_discount = 0;
+                                            //     if(!empty($item->promotions)) {     
+                                            //         $product_price_after_discount = 
+                                            //         $item->promotions['product_variant_price'] - $item->promotions['discount'] ;                       
+                                            //     }
+                                            //     else $product_price_after_discount = $item->price;
+                                                
+                                                
+                                            //     $url = $product->canonical.'---'.implode('--',$name_slug).'?sku='.$item->sku;
+                                            //     $canonical = makeTheURL($url,true); 
+                                            // }
+                                            $image = $data->image ? $data->image : explode(',',$data->album)[0];
+                                            
+                                        @endphp 
+                                        {{-- Use Foreach load widget --}}
+                                        <li class="glide__slide" style="width: 20%" >
+                                            <div  class="css-1ei4kcr">
+                                                <div class="css-1msrncq">
+                                                    <a href="#" style="text-decoration: none">
+                                                        <div class="css-4rhdrh">
+                                                            <div style="margin-bottom: 0.25rem;position: relative;">
+                                                                <div class="position-relative" style="padding-bottom: 100%;">
+                                                                    <div class="hover-zoom bg-image w-100 h-100">
+                                                                        <img class="w-100 h-100 object-fit-contain position-absolute" src="{{ $image }}" 
+                                                                        style="top: 0px;left: 0px">
+                                                                        {{-- @if (!empty($data->promotions))
+                                                                            <div class="position-absolute" style="width: 94px;bottom:0;left:0">
+                                                                                <div class="css-zb7zul">
+                                                                                    <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
+                                                                                    <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
                                                                                     
-                                                                                </div>                        
-                                                                            </div>
-                                                                            {{-- Title --}}
-                                                                            <div style="margin-bottom: 0.25rem">
-                                                                                <div class="">
-                                                                                    {{ $name }}
+                                                                                        {{ convert_price($data->promotions['discount'],true) }} đ
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                            {{-- desc --}}
-                                                                            <div style="height:3rem">
-                                                                            <div class="css-1uunp2d">
-                                                                                    <h3 style="font-size: 0.75rem;font-weight: 400;line-height: 1rem;display: inline;">
-                                                                                        {!! Str::limit($item->content,20, '...') !!}
-                                                                                    </h3>
+                                                                        @endif --}}
+                                                                        
+                                                                    </div>                        
+                                                                </div>
+                                                                <div class="mt-2">
+                                                                    <div class="css-90n0z6 text-uppercase">
+                                                                       {{$data->brand_name}}
+                                                                    </div>
+                                                                </div>
+                                                                {{-- Title --}}
+                                                                <div class="my-2">
+                                                                    <div class="css-1uunp2d">
+                                                                        <h3 class="css-1xdyrhj"> {{ $data->name }}</h3>
+                                                                    </div>
+                                                                </div>
+                                                                {{-- desc --}}
+                                                                <div style="height:3rem">
+                                                                {{-- <div class="css-1uunp2d">
+                                                                        <h3 style="font-size: 0.75rem;font-weight: 400;line-height: 1rem;display: inline;">
+                                                                            {!! Str::limit($item->content,20, '...') !!}
+                                                                        </h3>
+                                                                </div> --}}
+                                                            </div>
+                                                            {{-- price --}}
+                                                            <div style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
+                                                                    <div class="css-do31rh">
+                                                                        {{-- {{ convert_price($product_price_after_discount,true)  }} ₫ --}}
+                                                                    </div>
+                                                                    {{-- @if (!empty($item->promotions))
+                                                                        <div style="display: flex;height: 1rem;">
+                                                                            <div class="css-18z00w6">
+                                                                                {{ convert_price($item->price,true) }} đ
+                                                                            </div>
+                                                                            <div class="css-2rwx6s">
+                                                                                - {{ $item->promotions['discountValue'] }} {{ $item->promotions['discountType'] }}
                                                                             </div>
                                                                         </div>
-                                                                        {{-- price --}}
-                                                                        <div style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
-                                                                                <div class="css-do31rh">
-                                                                                    {{ convert_price($product_price_after_discount,true)  }} ₫
-                                                                                    </div>
-                                                                                    @if (!empty($item->promotions))
-                                                                                        <div style="display: flex;height: 1rem;">
-                                                                                            <div class="css-18z00w6">
-                                                                                                {{ convert_price($item->price,true) }} đ
-                                                                                            </div>
-                                                                                            <div class="css-2rwx6s">
-                                                                                                - {{ $item->promotions['discountValue'] }} {{ $item->promotions['discountType'] }}
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    @endif
-                                                                        </div>
-                                    
-                                                                        </div>
-                                                                    </div>
-                                                                </a>
-                                                                <button class="css-16gdkk6">
-                                                                    <div class="css-ct8m8z">
-                                                                        Thêm giỏ hàng
-                                                                    </div>
-                                                                </button>
+                                                                    @endif --}}
+                                                            </div>
+                        
                                                             </div>
                                                         </div>
-                                                    </li>   
-                                                @endforeach
-
-
-                                            @else 
-                                            @php
-                                            
-                                                $name = $product->name;
-                                                $url = $product->canonical;
-                                                $product_price_after_discount = 0;
-                                                if(!empty($product->promotions)) {     
-                                                    $product_price_after_discount = 
-                                                    $product->promotions['product_variant_price'] - $product->promotions['discount'] ;                       
-                                                }
-                                                else $product_price_after_discount = $product->price;
-                                                $canonical = makeTheURL($url,true); 
-                                            @endphp
-                                            <li class="glide__slide" style="width: 20%" >
-                                                <div  class="css-1ei4kcr">
-                                                    <div class="css-1msrncq">
-                                                        <a href="{{ $canonical }}" style="text-decoration: none">
-                                                            <div class="css-4rhdrh">
-                                                                <div style="margin-bottom: 0.25rem;position: relative;">
-                                                                    <div class="position-relative" style="padding-bottom: 100%;">
-                                                                        <div style="width:100%;height:100%"  class="hover-zoom bg-image">
-                                                                            <img src="{{ $product->image ?? '' }}" 
-                                                                            style="width: 100%;height: 100%;object-fit: contain;position: absolute;top: 0px;left: 0px">
-                                                                            @if (!empty($product->promotions))
-                                                                                <div class="position-absolute" style="width: 94px;bottom:0;left:0">
-                                                                                    <div class="css-zb7zul">
-                                                                                        <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
-                                                                                        <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
-                                                                                        
-                                                                                            {{ convert_price($product->promotions['discount'],true) }} đ
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            @endif
-                                                                            
-                                                                        </div>                        
-                                                                    </div>
-                                                                    {{-- Title --}}
-                                                                    <div style="margin-bottom: 0.25rem">
-                                                                        <div class="">
-                                                                            {{ $name }}
-                                                                        </div>
-                                                                    </div>
-                                                                    {{-- desc --}}
-                                                                    <div style="height:3rem">
-                                                                    <div class="css-1uunp2d">
-                                                                            <h3 style="font-size: 0.75rem;font-weight: 400;line-height: 1rem;display: inline;">
-                                                                                {!! Str::limit($product->content,20, '...') !!}
-                                                                            </h3>
-                                                                    </div>
-                                                                </div>
-                                                                {{-- price --}}
-                                                                <div style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
-                                                                        <div class="css-do31rh">
-                                                                            {{ convert_price($product_price_after_discount,true)  }} ₫
-                                                                            </div>
-                                                                            @if (!empty($product->promotions))
-                                                                                <div style="display: flex;height: 1rem;">
-                                                                                    <div class="css-18z00w6">
-                                                                                        {{ convert_price($product->price,true) }} đ
-                                                                                    </div>
-                                                                                    <div class="css-2rwx6s">
-                                                                                        - {{ $product->promotions['discountValue'] }} {{ $product->promotions['discountType'] }}
-                                                                                    </div>
-                                                                                </div>
-                                                                            @endif
-                                                                </div>
-                            
-                                                                </div>
-                                                            </div>
-                                                        </a>
-                                                        <button class="css-16gdkk6">
-                                                            <div class="css-ct8m8z">
-                                                                Thêm giỏ hàng
-                                                            </div>
-                                                        </button>
-                                                    </div>
+                                                    </a>
+                                                    <button class="css-16gdkk6">
+                                                        <div class="css-ct8m8z">
+                                                            Thêm giỏ hàng
+                                                        </div>
+                                                    </button>
                                                 </div>
-                                            </li>   
-                                         @endif
-
-                                    
-                                            
+                                            </div>
+                                        </li>                            
                                     @endforeach
                                 </ul>
                             </div>
@@ -247,7 +158,7 @@
                 glide.mount();
             </script>
         @endpush
-        @endif
+       
         
         
     @endforeach

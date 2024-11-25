@@ -57,8 +57,12 @@
                                 <div class="tree_select_attribute"></div>
                                 <input type="hidden" value="" id="attribute_ids" name="attribute_ids">
                             </div>
+
+                            <div class="mr-2 mt-2" style="width: 20% !important;">
+                                <select name="brand_id" class="form-control load-brand" data-placeholder="-- Thương hiệu --" multiple></select>
+                            </div>
                            {{-- <input type="hidden" name="category_id" id="category_id"> --}}
-                           <button type="submit" class="btn"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
+                           <button type="submit" class="btn mt-2"><i class="fa fa-search"></i>&nbsp;Tìm kiếm</button>
                       </form>
                    </div>
 
@@ -121,6 +125,7 @@
                             <th data-field="price" data-width="10%" >Giá tiền</th>
                             <th data-field="views" data-width="10%" >Lượt xem</th>
                             <th data-field="quantity" data-width="10%">Số lượng</th>
+                            <th data-field="brand_name">Thương hiệu</th>
                             <th data-field="category_name">Danh mục</th>
                             {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
                             <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
@@ -221,10 +226,11 @@
                         `<div>
                              <span class="fw-bold">Sku: ${row.sku_code}</span>
                         </div>` : '' }
-                        
-                         <div>
+                        ${row.attribute_name ? 
+                        `<div>
                              <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>
-                        </div>
+                        </div>`  : ''}
+                        
                     </div>`;
         }
 

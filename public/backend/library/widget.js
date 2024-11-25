@@ -29,26 +29,7 @@
 
     Data.AjaxUsingGetMenuAttribute = (option) => {
         console.log(option);
-        $.ajax({
-            type: 'GET',
-            url: '/private/system/ajax/dashboard/widget/model',
-            data : option,
-            success : function(data){
-                if(data?.length > 0) {
-                    $('.search_model_result').removeClass('hidden');
-                    $('.search_model_result').html('');
-                    $.each(data,function(index , val) {
-                        $('.search_model_result').append(Data.createRowSearchingModel(val));
-                    })
-                }
-                else {
-                    $('.search_model_result').addClass('hidden');
-                }
-            },
-            error : function(error) {
-                 console.log(error)
-            },
-        })
+       
     }
     Data.createRowSearchingModel = (data = null) => {
         let html = 

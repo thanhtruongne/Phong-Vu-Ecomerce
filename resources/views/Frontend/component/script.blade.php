@@ -6,14 +6,17 @@
 <script src="{{ asset('frontend/boosttrap/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('frontend/js/plugins/jquery.js') }}"></script>
 <script src="{{ asset('frontend/boosttrap/js/bootstrap.bundle.min.js') }}"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-
+<script src="{{asset('frontend/js/plugins/popper.min.js')}}" ></script>
 <script src="{{ asset('frontend/js/plugins/glide-slide.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js" integrity="sha512-zlWWyZq71UMApAjih4WkaRpikgY9Bz1oXIW5G0fED4vk14JjGlQ1UmkGM392jEULP8jbNMiwLWdM8Z87Hu88Fw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('frontend/js/library/jquery.js') }}"></script>
-{{-- <script src="{{ asset('backend/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script> --}}
+<script src="{{asset('frontend/js/plugins/jquery-elevatezoom.min.js')}}"></script>
+<script src="{{asset('frontend/js/plugins/sweetalert2.all.min.js')}}"></script>
+
+{{-- load custom jquery --}}
+<script src="{{asset('frontend/js/custom/custom.js')}}"></script>
+<script src="{{asset('frontend/js/custom/jquery.js')}}"></script>
+
+
+
 <script type="text/javascript">
     $.ajaxSetup({
         headers: {
@@ -21,18 +24,7 @@
         }
     });
 </script>
-@if (!empty($config['js']))
-    @foreach ($config['js'] as $item)
-        <script src="{{ asset($item) }}"></script>
-    @endforeach
-@endif
 
-
-@if (!empty($config['js_link']))
-    @foreach ($config['js_link'] as $item)
-        <script src="{{ $item }}"></script>
-    @endforeach
-@endif
 
 <script>
     $(document).ready(function(){

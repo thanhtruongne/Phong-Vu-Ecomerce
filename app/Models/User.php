@@ -77,14 +77,19 @@ class User extends Authenticatable
       }
 
       public function isAdmin(){
-        $cacheKey = 'admin_access_for_' . \Auth::user()->id;
-        return Cache::rememberForever($cacheKey, function () {
-            if (in_array(\Auth::user()->username, ['admin', 'superadmin'])) {
-                return true;
-            }
-            return self::getInstance()->roles()->where('name', 'Admin')->count();
-        });
+        if (in_array(auth()->user()->username, ['admin', 'superadmin'])) 
+          return true;
+        
+        return false;
 
+      }
+
+      public static function getAttributeName() {
+          return [
+            'username' => "Tài khoản",
+            "password" => "Mật khẩu",
+            "email" => "Email"
+          ];
       }
 
 }

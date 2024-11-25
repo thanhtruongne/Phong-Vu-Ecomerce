@@ -23,6 +23,7 @@ class CreateProductTable extends Migration
             $table->text('description')->nullable();
             $table->string('content')->nullable();
             $table->unsignedBigInteger('product_category_id')->index()->nullable();    
+            $table->unsignedBigInteger('brand_id')->index()->nullable();
             $table->integer('sort')->default(0);
             $table->decimal('price',10)->nullable();
             $table->integer('quantity')->default(0);

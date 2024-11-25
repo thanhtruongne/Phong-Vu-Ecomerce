@@ -14,11 +14,6 @@ use Modules\Products\Entities\SkuVariants;
 class ProductsController extends Controller
 {
 
-    private $type_params = [];
-
-    // public function __contructor(){
-    //     $this->type_params = ['laptop','phone','electric','accessory'];
-    // }
     public function index(){
         $data = ProductCategory::whereNotNull('name')->get()->toTree()->toArray();
         $ProductCategory = $this->rebuildTree($data);
@@ -38,21 +33,23 @@ class ProductsController extends Controller
         $order = $request->input('order','DESC');
         $category_product_main = $request->category_product_main ? explode(',',$request->category_product_main) : $request->category_product_main;; 
         $attribute_ids = $request->attribute_ids ? explode(',',$request->attribute_ids) : $request->attribute_ids;
+        $brand_id = $request->brand_id ? explode(',',$request->brand_id) : $request->brand_id;
         $query = Products::query();
         $query->from('product as a');
-        $query->select(['a.*','d.name as category_name']);
+        $query->select(self::selectDynamic());
         $query->leftJoin('product_attribute_relation as b','b.product_id','=','a.id');
         $query->leftJoin('attributes as c','c.id','=','b.attribute_id');
-        $query->leftJoin('product_category as d','d.id','=','a.product_category_id');
-        // // $query->whereExists(function($subquery) {
-        //   return  $subquery->leftJoin('product_variant as b','b.product_id','=','a.id');   
-        // });
+        $query->join('product_category as d','d.id','=','a.product_category_id');
+        $query->join('brand as e','e.id','=','a.brand_id');
         if($search){
-            $query->where('a.name','like','%'.$search.'%');
+            $query->where('a.name','like' ,$search.'%');
             // $query->orWhere('b.name as product_variant_name','like','&'.$search.'%');
         }
         if($attribute_ids){
             $query->whereIn('b.attribute_id',$attribute_ids);
+        }
+        if($brand_id){
+            $query->whereIn('e.id',$brand_id);
         }
         if($category_product_main){
             $query->whereIn('d.id',$category_product_main);
@@ -61,16 +58,14 @@ class ProductsController extends Controller
         $query->offset($offset);
         $query->limit($limit);
         $query->distinct();
-        $count = $query->count();
-        $rows = $query->get();
-      
+        // $count = $query->count();
+        $rows = $query->get();     
         foreach($rows as $row) {
             $row->edit_url = route('private-system.product.edit',['id' => $row->id,'type' => $this->getNameType($row->type) ]);
             if($row->is_single){
                 $row->price =null;      
                 $row->quantity =null;      
-            }
-            else 
+            } else 
                 $row->price = numberFormat($row->price);      
             
             $row->attribute_name = $this->renderAttribute($row);
@@ -78,7 +73,7 @@ class ProductsController extends Controller
       
         }
         // dd($rows);
-        return response()->json(['rows' => $rows , 'total' => $count]);
+        return response()->json(['rows' => $rows , 'total' => count($rows)]);
     }
 
 
@@ -94,9 +89,13 @@ class ProductsController extends Controller
         $data = $this->rebuildTree($categories);
         $model = Products::firstOrNew(['id' => $id]);
         $sku_idxs = [];
-        $attributes_model = [];
+        $attributes_model = [];  
+        //  //get attribute
+        $parent_attribute = Attribute::where('ikey',$type)->first();
+        $attributes = $parent_attribute->children->select(['name','id','parent_id']); 
         if($model && !is_null($model->is_single)){
-            $sku_idxs = $model->sku_variants->pluck('sku_idx')->toArray();
+            $sku_idxs = $model->sku_variant->pluck('sku_idx')->toArray();
+            // $model->sku_variant
             foreach($model->attributes as $key => $attribute){
                 $attri_ids = [];    
                 $attribute_parent = Attribute::where(['id' => $key , 'status' => 1])->first(['name','id']);
@@ -111,11 +110,15 @@ class ProductsController extends Controller
             }
             $model->attributes = $attributes_model;
         }
- 
-        //  //get attribute
-        $parent_attribute = Attribute::where('ikey',$type)->first();
-        $attributes = $parent_attribute->children->select(['name','id','parent_id']);
-        // return view('products::products.form',['categories' => $data ,'category_main' => $dataMain, 'model' => $model , 'attributes' => $attributes]);
+        if($model && $model->id > 0 && is_null($model->is_single)){
+            foreach ($model->attributes_item as $key => $val) {                        
+                $attribute_data_item = Attribute::where('id',$val->parent_id)->first(['name','id']);                              
+                $val->parent_name = $attribute_data_item->name;
+                $val->parent_id = $attribute_data_item->id;
+            }   
+            if($model->price)
+                $model->price = numberFormat($model->price);
+        }
         return view('products::products.form',['model' => $model , 'categories' => $data , 'attributes' => $attributes , 'sku_idxs'=> $sku_idxs]);
     }
 
@@ -126,6 +129,7 @@ class ProductsController extends Controller
             $this->validateRequest([
                 'category_id' => 'required',
                 'name' => 'required|string',
+                'brand_id' => 'required',
              ],$request,Products::getAttributeName());
          }
          else {
@@ -133,6 +137,7 @@ class ProductsController extends Controller
                 'name' => 'required|string',
                 'description' => 'required',
                 'content' => 'required',
+                'brand_id' => 'required',
                 'album' => 'required',
                 'image' => 'required',
                 'attribute' => 'required',
@@ -173,12 +178,12 @@ class ProductsController extends Controller
             $model->variants = $variants;
             $model->attributes = $attributes_ids;
             if($model->save()){
-                $model->sku_variants()->delete();
+                // $model->sku_variants()->delete();
                 foreach($sku_idx as $key => $sku){
-                    $variant = new SkuVariants();
+                    $variant = SkuVariants::firstOrNew(['sku_code' => $request->variants['sku'][$key]]);
                     $variant->product_id = $model->id;
                     $variant->sku_idx = $sku;
-                    $variant->sku_code = $request->variants['sku'][$key];
+                    // $variant->sku_code = $request->variants['sku'][$key];
                     $variant->name = $request->name .'('.str_replace(',','/',$request->productVariants['name'][$key]).')';
                     $variant->slug =\Str::slug($variant->name);
                     $variant->price = (int)str_replace('.','',$request->variants['price'][$key]);
@@ -200,10 +205,8 @@ class ProductsController extends Controller
              if($checkCategoriesId->descendants && count($checkCategoriesId->descendants) > 0){
                 json_result(['message' => 'Vui lòng chọn danh mục sản phẩm có chủ đề ','status' => 'error']);
              }
-            //  if($request-.attribute)
              $model->product_category_id = $request->category_id;
              $model->type = $this->getNameType($request->type);
-            //  $attribute = Attribute::whereIn('id',$request->attribute)->get(['id','name','parent_id']);
             if($request->attribute){
                 $attribute_name_convert = Attribute::whereIn('id',array_unique($request->attribute))->get()->pluck('name')->toArray();
             }
@@ -272,7 +275,7 @@ class ProductsController extends Controller
 
     private function renderHTML($row){
         $html = '';
-        $data = $row->sku_variants ?? [];
+        $data = $row->sku_variant ?? [];
          if($row){
             foreach($data as $key => $item){
                 $html .= 
@@ -310,6 +313,16 @@ class ProductsController extends Controller
       }
     
       return $html;
+    }
+
+    private function selectDynamic(){
+      return ['a.name','a.id','a.price','a.quantity','a.product_category_id','a.status','a.sku_code',
+      'a.views','a.type','a.image','d.name as category_name','e.name as brand_name'];
+    }
+
+    //set tạm
+    private function setPriceCurrency($variants) {
+        
     }
 }
 

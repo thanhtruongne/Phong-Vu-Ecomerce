@@ -21,32 +21,32 @@
    }
 
    Data.setUpSlideGlide = () => {
-    var glide =  new Glide('.glide',{
+    var glides =  new Glide('.glide',{
         type: 'carousel',
         startAt: 0,
         perView: 1,
         autoplay: 2000
     })
-    glide.mount();
+    glides.mount();
    }
 
    Data.setUpWidgetSlider = () => {
-    var glide =  new Glide('.glide_widget',{
+    var glide2 =  new Glide('.glide_widget',{
         type: 'carousel',
         startAt: 0,
         perView: 5,
     })
-    glide.mount();
+    glide2.mount();
    }
 
 
    Data.setUpCategoryOutStandingSlider = () => {
-    var glide =  new Glide('.glide_category',{
+    var glide3 =  new Glide('.glide_category',{
         type: 'carousel',
         startAt: 0,
         perView: 10,
     })
-    glide.mount();
+    glide3.mount();
    }
    
 

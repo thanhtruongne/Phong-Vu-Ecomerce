@@ -143,7 +143,7 @@
                                     <div class="col-sm-4 control-label">
                                         <label>Tên danh mục <span class="text-danger">*</span></label>
                                     </div>
-                                    <div class="col-md-7">
+                                    <div class="col-md-7"> 
                                         <input name="name" type="text" class="form-control" value=""
                                             required>
                                     </div>
@@ -160,10 +160,10 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
-                                        <label>Icon</label>
+                                        <label>Hình ảnh</label>
                                     </div>
-                                    <div class="col-md-7">
-                                        <button class="btn btn-dark" style="color:#fff !important;"  role="iconpicker"></button>
+                                    <div class="col-md-7 ckfinder_12">
+                                        <input name="icon" type="text" class="form-control" value="" required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -326,7 +326,7 @@
             $('#form_save').trigger("reset");
             $("input[name=id]").val('');
             $('.tree_select_demo').html(' ');
-            $('#category_product_main').val('');)
+            $('#category_product_main').val('');
             treeSelect();
             $('#myModal2').modal();
 

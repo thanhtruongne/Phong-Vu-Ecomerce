@@ -10,7 +10,6 @@ class CkFinderMiddleware
     {
         config(['ckfinder.authentication' => function() use ($request) {
             // dd(auth()->user());
-            dd(auth()->guard('web')->user());
             return true;
         }] );
 

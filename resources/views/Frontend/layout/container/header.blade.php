@@ -69,11 +69,11 @@
                             </a>
                             <div class="w-100">
                                 <div class="">
-                                   <div class="btn-modal on_click_change_toggle" > 
+                                   <div class="btn-modal on_click_change_toggle position-relative" > 
                                         <svg style="position: relative; top: -1px;" fill="#82869E" class="me-2" viewBox="0 0 512 512" size="20" class="css-11md2ba" color="textSecondary" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><title></title><line x1="88" y1="152" x2="424" y2="152" fill="none" stroke="#82869E" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48px"></line><line x1="88" y1="256" x2="424" y2="256" fill="none" stroke="#82869E" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48px"></line><line x1="88" y1="360" x2="424" y2="360" fill="none" stroke="#82869E" stroke-linecap="round" stroke-miterlimit="10" stroke-width="48px"></line></svg>
                                         Danh mục sản phẩm
+                                        @include('Frontend.layout.component.mainMenu')
                                     </div> 
-                                   
                                 </div>
 
                             </div>
@@ -134,4 +134,3 @@
           </div>
         </div>
 </header>
-@include('Frontend.layout.component.mainMenu')

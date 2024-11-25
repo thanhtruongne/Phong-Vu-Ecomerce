@@ -3,66 +3,29 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\ProductRepositories;
+use App\Models\Slider;
 use App\Repositories\SliderRepositories;
-use App\Repositories\SystemRepositories;
-use App\Services\WidgetService;
 use Illuminate\Http\Request;
+use Modules\Products\Entities\ProductCategory;
+use Modules\Widget\Entities\Widget;
 
-class HomeController extends BaseController
+class HomeController extends Controller
 {  
-     protected $sliderRepositories,$widgetService,$productRepositories;
-    // protected $language;
-   public function __construct(
-     // LanguageRepositories $languageRepositories,
-     SliderRepositories $sliderRepositories,
-     // WidgetService $widgetService,
-     // ProductRepositories $productRepositories
-    )
+    
+
+   public function home()
    {
-     $this->sliderRepositories = $sliderRepositories;
-     // $this->widgetService = $widgetService;
-     // $this->productRepositories = $productRepositories;
-     parent::__construct();
+
+     $widgets = Widget::whereNotNull('name')->where('status',1)->get();
+     $data_widget = $this->getWidgetData($widgets);
+     $slider = Slider::whereKeyword('slider-home')->first();
+     $productCategory = ProductCategory::whereNull('parent_id')->get();
+    //  $categories
+     return view('Frontend.page.home',['slider' => $slider,'productCategory' => $productCategory,'widgets' => $data_widget]);
    }
 
 
-   public function home(){
-     //hạn chế dùng phương thức này vì khi gọi api ,goi dư các dữ liệu render
-     $config = [ 
-          'js' => [
-              'frontend/js/library/custom.js'
-          ]
-     ];
-//      $widget = $this->widgetService->foundTheWidgetByKeyword([
-//           //product website
-//           ['keyword' => 'Brand_widget'],
-//           ['keyword' => 'category_outStanding','data-object' => true],
-//           ['keyword' => 'macbook_widget','promotion_variant' => true],
-//           ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
-//           ['keyword' => 'Ram_widget','data-object' => true],
-//           ['keyword' => 'VGA_widget','data-object' => true],
-//           ['keyword' => 'CPU_widget','data-object' => true],
-//           //brand website
-//      ]);
-  
-//      $Seo = $this->Seo;
-//      // Lấy ra các slider
-    $slider = $this->sliderRepositories->findCondition(...$this->argumentSlider());
-//     //Sản phẩm nổ bật
-//     $productOutStanding = $this->productRepositories->getoutStandingProduct(12);
-    return view('Frontend.page.home',compact('slider','config'));
-   }
 
-   private function argumentSlider() {
-     return [
-          'condition' => [
-               ['status','=',1],
-               ['keyword','=','main-slide']
-          ],
-          'params' => [], 
-          'relation' => [],
-          'type' => 'first'
-     ];
-   }
+
+
 }

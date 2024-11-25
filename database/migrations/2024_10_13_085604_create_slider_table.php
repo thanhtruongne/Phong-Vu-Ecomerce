@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('content')->nullable();
             $table->string('keyword')->nullable();
             $table->text('item');
+            $table->json('setting')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });

@@ -18,7 +18,7 @@
 <body>
     <div id="wrapper">
         {{-- sidebar --}}
-        @include('backend.component.sidebar');
+        {{-- @include('backend.component.sidebar'); --}}
         <div id="page-wrapper" class="gray-bg">
             <div class="row border-bottom">
             {{-- Nav bar --}}

@@ -24,7 +24,7 @@ class PromotionsController extends Controller
 
         $query = Promotions::query();
         if($search){
-            $query->where('name','like','%'.$search.'%');
+            $query->where('name','like',$search.'%');
         }
         $query->offset($offset);
         $query->limit($limit);
@@ -49,7 +49,17 @@ class PromotionsController extends Controller
     public function form(Request $request, $id = null) {
        $product_cateloges = ProductCategory::whereNotNull('name')->get()->toTree()->toArray();
        $data_category = $this->rebuildTree($product_cateloges);
-       return view('promotions::form',['categories' => $data_category]);
+
+       $model = Promotions::firstOrNew(['id' => $id]);
+       if($model) {
+           
+            $model->amount = numberFormat($model->amount);
+            $model->startDate = \Carbon::parse($model->startDate)->format('d/m/Y H:i');
+            if($model->endDate) 
+                $model->endDate = \Carbon::parse($model->endDate)->format('d/m/Y H:i');
+              
+       }
+       return view('promotions::form',['categories' => $data_category, 'model' => $model]);
     }
 
     public function save(Request $request){
@@ -62,6 +72,7 @@ class PromotionsController extends Controller
             'neverEndDate' => 'nullable',
             'endDate' => 'required_if:neverEndDate,null'
         ],$request,Promotions::getAttributeName());
+        dd($request->all());
         if($request->promotion && $request->category_id){
             json_result(['message' => 'Sản phẩm chọn không được bỏ trống','status' => 'error']);
         }  
@@ -73,7 +84,8 @@ class PromotionsController extends Controller
             if(!$request->neverEndDate){  
                 $model->endDate = \Carbon::createFromFormat('d/m/Y H:i',$request->endDate);
             }
-            else   $model->neverEndDate = $request->neverEndDate;
+            else 
+                $model->neverEndDate = $request->neverEndDate;
             
             $model->name = $request->name;
             $model->code = $request->code;
@@ -145,9 +157,8 @@ class PromotionsController extends Controller
        $query->where('a.status',1);
        $count = $query->count();
     //    $query->with('sku_variant');
-       $rows =  $query->paginate(4);
+       $rows =  $query->paginate(12);
        return response()->json(['rows' => $rows , 'count' => $count]);
     }
-
    
 }

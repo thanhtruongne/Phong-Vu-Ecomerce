@@ -156,6 +156,7 @@ class ProductCatelogeController extends Controller
         );
         $model = ProductCategory::firstOrCreate(['id' => $request->id]);
         $model->name = $request->name;
+        $model->icon = $request->icon;
         $model->ikey =\Str::slug($request->name);
         $model->status = $request->status;
         $model->save();

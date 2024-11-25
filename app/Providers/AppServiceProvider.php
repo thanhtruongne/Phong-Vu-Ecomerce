@@ -38,11 +38,16 @@ class AppServiceProvider extends ServiceProvider
         }
 
         view()->composer('backends.layouts.aside','App\Http\ViewComposers\LeftMenuComposer');
+        view()->composer('Frontend.layout.component.mainMenu','App\Http\ViewComposers\MenuComposer');
 
         $modules =\Module::all();
         foreach ($modules as $module) {
             $this->loadMigrationsFrom([$module->getPath() . '/Database/Migrations']);
         }
+
+        \Validator::extend('string_vertify',function($attribute,$value) {
+            return $value === filter_var($value,FILTER_SANITIZE_STRING);
+        });
 
     }
 }

@@ -18,7 +18,8 @@ class Promotions extends Model
 
     
     public function products(){
-        return $this->belongsToMany(Products::class,'promotion_product_relation','promotion_id','product_id');
+        return $this->belongsToMany(Products::class,'promotion_product_relation','promotion_id','product_id')
+        ->select('name','product_id','price','quantity','views','sku_code','type','image');
     }
     public function sku_variants(){
         return $this->belongsToMany(SkuVariants::class,'promotion_variants_relation','promotion_id','sku_id');
