@@ -413,15 +413,13 @@ if(!function_exists('renderMenuDynamicFrontEndParent')) {
         $parent = '';
         if(isset($data) && !is_null($data)) {
             foreach($data as $key => $item) {
-                $name = $item['item']->name;
-                // dd($name);
-                // $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
+                $name = $item['name'];
                 $slug = Str::slug($name);
                 $parent .= '<a href="#" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
                 $parent .= '<div class="css-73wobg">';
                 $parent .= '<div class="image_category">';
                 $parent .= '<div style="position: relative;display: inline-block;overflow: hidden;height: 100%;width: 100%;">';
-                $parent .= '<img class="h-100 w-100" src="'.$item['item']->image.'"/>';
+                $parent .= '<img class="h-100 w-100" src="#"/>';
                 $parent .= '</div>';
                 $parent .= '</div>';
                 $parent .= '<div  class="css-13yxnyc" style="flex: 1 1 0%;">';

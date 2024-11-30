@@ -36,7 +36,8 @@ class Promotions extends Model
             'amount' => 'Giá khuyến mãi',
             'description' => 'Mô tả khuyến mãi',
             'startDate' => 'Thời gian bắt đầu',
-            'endDate' => 'Thời gian kết thúc'
+            'endDate' => 'Thời gian kết thúc',
+            'ids' => 'Các trường id '
         ];
     }
 }

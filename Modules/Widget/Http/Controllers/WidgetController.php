@@ -92,7 +92,7 @@ class WidgetController extends Controller
         $query = Products::query();
         $query->select(['a.id as product_id','a.sku_code as product_sku','a.name as product_name','c.album as variant_album','c.name as variant_name','c.price as variant_price','c.sku_code as variant_sku','c.stock as variant_stock','c.id as variant_id','a.image','a.price','a.quantity','b.name as category_name']);
         $query->from('product as a');
-        $query->leftJoin('product_category as b','b.id','=','a.product_category_id');
+        $query->join('product_category as b','b.id','=','a.product_category_id');
         $query->leftJoin('sku_variants as c','c.product_id','=','a.id');
  
         if($keyword){

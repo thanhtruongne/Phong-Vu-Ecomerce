@@ -23,7 +23,7 @@ class CreatePromotionsTable extends Migration
             $table->decimal('amount',10)->nullable();
             $table->dateTime('startDate');
             $table->dateTime('endDate')->nullable();
-            $table->integer('neverEndDate');
+            $table->integer('neverEndDate')->nullable();
             $table->integer('status')->default(1);
             $table->integer('type')->nullable()->comment('1 theo danh mục,2 theo sản phẩm');
             $table->timestamps();

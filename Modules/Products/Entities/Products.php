@@ -28,7 +28,7 @@ class Products extends Model
 
     protected $casts = [
        'variants' => 'json',
-       'attributes' => 'json'
+       'attributes' => 'json',
     ];
 
     public function sku_variant(){

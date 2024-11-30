@@ -17,10 +17,10 @@
         {{-- Product Category by Widget --}}
         @include('Frontend.layout.container.widgets.product',['widgets' => $widgets])
         {{-- brand --}}
-        {{-- @include('Frontend.layout.component.brand',['data' => $brand]) --}}
+        @include('Frontend.layout.component.brand',['brands' => $brands])
 
         {{-- ProductOutstanding --}}
-        {{-- @include('frontend.layout.component.productOutStanding') --}}
+        @include('frontend.layout.component.productOutStanding',['products' => $products])
     </div>
      
 @endsection

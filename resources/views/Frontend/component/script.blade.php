@@ -1,6 +1,6 @@
 <script>
         //Global
-        const Server_Frontend = 'http://localhost:8000';
+        const Server_Frontend = '{{env('APP_URL_DEFAULT')}}';
 </script>
 
 <script src="{{ asset('frontend/boosttrap/js/bootstrap.min.js') }}"></script>
@@ -9,12 +9,12 @@
 <script src="{{asset('frontend/js/plugins/popper.min.js')}}" ></script>
 <script src="{{ asset('frontend/js/plugins/glide-slide.js') }}"></script>
 <script src="{{asset('frontend/js/plugins/jquery-elevatezoom.min.js')}}"></script>
-<script src="{{asset('frontend/js/plugins/sweetalert2.all.min.js')}}"></script>
-
+<script src="{{asset('frontend/js/plugins/nouislider.min.js')}}"></script>
+<script src="{{asset('frontend/js/plugins/metisMenu.min.js')}}"></script>
+<script src="{{asset('frontend/js/plugins/wNumb.min.js')}}"></script>
 {{-- load custom jquery --}}
 <script src="{{asset('frontend/js/custom/custom.js')}}"></script>
 <script src="{{asset('frontend/js/custom/jquery.js')}}"></script>
-
 
 
 <script type="text/javascript">

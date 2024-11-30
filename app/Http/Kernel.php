@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         // \App\Http\Middleware\AutoLogout::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        \App\Http\Middleware\XssInput::class,
+        // \App\Http\Middleware\XssInput::class,
     ];
 
     /**
@@ -39,7 +39,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\LogVisits::class,
-            \App\Http\Middleware\AutoLogout::class,
             // \Spatie\ResponseCache\Middlewares\CacheResponse::class,
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
         ],
@@ -74,5 +73,6 @@ class Kernel extends HttpKernel
         'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
         'cacheResponse' => \Spatie\ResponseCache\Middlewares\CacheResponse::class,
         'isAdmin' => \App\Http\Middleware\AuthorizeAdmin::class,
+        'autoLogout' => \App\Http\Middleware\AutoLogout::class
     ];
 }

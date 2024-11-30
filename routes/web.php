@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\Ajax\ProductController;
 use App\Http\Controllers\Backend\Auth\AuthencateController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Frontend\AccountController;
+use App\Http\Controllers\Frontend\Ajax\ProductAjaxController;
 use App\Http\Controllers\Frontend\Auth\AuthController;
 use App\Http\Controllers\Frontend\CartController as FrontendCartController;
 use App\Http\Controllers\Frontend\CheckoutController;
@@ -100,7 +101,7 @@ Route::get('/',[HomeController::class,'home'])->name('home');
 // Route::middleware(['cacheResponse:600'])->group(function(){
 Route::get('{canonical}---{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
 ->where('canonical','[a-zA-Z0-9-]+')->where('slug','[a-zA-Z0-9-]+');
-//Dynamic router use database render controllers and model
-Route::get('{canonical}',[RouterController::class,'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
-    
-// });
+
+Route::get('/c/{slug}',[HomeController::class,'productCategory'])->name('home.category')->where('canonical', '[a-zA-Z0-9-]+');
+Route::get('/get-product-by-category-filter',[ProductAjaxController::class,'getProductByCategoryParams'])->name('fe.product.category.filter');
+

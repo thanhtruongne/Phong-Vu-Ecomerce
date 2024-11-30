@@ -113,7 +113,7 @@
                                             <div class="" style="margin-top: 16px">
                                                 <input type="checkbox" 
                                                     {{ $model && $model->neverEndDate == 1 ? 'checked' : '' }}
-                                                    value="choose" 
+                                                    value="1" 
                                                     class="no_date_promotion" id="no_date_promotion" name="neverEndDate">  
                                                 <label 
                                                 for="no_date_promotion"
@@ -309,7 +309,7 @@
        }
        $.each(option , function(index , val) {
         if(val?.variant_id) {
-            let variantIdCheck = val?.variant_sku ;
+            let variantIdCheck = val?.variant_sku;
             let album  = [];
             if(val?.variant_album) {
                 album = JSON.parse(val?.variant_album)?.split(',');
@@ -326,7 +326,7 @@
                         <div class="data_item" style="width:89%;
                         display:flex;justify-content:space-between;align-items:center">
                             <div style="width:5%">
-                                <input type="checkbox"  ${(check.includes(variantIdCheck) == true ) || (value != null && value['variant'].includes(variantIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}_${val?.variant_id}" value="${val?.variant_id}" name="variant_id[]">
+                                <input type="checkbox"  ${(check.includes(variantIdCheck) == true ) || ( @json($model->id) && value != null && value['variant']?.includes(variantIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}_${val?.variant_id}" value="${val?.variant_id}" name="variant_id[]">
                             </div>
                             <div style="width:16%" class="image_thumbnail">
                                 <img class="w-100" src="${album[0]}" alt="">
@@ -367,7 +367,7 @@
                         <div class="data_item" style="width:89%;
                         display:flex;justify-content:space-between;align-items:center">
                             <div style="width:5%">
-                                <input type="checkbox" ${(check.includes(productIdCheck) == true) || (value && value['product'].includes(productIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}" value="${val?.product_id}" name="product_id[]">
+                                <input type="checkbox" ${(check.includes(productIdCheck) == true) || (@json($model->id) &&  value && value['product']?.includes(productIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}" value="${val?.product_id}" name="product_id[]">
                             </div>
                             <div style="width:16%" class="image_thumbnail">
                                 <img class="w-100" src="${val?.image}" alt="">
@@ -461,8 +461,8 @@
         let value = null;
         if($('input[name="id"]').val()){
             value = {
-                'product' : @json($model->products->pluck('sku_code')),
-                'variant' : @json($model->sku_variants->pluck('sku_code'))
+                'product' : @json($model->id) &&  @json($model->products) != null ? @json($model->products->pluck('sku_code')) : null,
+                'variant' : @json($model->id) &&  @json($model->sku_variants) != null ?   @json($model->sku_variants->pluck('sku_code')) : null
             }
         }
         AjaxGetProductPromotion(option,value);
@@ -497,7 +497,7 @@
             // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
             var desc = CKEDITOR.instances['description'].getData();
             formData += '&description=' + encodeURIComponent(desc) + '&promotion=' + JSON.stringify(promotion)
-
+            
             $('#submit-btn-data').html('<i class="fa fa-spinner fa-spin"></i> '+'Lưu').attr("disabled", true);
 
             saveProductData(formData);

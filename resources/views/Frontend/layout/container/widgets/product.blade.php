@@ -53,8 +53,10 @@
                                             //     $url = $product->canonical.'---'.implode('--',$name_slug).'?sku='.$item->sku;
                                             //     $canonical = makeTheURL($url,true); 
                                             // }
+                                            // dd($data);
+                                            $promotion = $data->promotion->select(['name','id','amount'])->first();                                        
                                             $image = $data->image ? $data->image : explode(',',$data->album)[0];
-                                            
+                                            $price = $promotion ? ((int)$data->price - (int)$promotion['amount']) : $data->price;
                                         @endphp 
                                         {{-- Use Foreach load widget --}}
                                         <li class="glide__slide" style="width: 20%" >
@@ -64,20 +66,20 @@
                                                         <div class="css-4rhdrh">
                                                             <div style="margin-bottom: 0.25rem;position: relative;">
                                                                 <div class="position-relative" style="padding-bottom: 100%;">
-                                                                    <div class="hover-zoom bg-image w-100 h-100">
+                                                                    <div class="bg-image w-100 h-100">
                                                                         <img class="w-100 h-100 object-fit-contain position-absolute" src="{{ $image }}" 
                                                                         style="top: 0px;left: 0px">
-                                                                        {{-- @if (!empty($data->promotions))
+                                                                        @if (!empty($promotion))
                                                                             <div class="position-absolute" style="width: 94px;bottom:0;left:0">
                                                                                 <div class="css-zb7zul">
                                                                                     <div style="font-size: 10px;font-weight: 700;color: #ffd591;">TIẾT KIỆM</div>
                                                                                     <div style="font-size: 13px;line-height: 18px;font-weight: 700;color: #FFFFFF;">
                                                                                     
-                                                                                        {{ convert_price($data->promotions['discount'],true) }} đ
+                                                                                        {{ convert_price($promotion['amount'],true) }} đ
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
-                                                                        @endif --}}
+                                                                        @endif
                                                                         
                                                                     </div>                        
                                                                 </div>
@@ -94,27 +96,27 @@
                                                                 </div>
                                                                 {{-- desc --}}
                                                                 <div style="height:3rem">
-                                                                {{-- <div class="css-1uunp2d">
+                                                                <div class="css-1uunp2d">
                                                                         <h3 style="font-size: 0.75rem;font-weight: 400;line-height: 1rem;display: inline;">
-                                                                            {!! Str::limit($item->content,20, '...') !!}
+                                                                            {!! Str::limit($data->content,20, '...') !!}
                                                                         </h3>
-                                                                </div> --}}
+                                                                </div>
                                                             </div>
                                                             {{-- price --}}
                                                             <div style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
                                                                     <div class="css-do31rh">
-                                                                        {{-- {{ convert_price($product_price_after_discount,true)  }} ₫ --}}
+                                                                        {{ convert_price($price,true)  }} ₫
                                                                     </div>
-                                                                    {{-- @if (!empty($item->promotions))
+                                                                    @if (isset($promotion) && !empty($promotion))
                                                                         <div style="display: flex;height: 1rem;">
                                                                             <div class="css-18z00w6">
-                                                                                {{ convert_price($item->price,true) }} đ
+                                                                                {{ convert_price($data->price,true) }} đ
                                                                             </div>
                                                                             <div class="css-2rwx6s">
-                                                                                - {{ $item->promotions['discountValue'] }} {{ $item->promotions['discountType'] }}
+                                                                                - {{ number_format(100 - (((int)$price / (int)$data->price) * 100),2) }} %
                                                                             </div>
                                                                         </div>
-                                                                    @endif --}}
+                                                                    @endif
                                                             </div>
                         
                                                             </div>

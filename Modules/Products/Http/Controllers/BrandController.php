@@ -21,7 +21,7 @@ class BrandController extends Controller
         $sort = $request->input('sort','id');
         $order = $request->input('order','DESC');
         $offset = $request->input('offset',0);
-        $limit = $request->input('limit',20);
+        $limit = $request->input('limit',6);
         
         $query = Brand::query();
         if($search){

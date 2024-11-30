@@ -698,7 +698,7 @@
             row.append(td);
             
             row.append($('<td>').addClass('variants-qualnity').text(model?.stock))
-                .append($('<td>').addClass('variants-price').text(toVND(model?.price)))
+                .append($('<td>').addClass('variants-price').text( model?.price ? toVND(model?.price) : ''))
                 .append($('<td>').addClass('variants-sku').text(model?.sku_code))
             return row;
         }

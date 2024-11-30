@@ -160,6 +160,15 @@
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-4 control-label">
+                                        <label>URL</label>
+                                    </div>
+                                    <div class="col-md-7"> 
+                                        <input name="url" type="text" class="form-control" value=""
+                                        >
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-4 control-label">
                                         <label>Hình ảnh</label>
                                     </div>
                                     <div class="col-md-7 ckfinder_12">
@@ -204,7 +213,6 @@
     <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
     <script>
         function index_formatter(value, row, index) {
-            console.log(row);
             return (index+1);
         }
 
@@ -260,7 +268,6 @@
                         'id' : id
                         }
                     }).done(function(result){
-                        console.log(result);
                         show_message(result.message, result.status);
                         $(table.table).bootstrapTable('refresh');
                     }).fail(function(data) {
@@ -325,8 +332,12 @@
             $('#exampleModalLabel').html('Thêm mới');
             $('#form_save').trigger("reset");
             $("input[name=id]").val('');
+            $("input[name=name]").val('');
+            $("input[name=icon]").val('');
+            $('#description').text(' ')
+            $("input[name=url]").val('');
             $('.tree_select_demo').html(' ');
-            $('#category_product_main').val('');
+            $('#category_parent_id').val('');
             treeSelect();
             $('#myModal2').modal();
 
@@ -343,7 +354,6 @@
                 })
 
                 treeselect.srcElement.addEventListener('input', (e) => {
-                console.log('Selected value:', e.detail)
                     $('#category_parent_id').val(e.detail );
                 })
             }
@@ -359,7 +369,6 @@
                 })
 
                 treeselect.srcElement.addEventListener('input', (e) => {
-                console.log('Selected value:', e.detail)
                     $('#category_product_main').val(e.detail );
                 })
 
@@ -378,7 +387,6 @@
                     type: 'POST',
                     data: formData,
                 }).done(function(data) {
-                    console.log(data);
                     item.html(oldtext);
                     $('.save').attr('disabled', false);
                     if (data && data.status == 'success') {
@@ -406,8 +414,6 @@
                 item.prop('disabled',true).html('<i class="fa fa-spinner fa-spin"></i>')
                 $("input[name=id]").val('');
                 $('.tree_select_demo').html(' ');
-                let position = '<option value="1">Thuê căn hộ / phòng trọ</option> <option value="2">Buôn bán điện tử</option> <option value="3">Việc làm</option>';
-                $("#type_id").html(position)
                 $.ajax({
                 url: "{{ route('private-system.product-cateloge.edit') }}",
                 type: 'get',
@@ -416,20 +422,15 @@
                 }
             }).done(function(data) {
                 item.prop('disabled',false).html(oldtext)
-                console.log(data)
                 $('.tree_select_data').html(' ');
                 $('#exampleModalLabel').html('Chỉnh sửa');
                 $("input[name=id]").val(data.model.id);
                 $("input[name=name]").val(data.model.name);
+                $("input[name=url]").val(data?.model?.url);
+                $("input[name=icon]").val(data?.model?.icon);
+                CKEDITOR.instances['description'].setData(data?.model?.description)
+                $('#category_parent_id').val(data.model.parent_id);
                 treeSelect(data.model.parent_id);
-
-                if (data.model.type) {
-                    $("#position_modal select").val(data.model.type);
-                    $("#position_modal select").val(data.model.type).change();
-                } else {
-                    $("#position_modal select").val('');
-                    $("#position_modal select").val('').change();
-                }
 
                 if (data.model.status == 1) {
                     $('#enable').prop('checked', true)

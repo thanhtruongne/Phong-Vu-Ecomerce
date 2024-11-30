@@ -39,7 +39,14 @@ class MenuComposer extends Controller{
        $render = renderMenuDynamicFrontEndChild($data);
        $renderChild = explode('---',$render);
        array_shift($renderChild);
-       $this->menu = $renderChild;
+       $renderParent = renderMenuDynamicFrontEndParent($data);
+       $renderParent = explode('---', $renderParent);
+
+        $data= [
+            'child' => $renderChild,
+            'parent' => $renderParent
+        ];
+       $this->menu = $data;
        return $this->menu;
     }
 

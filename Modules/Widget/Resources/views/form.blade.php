@@ -230,10 +230,10 @@
                 data-id="${data?.product_id}"
                 data-variant_id="${data?.variant_id}">
                 <div>        
-                    <img width="100" src="${data?.image ? data?.image : data?.variant_album}"/>
+                    <img width="100" src="${ data?.variant_id ? data?.variant_album :  data?.image }"/>
                 </div>  
                 <div>        
-                    ${data?.product_name ? data?.product_name : data?.variant_name}
+                    ${data?.variant_id ? data?.variant_name : data?.product_name}
                 </div>  
                 <div class="auto_icon_check">
                 

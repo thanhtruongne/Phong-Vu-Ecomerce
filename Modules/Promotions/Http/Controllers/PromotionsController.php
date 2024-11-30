@@ -2,11 +2,13 @@
 
 namespace Modules\Promotions\Http\Controllers;
 
+use App\Enums\Enum\StatusReponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Products\Entities\ProductCategory;
 use Modules\Products\Entities\Products;
 use Modules\Promotions\Entities\Promotions;
+
 class PromotionsController extends Controller
 {
 
@@ -69,13 +71,14 @@ class PromotionsController extends Controller
             'amount' => 'required',
             'description' => 'required',
             'startDate' => 'required',
-            'neverEndDate' => 'nullable',
-            'endDate' => 'required_if:neverEndDate,null'
+            // 'endDate' => 'null'
         ],$request,Promotions::getAttributeName());
-        dd($request->all());
         if($request->promotion && $request->category_id){
-            json_result(['message' => 'Sản phẩm chọn không được bỏ trống','status' => 'error']);
+            json_result(['message' => 'Sản phẩm chọn không được bỏ trống','status' => StatusReponse::ERROR]);
         }  
+        if(!$request->neverEndDate &&  is_null($request->endDate)) {
+            json_result(['message' => 'Thời gian kết thúc không được bỏ trống','status' => StatusReponse::ERROR]);
+        }
         \DB::beginTransaction();
         try {
             $model = Promotions::firstOrNew(['id' => $request->id]);
@@ -85,7 +88,7 @@ class PromotionsController extends Controller
                 $model->endDate = \Carbon::createFromFormat('d/m/Y H:i',$request->endDate);
             }
             else 
-                $model->neverEndDate = $request->neverEndDate;
+                $model->neverEndDate = (int)$request->neverEndDate;
             
             $model->name = $request->name;
             $model->code = $request->code;
@@ -96,27 +99,28 @@ class PromotionsController extends Controller
                     $data =  json_decode($request->promotion,true);
                     foreach($data as $item){
                         if($item['type'] == 1){
-                            $model->sku_variants()->detach();
+                            $model->sku_variants()->detach($item['variant_id']);
                             $model->sku_variants()->attach($item['variant_id']); 
                         }
                         else {
-                            $model->products()->detach();
+                            $model->products()->detach($item['id']);
                             $model->products()->attach($item['id']); 
                         }                 
                     }
                 }
                 if($request->category_id){
-                    $data =explode(',',$request->category_id);
-                    $model->products()->detach();
-                    $model->product_category()->sync($data);
+                    $datas = explode(',',$request->category_id);
+
+                    $model->product_category()->detach();
+                    $model->product_category()->sync($datas);
                 } 
             }
      
             \DB::commit();
-            return response()->json(['message' => 'Tạo khuyến mãi thành công','status' => 'success','redirect' => route('private-system.promotions.index')]);
+            return response()->json(['message' => 'Tạo khuyến mãi thành công','status' => StatusReponse::SUCCESS,'redirect' => route('private-system.promotions.index')]);
         } catch (\Throwable $th) {
             \DB::rollback();
-            return response()->json(['message' => $th->getMessage(),'status' => 'error','code' => 400]);
+            return response()->json(['message' => $th->getMessage(),'status' => StatusReponse::ERROR,'code' => 400]);
 
         }
       
@@ -133,19 +137,21 @@ class PromotionsController extends Controller
        $query->leftJoin('product_category as b','b.id','=','a.product_category_id');
        $query->leftJoin('sku_variants as c','c.product_id','=','a.id');
        //tránh trùng lặp product riêng
-       $query->whereNotExists(function($subquery){
+       $query->whereNotExists(function($subquery){          
+            $subquery->selectRaw(1);
             $subquery->from('promotion_product_relation as d');
             $subquery->whereRaw('a.id = d.product_id');
             $subquery->groupBy('d.product_id');
-            $subquery->havingRaw('COUNT(d.product_id) > 2');
+            // $subquery->havingRaw('COUNT(d.product_id) > 2');
        });
 
     //    //tránh trùng lặp variant
         $query->whereNotExists(function($sub_query_2){
+            $sub_query_2->selectRaw(1);
             $sub_query_2->from('promotion_variants_relation as e');
             $sub_query_2->whereRaw('c.id = e.sku_id');
             $sub_query_2->groupBy('e.sku_id');
-            $sub_query_2->havingRaw('COUNT(e.sku_id) > 2');
+            // $sub_query_2->havingRaw('COUNT(e.sku_id) > 2');
        });
 
        if($search){

@@ -715,8 +715,10 @@ header .search-icon  {
     -webkit-transition: -webkit-transform 0.3s ease 0s;
     transition: transform 0.3s ease 0s;
 }
-
-.css-egxwy8:hover {
+.css-egxwy8:hover img {
+    transform: scale(1.05);
+}
+.hover-zoom:hover {
     transform: scale(1.05);
 }
 .css-uros0k {

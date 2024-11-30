@@ -156,12 +156,12 @@ class ProductsController extends Controller
             $model->price = null;
             $model->type = $this->getNameType($request->type);
             $model->product_category_id = $request->category_id;
-            $attributes_ids = $request->attribute_id;
+            $attributes_parent_ids = $request->attribute_id;
             $variants = [];
             $sku_idx = [];
-            ksort($attributes_ids);
+            ksort($attributes_parent_ids);
             $sku_idx = json_decode($request->attribute_varian_idx);
-            foreach($attributes_ids as $key =>  $attribute_item){
+            foreach($attributes_parent_ids as $key =>  $attribute_item){
                 // compare các giá trị gán chúng vào index của item
                 $attribute_cateloge = Attribute::where('id',$key)->first(['name','id']);
                 $variants_attribute = [];
@@ -176,8 +176,9 @@ class ProductsController extends Controller
                 ];
             }
             $model->variants = $variants;
-            $model->attributes = $attributes_ids;
+            $model->attributes = $attributes_parent_ids;
             if($model->save()){
+                $model->attributes_item()->sync((array_unique(array_merge(...$attributes_parent_ids) ?: [])));
                 // $model->sku_variants()->delete();
                 foreach($sku_idx as $key => $sku){
                     $variant = SkuVariants::firstOrNew(['sku_code' => $request->variants['sku'][$key]]);
@@ -212,7 +213,7 @@ class ProductsController extends Controller
             }
            
              
-             if($request->id){
+            if($request->id){
                 $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
                 if($name)
                     $model->name = $name[0] . ' ('.implode('/',$attribute_name_convert) .')';
@@ -237,9 +238,11 @@ class ProductsController extends Controller
             $ids = $request->input('ids', null);
             foreach ($ids as $id){
                $model = Products::find($id);
-               if(!$model->sku_variants->isEmpty()){
+               if(!$model->sku_variant->isEmpty()){
                     json_result(['message' => 'Sản phẩm còn tồn tại các variant con','status' => 'error']);
                }
+               $model->promotion->detach();
+               $model->attributes_item->detach();
                $model->delete();
             }
         }

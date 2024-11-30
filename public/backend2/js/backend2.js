@@ -221,7 +221,7 @@ function toVND (value) {
       .trim();
     
     return formatted;
-  }
+}
 
 
 
