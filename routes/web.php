@@ -99,7 +99,7 @@ Route::get('/ajax/ghtk/transportfee',[ShippingGHTK::class,'CalcShippingByGhtk'])
 
 Route::get('/',[HomeController::class,'home'])->name('home');
 // Route::middleware(['cacheResponse:600'])->group(function(){
-Route::get('{canonical}---{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
+Route::get('{canonical}--{slug}',[RouterController::class,'detail'])->name('router.detail.slug')
 ->where('canonical','[a-zA-Z0-9-]+')->where('slug','[a-zA-Z0-9-]+');
 
 Route::get('/c/{slug}',[HomeController::class,'productCategory'])->name('home.category')->where('canonical', '[a-zA-Z0-9-]+');

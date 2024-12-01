@@ -72,7 +72,7 @@
                             {{-- sort --}}
                              @include('Frontend.page.products.components.sort')
                              {{-- products --}}
-                             @include('Frontend.page.products.components.products',['products' => $products])
+                             @include('Frontend.page.products.components.products')
                         </div>
                     </div>
 
@@ -88,70 +88,8 @@
 
 @push('scripts')
    <script>
-//    $(document).ready(function(){
-//     length = 500;
-//     cHtml = $(".content_desc_product_cateloge").html();
-//     cText = $(".content_desc_product_cateloge").text().substr(0, length).trim();
-//     $(".content_desc_product_cateloge").addClass("compressed").html(cText);
-//     $(".button_toggle").addClass('exp').text('Xem thêm nội dung');
-//     window.handler = function()
-//     {
-//         $('.exp').click(function(){
-//             if ($(".content_desc_product_cateloge").hasClass("compressed"))
-//             {
-//                 $(".content_desc_product_cateloge").html(cHtml);
-//                 $(".button_toggle").text('Tóm tắt nội dung');
-//                 $(".content_desc_product_cateloge").removeClass("compressed");
-//                 handler();
-//                 return false;
-//             }
-//             else
-//             {
-//                 $(".content_desc_product_cateloge").html(cText);
-//                 $(".button_toggle").text('Xem thêm nội dung');
-//                 $(".content_desc_product_cateloge").addClass("compressed");
-//                 handler();
-//                 return false;
-//             }
-//         });
-//     }
-//     handler();
-// });
-
-
-
-
-
-    var slider = document.getElementById('slider');
-    var moneyFormat = wNumb({
-        decimals: 3,
-        thousand: ".",
-        suffix: " đ"
-    });
-    noUiSlider.create(slider, {
-        start: [1000000, 5000000],  
-        step : 100,
-        range: {
-            'min': 100000,
-            'max': 10000000
-        },
-        format :moneyFormat,
-        connect: true,
-    });
-    var snapValues = [
-        document.getElementById('slider-snap-value-lower'),
-        document.getElementById('slider-snap-value-upper')
-    ];
-
-    slider?.noUiSlider?.on('update', function (values, handle) {
-        snapValues[handle].innerHTML = values[handle];
-    });
-    snapValues?.addEventListener('change', function () {
-        slider.noUiSlider.set(this.value);
-    });
-
-
-
+        //gọi data khi click vào data
+        renderProductCategoryFirstTime();
    </script>
    
 @endpush

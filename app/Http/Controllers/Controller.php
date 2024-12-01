@@ -153,24 +153,40 @@ class Controller extends ControllerAstract implements ControllerInterfaces
         return $widgets;
     }
 
-    public function getProductByCategory(Request $request,$productCategory,array $filter = [],$type = 'category') {
+    public function getProductByCategory(Request $request,$productCategory,array $filter,$range_price = null,$type = 'category') {
         $limit = $request->input('limit',20);
         $offset = $request->input('offset',0);
 
 
         $query = Products::query();
-            $query->select(['a.id','a.content','a.brand_id','a.sku_code as product_sku',
+            $query->select(['a.id','a.slug','a.brand_id','a.sku_code as product_sku',
             'a.name as product_name','c.album as variant_album','c.name as variant_name',
-            'c.price as variant_price','c.sku_code as variant_sku','c.stock as variant_stock','a.attributes',
+            'c.price as variant_price','c.slug as variant_slug','c.sku_code as variant_sku','c.stock as variant_stock','a.attributes',
             'c.id as sku_id','a.image','a.price','a.quantity',
             \DB::raw('UPPER(b.name) as brand_name')]);
             $query->from('product as a');
             $query->join('brand as b','b.id','=','a.brand_id');
             $query->leftJoin('sku_variants as c','c.product_id','=','a.id');
             $query->whereIn('a.product_category_id',$productCategory->descendants->pluck('id')->toArray());
-            if($type != 'category' && $type == 'filter' && !empty($filter)){
-                $query->leftJoin('product_attribute_relation as par','par.product_id','=','a.id');
-                $query->whereIn('par.attribute_id',$filter);
+            if($type != 'category' && $type == 'filter'){
+                if(isset($filter) && !empty($filter)){
+                    $query->leftJoin('product_attribute_relation as par','par.product_id','=','a.id');
+                    $query->whereIn('par.attribute_id',$filter);
+                }
+                if(isset($range_price['price_lte']) || isset($range_price['price_gte'])) {
+                    $price_lte = isset($range_price['price_lte']) ? $range_price['price_lte'] : null;
+                    $price_gte = isset($range_price['price_gte']) ?  $range_price['price_gte'] : null;
+                    if($price_lte && $price_gte){
+                        $query->whereBetween('a.price',[$price_gte,$price_lte]);
+                        $query->orWhereBetween('c.price',[$price_gte,$price_lte]);
+                    } elseif($price_lte){
+                        $query->where('a.price','<=',$price_lte);
+                        $query->orWhere('c.price','<=',$price_lte);
+                    } elseif($price_gte){
+                        $query->where('a.price','>=',$price_gte);
+                        $query->orWhere('c.price','>=',$price_gte);
+                    }
+                }
             }
             $query->where('a.status',1);
             $query->with(['promotion','attributes_item']);

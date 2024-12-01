@@ -1,4 +1,39 @@
 
+    var arr = [0, 12000000];
+    var Timer;
+    const baseUrl = window.location.origin + window.location.pathname;
+    let searchParams = new URLSearchParams(window.location.search);
+    
+    function renderProductCategoryFirstTime(option = null){
+        let render = {};
+        let price_range = {};
+        let productCategory = $('input[name="productCategory"]').val();    
+        searchParams.forEach(function(value,key){
+            if (!Array.isArray(render[key]) && (key != 'price_lte' && key != 'price_gte')) {
+                render[key] = []; 
+            } else {
+                price_range[key] = []; 
+            }
+            if(key != 'price_lte' && key != 'price_gte') {
+                render[key] = value;
+            } else {
+                price_range[key] = value;
+            }
+          
+        })
+        $.each(render,function(key,attempt) {
+            if(key != 'price_lte' && key != 'price_gte'){
+                render[key] = attempt?.split(',');
+            }
+        });
+        AjaxGetProductByFilterParams({
+            attempt : render,
+            ...price_range ,
+            clear : null,
+            product_category_id : productCategory
+        });
+    }
+
     $(document).on('click','.on_click_change_toggle',function() {
         let _this = $(this);
        
@@ -20,7 +55,6 @@
             $.each($('.set_ui_menu') , function(index,val) {
                 let classList = $(val).attr('data-title');
                 $(val).hover(function (e) {
-                    console.log(44)
                     $('.css-j61855').removeClass('hidden');
                     $('.css-j61855').find('.'+classList).removeClass('hidden')
                     $('.css-j61855').find('.'+classList).find('div.css-fej9ea').removeClass('hidden')
@@ -55,6 +89,7 @@
             })
         }
     }
+
     function toVND (value) {
         // value = value.toString().replace(/\./g, "");
         const formatted = new Intl.NumberFormat("vi-VN", {
@@ -67,62 +102,80 @@
         
         return formatted;
     }
-
-    var Timer;
     //productCategory
     $('.on_change_ajax').on('change',function(){
         clearTimeout(Timer);
-        Timer = setTimeout(function(){
-            const baseUrl = window.location.origin + window.location.pathname;
-            let data = {};
-            $('.on_change_ajax').each(function(index,value){
-                if( $(value) && $(value).prop('checked')){
-                    let value = $(this).val();
-                    let slug = $(this).parents('.ul_parent').siblings().data('id');
-                    if (!Array.isArray(data[slug])) {
-                        data[slug] = []; 
-                    }
-                    data[slug]?.push(value);
-                } else {
-                    window.history.pushState({},'',baseUrl);
-                }
-            })
-            if(data) {
-                let string = '';
-                $.each(data,function(key,attempt) {
-                    if(attempt){
-                      string += key + '=' + attempt?.join(',') + '&';
-                    }
-                })
-                if(string) {
-                    AjaxGetProductByFilterParams(data);
-                    window.history.pushState(data,'','?'+string?.slice(0,-1));
-                }
-            }
+        Timer = setTimeout(function(){           
+            doingWhileFilter();
         }, 600)    
     })
+    let filter_price = {};
+    function doingWhileFilter(option = null){
+        let data = {};
+        let productCategory = $('input[name="productCategory"]').val();    
+        $('.on_change_ajax').each(function(index,value){
+            if( $(value) && $(value).prop('checked')){
+                let value = $(this).val();
+                let slug = $(this).parents('.ul_parent').siblings().data('id');
+                if (!Array.isArray(data[slug])) {
+                    data[slug] = []; 
+                }
+                data[slug]?.push(value);
+            } else { 
+                window.history.pushState({},'',baseUrl);       
+            }
+        })
+        if(option) {
+            filter_price[option?.key] = option?.value;
+        }
+        if(data || filter_price) {
+            let string = '';
+            $.each(data,function(key,attempt) {
+                if(attempt){
+                  string += key + '=' +attempt?.join(',') + '&';
+                }
+            })
+
+            $.each(filter_price,function(index,item){
+                if(item){
+                  string += index + '=' + item + '&';
+                }
+            })  
+            AjaxGetProductByFilterParams({
+                attempt : data,
+                ...filter_price ,
+                clear : string == null ? 1 : null,
+                product_category_id : productCategory
+            });
+            window.history.pushState(data,'','?'+string?.slice(0,-1).trim());
+        }
+    }
 
 
-    function AjaxGetProductByFilterParams(data){
-        let productCategory = $('input[name="productCategory"]').val();
+    function AjaxGetProductByFilterParams(option){ 
         $.ajax({
             type: 'GET',
             url : Server_Frontend + 'get-product-by-category-filter',
-            data : {
-                attempt : data,
-                product_category_id : productCategory
-            },
+            data : option,
             success : function(data) {
                 if(data?.status == 'success' && data?.rows) {
-                  let render = $('#render_category_method');
-                  render.html('');
+                  let render = $('#render_data');
+                  let html = '';
                   $.each(data?.rows,function(index,value){
-                    let promotion = value?.sku_id ? value?.variant_promotion_price : value?.promotion[0]; 
                     let name =  value?.sku_id ?  value?.variant_name : value?.product_name;                                
+                    let promotion = value?.sku_id ? value?.variant_promotion_price : value?.promotion[0]; 
                     let image =  value?.sku_id ?  value?.variant_album : value?.image;
                     let price =  value?.sku_id ? value?.variant_price : value?.price;
-                    let price_promtion_save = value?.promotion[0]  ? (+price - +promotion?.amount) : null;
-                    render.append(`
+                    let price_promtion_save = value?.promotion  ? (+price - +promotion?.amount) : null;
+                    let slug =  value?.sku_id ?  value?.variant_slug : value?.slug;
+                    let sku = value?.sku_id ?  value?.variant_sku : value?.product_sku;
+                    let url  = slug + '--' + sku;
+                    console.log(url);     
+
+
+
+
+                    html +=`
                     <div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
                         <div class="css-1msrncq fill_parent">
                             <a href="#" class="d-block" style="text-decoration: none">
@@ -154,20 +207,13 @@
                                             <h3 class="css-1xdyrhj">${name}</h3>
                                         </div>
                                     </div>
-                                    <div style="height:3rem">
-                                        <div class="css-1uunp2d">
-                                                <h3 style="font-size: 0.75rem;font-weight: 400;line-height: 1rem;display: inline;">
-                                                    ${value?.content}
-                                                </h3>
-                                        </div>
-                                    </div>
                                     <div class="" style="position: relative;margin-top: 0.25rem;padding-right: unset;margin-bottom: 0.25rem;">
                                         <div class="d-flex flex-column" style="height:2.5rem;">
-                                            <div type="subtitle" class="att-product-detail-latest-price css-do31rh" color="primary500">  ${price} ₫</div>
+                                            <div type="subtitle" class="att-product-detail-latest-price css-do31rh" color="primary500">  ${toVND(price)} ₫</div>
                                             ${promotion ? `
                                                 <div class="d-flex" style="height:1rem">
                                                     <div type="caption" class="att-product-detail-retail-price css-18z00w6" color="textSecondary"> ${toVND(price_promtion_save)} đ</div>
-                                                    <div type="caption" color="primary500" class="css-2rwx6s">  - ${100 - ((+price_promtion_save / +price) * 100) } %</div>
+                                                    <div type="caption" color="primary500" class="css-2rwx6s">  - ${(100 - ((+price_promtion_save / +price) * 100)).toFixed(2) } %</div>
                                                 </div>   
                                             ` : ''}
                                             
@@ -183,19 +229,63 @@
                             </button> 
                         </div>
                     </div>
-                    `)
+                    `;
                   })
+                  render.html(html);
                 } else {
-                    show_message(data?.message,data?.status);
                     return false;
                 }
             },
             error : function(error) {
                 console.log(error);
+                return false;
             }
             
          })
     }
 
+    var slider = document.getElementById('slider');
+    var moneyFormat = wNumb({
+        decimals: 3,
+        thousand: ".",
+        suffix: " đ"
+    });
 
+    noUiSlider.create(slider, {
+        start: arr,  
+        step : 1000000,
+        range: {
+            'min': 0,
+            'max': 100000000
+        },
+        format :moneyFormat,
+        connect: true,
+    });
+    var snapValues = [
+        document.getElementById('slider-snap-value-lower'),
+        document.getElementById('slider-snap-value-upper')
+    ];
+    slider.noUiSlider.on('change', function(values, handle) {
+        snapValues[handle].innerHTML = values[handle];
+        let key_string = +handle == 1 ? 'price_lte' : 'price_gte';
+        clearTimeout(Timer);
+        Timer = setTimeout(function(){         
+            doingWhileFilter(            
+                {
+                    key : key_string,
+                    value : arr.includes(check_validate_range_price(snapValues[1].innerHTML)) ? null : (+values[handle]?.replace("đ", "")?.replaceAll(".", "").trim() == 0 ? null : values[handle]?.replace("đ", "")?.replaceAll(".", "").trim())
+                }
+              
+            );
+        }, 600)  
+    });
+
+    function check_validate_range_price(price){
+        let format = price?.replace("đ", "")?.replaceAll(".", "").trim();
+        return +format;
+    }
+
+
+  
+    
 

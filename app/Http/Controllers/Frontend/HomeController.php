@@ -40,13 +40,13 @@ class HomeController extends Controller implements HomeDataControl
                       ->where('status',1)
                       ->get();
 
-    $products = $this->getProductByCategory($request,$productCategory);
     //filter
+    $products = $this->getProductByCategory($request,$productCategory,[]);
     $filters = $this->getFilterProductCategory($products);
     return view('Frontend.page.products.productCategory',
     [
             'productCategory' => $productCategory ,
-            'products' => $products ,
+            // 'products' => $products ,
             'childCatehgory' => $childCatehgory,
             'filters' => $filters,
           ]);

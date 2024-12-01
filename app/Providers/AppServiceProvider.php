@@ -2,18 +2,8 @@
 
 namespace App\Providers;
 
-use App\Http\Controllers\Backend\SystemController;
-use App\Http\ViewComposers\MenuComposer;
-use App\Http\ViewComposers\SystemComposer;
-use Carbon\Carbon;
-use Illuminate\Pagination\Paginator;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Redis;
+use App\Helpers\Tracking;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Validation\Validator;
-use Laravel\Sanctum\PersonalAccessToken;
-use Laravel\Sanctum\Sanctum;
-
 class AppServiceProvider extends ServiceProvider
 {
 
@@ -22,7 +12,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     { 
-
+        // dùng debug các raw sql file query builder
+        \Illuminate\Database\Query\Builder::macro('toRawSql', function () {
+            return array_reduce($this->getBindings(), function ($sql, $binding) {
+                return preg_replace('/\?/', is_numeric($binding) ? $binding : "'" . $binding . "'", $sql, 1);
+            }, $this->toSql());
+        });
+        // dùng debug các raw sql file eloquent
+        \Illuminate\Database\Eloquent\Builder::macro('toRawSql', function () {
+            return ($this->getQuery()->toRawSql());
+        });
     }
 
     /**
@@ -48,6 +47,25 @@ class AppServiceProvider extends ServiceProvider
         \Validator::extend('string_vertify',function($attribute,$value) {
             return $value === filter_var($value,FILTER_SANITIZE_STRING);
         });
+
+        //lưu log các câu truy vấn và thời gian thực thi
+        if (
+            config('app.debug', false)
+            && config('app.enable_logging', false)
+        )
+            \DB::listen(function ($query) {
+                $rawQuery = $query->sql;
+                if (
+                    is_array($query->bindings)
+                    && count($query->bindings) > 0
+                ) {
+                    foreach ($query->bindings as $val) {
+                        $rawQuery = preg_replace('[\?]', "'" . $val . "'", $rawQuery, 1);
+                    }
+                }
+
+                Tracking::put((object) ['sql' => $rawQuery, 'time' => $query->time], 'db', false);
+            });
 
     }
 }

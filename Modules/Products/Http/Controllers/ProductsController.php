@@ -186,7 +186,7 @@ class ProductsController extends Controller
                     $variant->sku_idx = $sku;
                     // $variant->sku_code = $request->variants['sku'][$key];
                     $variant->name = $request->name .'('.str_replace(',','/',$request->productVariants['name'][$key]).')';
-                    $variant->slug =\Str::slug($variant->name);
+                    $variant->slug =\Str::slug($request->name);
                     $variant->price = (int)str_replace('.','',$request->variants['price'][$key]);
                     $variant->stock = $request->variants['qualnity'][$key];
                     $variant->album = $request->variants['album'][$key];
@@ -215,13 +215,17 @@ class ProductsController extends Controller
              
             if($request->id){
                 $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
+                $model->slug = $name ? $name[0] :  \Str::slug($request->name);
                 if($name)
                     $model->name = $name[0] . ' ('.implode('/',$attribute_name_convert) .')';
-                else 
+                else  {
                     $model->name = $request->name.' ('.implode('/',$attribute_name_convert) .')';
-             }
-             else $model->name = $request->name.' ('.implode('/',$attribute_name_convert) .')';
-             $model->sku_code = $request->sku;  
+                }            
+            } else {
+                $model->name = $request->name.' ('.implode('/',$attribute_name_convert) .')';
+                $model->slug = \Str::slug($request->name);
+             } 
+             $model->sku_code = $request->sku;   
              $model->price = (int)str_replace([',','.'],'',$request->cost);
              $model->album = json_encode($request->album);    
              if($model->save()){
