@@ -10,7 +10,6 @@ class Authenticate
 {
     public function handle(Request $request, Closure $next)
     {
-        // dd(\Auth::check());
         if (!\Auth::check()) {
             if ($request->ajax()){
                 if(!session()->has('target_url')){
@@ -23,10 +22,12 @@ class Authenticate
             if(!session()->has('target_url')){
                 session()->put('target_url', $request->fullUrl());
             }
-            if(request()->segment(1) == 'private' && request()->segment(2) == 'system'){
+            if((request()->segment(1) == 'private' && request()->segment(2) == 'system') || request()->segment(1) == 'log-viewer')
                 return redirect(route('private-system.be.login.template'));
-            }
-            return redirect(route('login'));
+            
+            else
+                abort(404);
+        
         }
 
 

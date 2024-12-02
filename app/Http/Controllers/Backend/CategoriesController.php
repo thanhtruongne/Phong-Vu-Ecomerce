@@ -1,43 +1,32 @@
 <?php
-
 namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Facades\Redirect;
-use App\Models\User;
-use App\Models\UserActivities;
-use App\Models\Visits;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
-    protected $tree;
-
-    public function __construct(){
-        $categories = Categories::whereNotNull('name')->get()->toTree()->toArray();
-        $this->tree =  $this->rebuildTree($categories);
-    }
-
     public function index(){
-        return view('backends.pages.categories.index',['categories' => $this->tree]);
+        $render_data = Categories::whereNotNull('name')->get()->toTree()->toArray();
+        $categories = $this->rebuildTree($render_data);
+        return view('backends.pages.categories.index',['categories' => $categories]);
     }
 
     public function getData(Request $request){
         $search = $request->input('search');
-        $category_id = $request->input('category_id');
+        $category_id = $request->input('category_id') ? explode(',',$request->input('category_id')) : null;
         $sort = $request->input('sort','id');
         $order = $request->input('order','desc');
         // $offset = $request->input('offset',0);
         // $limit = $request->input('limit',20);
         
-        $query = Categories::query();
-        // $query->select(['name','status','parent_id','id']);
+        $query = Categories::query();;
         if($search){
-            $query->where('name','like','%'.$search.'%');
+            $query->where('name','like',$search.'%');
         }
-        // $query->whereNull('parent_id');
+        if($category_id) {
+            $query->whereIn('id',$category_id);
+        }
         $query->orderBy($sort,$order);
         // $query->offset($offset);
         // $query->limit($limit);
@@ -45,7 +34,7 @@ class CategoriesController extends Controller
         $rows = $query->get()->toTree();
         foreach($rows as $row){
             $row->category_child = count($row->children);
-            // $row->edit_url= route('categories.edit',['id' => $row->id]);
+            $row->edit_url= route('private-system.categories.edit',['id' => $row->id]);
             $row->html = $this->renderHTML($row);
         }
         return response()->json(['rows' => $rows , 'total' =>$count]);
@@ -131,8 +120,9 @@ class CategoriesController extends Controller
     public function form(Request $request){
         if($request->id){
             $model = Categories::find($request->id);
-            return response()->json(['status' => 'success','model' => $model,'categories' => $this->tree]);
-            // return view('pages.categories.form',['model' => $model, 'ancestor' => $ancestor,'categories' => $this->tree]);
+            $render_data = Categories::whereNotNull('name')->get()->toTree()->toArray();
+            $categories = $this->rebuildTree($render_data);
+            return response()->json(['status' => 'success','model' => $model,'categories' => $categories]);
         }
         return response()->json(['status' => 'error','message' => 'Có lỗi xảy ra !']);
     }

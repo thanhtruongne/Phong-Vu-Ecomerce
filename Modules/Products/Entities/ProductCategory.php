@@ -12,7 +12,7 @@ class ProductCategory extends Model
     
     protected $table = 'product_category';
     protected $primaryKey = 'id';
-    protected $fillable = ['description','icon','status','parent_id','_lft','_rgt','name','ikey'];
+    protected $fillable = ['description','icon','status','parent_id','_lft','_rgt','name','ikey','url'];
 
     public function getLftName()
     {

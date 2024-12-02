@@ -149,7 +149,8 @@
             $('body').on('click','.ckfinder_12',function() {
                 let input = $(this).find('input');   
                 let img = $(this).find('img');   
-                selectFileWithCKFinder(input ,img);
+                let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
+                selectFileWithCKFinder(input ,img,render);
             })
 
             //variant
@@ -188,9 +189,9 @@
                 });
             })
 
+  
 
-
-            function selectFileWithCKFinder( input , img = null , type = 'single' ) {
+            function selectFileWithCKFinder( input , img = null ,render = null, type = 'single' ) {
                 CKFinder.modal({
                     chooseFiles: true,
                     width: 800,
@@ -199,7 +200,10 @@
                         finder.on( 'files:choose', function( evt ) {
                             var file = evt.data.files.first();
                             input.val(file.getUrl());
+                            img.removeAttr('width').addClass('w-100 object-fit-cover')
                             img.attr('src',file.getUrl());
+                            
+                            
                             // output.value = 
                         } );
 
@@ -215,6 +219,14 @@
 
 
         })
+        function debounce(func, delay) {
+            let timer;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timer);
+                timer = setTimeout(() => func.apply(context, args), delay);
+            };
+        }
     </script>
 
     

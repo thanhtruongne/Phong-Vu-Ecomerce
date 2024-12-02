@@ -6,7 +6,8 @@ use App\Trait\QueryScopes;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Modules\Promotions\Entities\Promotions;
+use Modules\Products\Entities\Products;
 class SkuVariants extends Model
 {
     use Cachable;
@@ -31,6 +32,14 @@ class SkuVariants extends Model
         'album' => 'json',
         'attributes' => 'json'
     ];
+
+    public function promotion(){
+        return $this->belongsToMany(Promotions::class,'promotion_variants_relation','sku_id','promotion_id');
+    }
+
+    public function product(){
+        return $this->belongsTo(Products::class,'product_id','id');
+    }
 
     public static function getAttributeName(){
         return [

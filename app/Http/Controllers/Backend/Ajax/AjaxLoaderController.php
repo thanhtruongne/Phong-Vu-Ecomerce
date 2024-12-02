@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use Illuminate\Http\Request;
 use Modules\Products\Entities\Attribute;
-
+use Modules\Products\Entities\Brand;
 class AjaxLoaderController extends Controller
 {
   public function load_ajax($func,Request $request)
@@ -18,6 +18,24 @@ class AjaxLoaderController extends Controller
     return response()->json(['message' => 'Có lỗi xảy ra'],404);  
 
 
+  }
+
+  private function loadProductBrand(Request $request) {
+    $search = $request->search;
+    $query = Brand::query();
+    if ($search) {
+      $query->where('name', 'like', '%'. $search .'%');
+    }
+
+
+    $query->orderBy('id', 'desc');
+    $paginate = $query->paginate(10);
+    $data['results'] = $query->select('id', 'name AS text')->get();
+    if ($paginate->nextPageUrl()) {
+        $data['pagination'] = ['more' => true];
+    }
+
+    return json_result($data);
   }
 
 

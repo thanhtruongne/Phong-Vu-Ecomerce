@@ -201,9 +201,27 @@ $(document).ready(function(){
         a.value = a.value.replace(/\./gi, "");
         a.value = a.value.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
     }
-
-
 })
+
+function formatCash(str) {
+    str = str.toString().replace(/\./g, "");
+    return str.split('').reverse().reduce((prev, next, index) => {
+        return ((index % 3) ? next : (next + ',')) + prev
+    })
+}
+
+function toVND (value) {
+    // value = value.toString().replace(/\./g, "");
+    const formatted = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+      })
+      .format(value)
+      .replace("₫", "")
+      .trim();
+    
+    return formatted;
+}
 
 
 

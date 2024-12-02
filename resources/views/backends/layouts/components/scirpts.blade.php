@@ -61,7 +61,7 @@
 <script src="{{asset('backend2/js/plugins/nestable/jquery.nestable.js')}}"></script>
 {{-- Ckeditor --}}
 <script src="{{asset('backend2/plugins/ckeditor/ckeditor.js')}}"></script>
-<script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script>
+{{-- <script src="{{asset('backend2/plugins/ckeditor/ckeditorClassic.js')}}"></script> --}}
 
 <script src="{{asset('backend2/js/boostrapdatepicker.min.js')}}"></script>
 {{-- CkFinder --}}

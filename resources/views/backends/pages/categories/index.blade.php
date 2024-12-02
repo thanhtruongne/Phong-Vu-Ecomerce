@@ -51,7 +51,7 @@
                                $nodes = App\Models\Categories::whereNotNull('name')->withDepth()->with('ancestors')->get()->toFlatTree();
                            @endphp
                            <div class="" style="width: 28% !important;">
-                            <select name="category_id" id="" class="select2 mr-2" data-placeholder="-- Danh mục --" multiple>
+                            <select name="category_id" id="" class="select_custom mr-2" data-placeholder="-- Danh mục --" multiple>
                                 @foreach ($nodes as $item)
                                     <option value="{{$item->id}}">   
                                        {{ str_repeat('|---',($item->depth > 0) ? $item->depth : 0) }}

@@ -20,6 +20,7 @@ return new class extends Migration
             $table->bigInteger('views')->default(0);
             $table->longText('desc')->nullable();
             $table->longText('attribute')->nullable();
+            $table->json('attributes_id')->nullable();
             $table->unsignedBigInteger('product_cateloge_id')->index();
             $table->tinyInteger('status')->default(1);
             $table->bigInteger('price');

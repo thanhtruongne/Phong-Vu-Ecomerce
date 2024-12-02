@@ -12,4 +12,9 @@ return [
     'manager_menu_cateloge' => 'DM Menu sản phẩm',
     'manager_promotion' => 'QL khuyến mãi',
     'setting' => 'Cài đặt',
+    'manager_slider' => 'QL banner',
+    'message_success' => 'Tạo dữ liệu thành công',
+    'message_error' => 'Có lỗi xảy ra',
+    'manager_widget' => 'QL Widget',
+    'manager_brand' => 'QL thương hiệu'
 ];

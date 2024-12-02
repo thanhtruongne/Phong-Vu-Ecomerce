@@ -30,6 +30,34 @@
     })
 
 
+    $('.load-brand').select2({
+        allowClear: true,
+        dropdownAutoWidth : true,
+        width: '100%',
+        placeholder: function(params) {
+            return {
+                id: null,
+                text: params.placeholder,
+            }
+        },
+        ajax: {
+            method: 'GET',
+            url: base_url + '/load-ajax/loadProductBrand',
+            dataType: 'json',
+            data: function (params) {
+
+                var query = {
+                    search: $.trim(params.term),
+                    page: params.page,
+                };
+
+                return query;
+            }
+        }
+
+    })
+
+
     function load_attribute_parent(){
         $('.load-attribute').select2({
             allowClear: true,

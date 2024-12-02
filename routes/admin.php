@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\Auth\AuthencateController;
 use App\Http\Controllers\Backend\DashboardController;
 
 use App\Http\Controllers\Backend\CategoriesController;
+use App\Http\Controllers\Backend\Slider\SliderController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Frontend\Shipping\ShippingGHTK;
@@ -21,69 +22,40 @@ use Modules\Products\Http\Controllers\AttributeCatelogeController;
     Route::post('/login',[AuthencateController::class,'login'])->name('be.login');
     Route::middleware(['auth','isAdmin'])->group(function(){
 
-        Route::match(['get', 'post'], 'logout',[AuthencateController::class,'logout'] )->name('logout');
-        Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+    Route::match(['get', 'post'], 'logout',[AuthencateController::class,'logout'] )->name('logout');
+   
+    Route::get('/dashboard',[DashboardController::class,'index'])->name('dashboard');
+   
+    //categories 
+    Route::get('/categories',[CategoriesController::class,'index'])->name('categories');
+    Route::get('/categories/get-data',[CategoriesController::class,'getData'])->name('categories.getdata'); 
+    Route::post('/categories/remove',[CategoriesController::class,'remove'])->name('categories.remove'); 
+    Route::post('/categories/save',[CategoriesController::class,'save'])->name('categories.save');       
+    Route::get('/categories/edit',[CategoriesController::class,'form'])->name('categories.edit');    
+    Route::get('/categories/create',[CategoriesController::class,'form'])->name('categories.create');    
+    Route::post('/categories/change-status',[CategoriesController::class,'changeStatus'])->name('categories.change.status');
+    Route::post('/categories/remove',[CategoriesController::class,'remove'])->name('categories.remove');
+    Route::post('/categories/removeSelectAll',[CategoriesController::class,'removeSelectAll'])->name('categories.remove.select');
+         
+    //  ---- Danh mục sản phẩm
+    Route::get('/slider',[SliderController::class,'index'])->name('slider');
+    Route::get('/slider/get-data',[SliderController::class,'getData'])->name('slider.getData'); 
+    Route::post('/slider/remove',[SliderController::class,'remove'])->name('slider.remove'); 
+    Route::get('/slider/edit/{id}',[SliderController::class,'form'])->name('slider.edit'); 
+    Route::get('/slider/create',[SliderController::class,'form'])->name('slider.create'); 
+    Route::post('/slider/save',[SliderController::class,'save'])->name('slider.save'); 
 
-        //categories boa gồm các danh mcu5 sản phẩm
-        Route::get('/categories',[CategoriesController::class,'index'])->name('categories');
-        Route::get('/categories/get-data',[CategoriesController::class,'getData'])->name('categories.getdata'); 
-        Route::post('/categories/remove',[CategoriesController::class,'remove'])->name('categories.remove'); 
-        Route::post('/categories/save',[CategoriesController::class,'save'])->name('categories.save');       
-        Route::get('/categories/edit',[CategoriesController::class,'form'])->name('categories.edit');    
-        Route::get('/categories/create',[CategoriesController::class,'form'])->name('categories.create');    
-        Route::post('/categories/change-status',[CategoriesController::class,'changeStatus'])->name('categories.change.status');
-        Route::post('/categories/remove',[CategoriesController::class,'remove'])->name('categories.remove');
-        Route::post('/categories/removeSelectAll',[CategoriesController::class,'removeSelectAll'])->name('categories.remove.select');
-        
-        //Sản phẩm
 
-        //  ---- Danh mục sản phẩm
-        Route::get('/product/categories',[ProductCatelogeController::class,'index'])->name('product-cateloge');
-        Route::get('/product/categories/get-data',[ProductCatelogeController::class,'getData'])->name('product-cateloge.getdata'); 
-        Route::post('/product/categories/remove',[ProductCatelogeController::class,'remove'])->name('product-cateloge.remove'); 
-        Route::post('/product/categories/save',[ProductCatelogeController::class,'save'])->name('product-cateloge.save');       
-        Route::get('/product/categories/edit',[ProductCatelogeController::class,'form'])->name('product-cateloge.edit');    
-        Route::get('/product/categories/create',[ProductCatelogeController::class,'form'])->name('product-cateloge.create');    
-        Route::post('/product/categories/change-status',[ProductCatelogeController::class,'changeStatus'])->name('product-cateloge.change.status');
-        Route::post('/product/categories/remove',[ProductCatelogeController::class,'remove'])->name('product-cateloge.remove');
-        Route::post('/product/categories/removeSelectAll',[ProductCatelogeController::class,'removeSelectAll'])->name('product-cateloge.remove.select');
 
-         //  ---- Attribute sản phẩm
-         Route::get('/product/attribute',[AttributeController::class,'index'])->name('product-attribute');
-         Route::get('/product/attribute/get-data',[AttributeController::class,'getData'])->name('product-attribute.getdata'); 
-         Route::post('/product/attribute/remove',[AttributeController::class,'remove'])->name('product-attribute.remove'); 
-         Route::post('/product/attribute/save',[AttributeController::class,'save'])->name('product-attribute.save');       
-         Route::get('/product/attribute/edit',[AttributeController::class,'form'])->name('product-attribute.edit');    
-         Route::get('/product/attribute/create',[AttributeController::class,'form'])->name('product-attribute.create');    
-         Route::post('/product/attribute/change-status',[AttributeController::class,'changeStatus'])->name('product-attribute.change.status');
-         Route::post('/product/attribute/remove',[AttributeController::class,'remove'])->name('product-attribute.remove');
-         Route::post('/product/attribute/removeSelectAll',[AttributeController::class,'removeSelectAll'])->name('product-attribute.remove.select');
-        
-        //  Route::get('/product/categories/attribute',[AttributeCatelogeController::class,'index'])->name('product-attribute-catgories');
-        //  Route::get('/product/categories/attribute/get-data',[AttributeCatelogeController::class,'getData'])->name('product-attribute-catgories.getdata'); 
-        //  Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove'); 
-        //  Route::post('/product/categories/attribute/save',[AttributeCatelogeController::class,'save'])->name('product-attribute-catgories.save');       
-        //  Route::get('/product/categories/attribute/edit',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.edit');    
-        //  Route::get('/product/categories/attribute/create',[AttributeCatelogeController::class,'form'])->name('product-attribute-catgories.create');    
-        //  Route::post('/product/categories/attribute/change-status',[AttributeCatelogeController::class,'changeStatus'])->name('product-attribute-catgories.change.status');
-        //  Route::post('/product/categories/attribute/remove',[AttributeCatelogeController::class,'remove'])->name('product-attribute-catgories.remove');
-        //  Route::post('/product/categories/attribute/removeSelectAll',[AttributeCatelogeController::class,'removeSelectAll'])->name('product-attribute-catgories.remove.select');
-        
-        
-        
-        // sản  phẩm item
-        Route::get('/product',[ProductsController::class,'index'])->name('product');
-        Route::get('/product/get-data',[ProductsController::class,'getData'])->name('product.getdata'); 
-        Route::get('/product/create',[ProductsController::class,'form'])->name('product.create'); 
-        Route::get('/product/edit/{id}',[ProductsController::class,'form'])->name('product.edit'); 
-        Route::post('/product/save',[ProductsController::class,'save'])->name('product.save'); 
-        Route::post('/product/remove',[ProductsController::class,'remove'])->name('product.remove'); 
-        Route::post('/product/remove_variant',[ProductsController::class,'remove_variant'])->name('product.remove_variant'); 
-      
-        
-        
-        Route::get('load-ajax/{func}',[AjaxLoaderController::class,'load_ajax'])->name('load_ajax');
-        
+
+
+    Route::get('load-ajax/{func}',[AjaxLoaderController::class,'load_ajax'])->name('load_ajax');
+    // Route::post('/slider/save',[SliderController::class,'save'])->name('product-cateloge.save');       
+    // Route::get('/slider/edit',[SliderController::class,'form'])->name('product-cateloge.edit');    
+    // Route::get('/slider/create',[SliderController::class,'form'])->name('product-cateloge.create');    
+    // Route::post('/slider/change-status',[SliderController::class,'changeStatus'])->name('product-cateloge.change.status');
+    // Route::post('/slider/remove',[SliderController::class,'remove'])->name('product-cateloge.remove');
+    // Route::post('/slider/removeSelectAll',[SliderController::class,'removeSelectAll'])->name('product-cateloge.remove.select');   
         
         
         

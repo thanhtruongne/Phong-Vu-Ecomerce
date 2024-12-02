@@ -7,7 +7,7 @@
     "require": {
         "php": "^8.1",
         "ext-gd": "*",
-        "babenkoivan/elastic-scout-driver": "3.0",
+        "babenkoivan/elastic-scout-driver": "^3.2",
         "bensampo/laravel-enum": "^6.11",
         "ckfinder/ckfinder-laravel-package": "^5.0",
         "egulias/email-validator": "^4.0",

@@ -23,6 +23,10 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerPolicies();
+
+        Gate::define('viewsLog',function($user){
+            return in_array($user->username, ['admin', 'superadmin']) ? true : null;
+        });
        
     }
 }

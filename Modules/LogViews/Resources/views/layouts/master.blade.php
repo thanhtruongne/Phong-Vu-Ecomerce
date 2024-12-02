@@ -4,16 +4,16 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Module Widget</title>
+        <title>Module LogViews</title>
 
        {{-- Laravel Mix - CSS File --}}
-       {{-- <link rel="stylesheet" href="{{ mix('css/widget.css') }}"> --}}
+       {{-- <link rel="stylesheet" href="{{ mix('css/logviews.css') }}"> --}}
 
     </head>
     <body>
         @yield('content')
 
         {{-- Laravel Mix - JS File --}}
-        {{-- <script src="{{ mix('js/widget.js') }}"></script> --}}
+        {{-- <script src="{{ mix('js/logviews.js') }}"></script> --}}
     </body>
 </html>

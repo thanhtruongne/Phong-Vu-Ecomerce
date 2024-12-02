@@ -113,7 +113,7 @@
                                             </label>
                                             <div class="col-md-8">
                                                 <div class="text-center" style="border: 1px solid #ccc">
-                                                    <div class="check_hidden_image_album {{ isset($model->galley) && !empty($model->galley) && $model->galley != 'null' ? 'hidden' : '' }}">
+                                                    <div class="check_hidden_image_album {{ isset($model->album) && !empty($model->album) && $model->album != 'null' ? 'hidden' : '' }}">
                                                         <img class="ckfinder_3" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
                                                         <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div>
                                                     </div>
@@ -122,7 +122,7 @@
                                                         
                                                         @if (isset($model) && !empty($model))
                                                             @php
-                                                                $album =  json_decode($model->galley) ?: [];
+                                                                $album =  json_decode($model->album) ?: [];
                                                             @endphp
                                                         @if (!empty($album) && count($album) > 0)
                                                             @foreach ($album as $item) 
@@ -170,7 +170,7 @@
                                                 Mã SKU
                                             </label>
                                             <div class="col-md-8">
-                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="sku" value="{{$model->sku}}"> 
+                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="sku" value="{{$model->sku_code}}"> 
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -179,7 +179,7 @@
                                                 <span class="text-danger">(*)</span>
                                             </label>
                                             <div class="col-md-8">
-                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="quantity" value="{{$model->qualnity}}">
+                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="quantity" value="{{$model->quantity}}">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -199,7 +199,24 @@
                                             </label>
                                             <div class="col-md-8">
                                                <div class="tree_select_demo_main"></div>
-                                               <input type="hidden" value="{{$model->product_cateloge_id}}" name="category_id" id="category_id">
+                                               <input type="hidden" value="{{$model->product_category_id}}" name="category_id" id="category_id">
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-8 control-label">
+                                               Thương hiệu sản phẩm
+                                               <span class="text-danger">(*)</span>
+                                            </label>
+                                            <div class="col-md-8">
+                                                <select name="brand_id" class="form-control load-brand" id="" data-placeholder="-- Thương hiệu --">
+                                                    @if ($model && $model->brand)
+                                                        @php
+                                                            $brand = $model->brand ?? null
+                                                        @endphp
+                                                        <option value="{{$brand->id}}" selected>{{ $brand->name }}</option>
+                                                    @endif
+                                                </select>
                                             </div>
                                         </div>
                                         
@@ -211,17 +228,15 @@
                                                     </button>
                                                     <div class="dropdown-menu toggle_attribute">
                                                         @php        
-                                                            if($model && $model->id > 0 && is_null($model->is_single)){
-                                                                foreach ($model->attributes as $key => $item) {                                                                 
-                                                                    $attribute = \Modules\Products\Entities\Attribute::where('id',$item->id)->first();
-                                                                    $item->parent_name = $attribute->ancestors->first()->name;
-                                                                }   
+                                                          
+                                                            if($model && $model->id > 0 && is_null($model->is_single)){  
+                                                               $attributes_check = $model->attributes_item->pluck('parent_id')->toArray();         
                                                             }
                                                        @endphp
                                                       
                                                         @if (isset($attributes))
                                                             @foreach ($attributes as $attribute)
-                                                                <a class="dropdown-item attribute_choose" data-parent="{{$attribute['id']}}" >{{ $attribute['name'] }}</a>
+                                                                <a class="dropdown-item attribute_choose {{isset($attributes_check) && !is_null($attributes_check) &&  in_array($attribute['id'],$attributes_check) ? 'disabled' : ''}}"  data-parent="{{$attribute['id']}}" >{{ $attribute['name'] }}</a>
                                                             @endforeach
                                                         @endif   
                                                     </div>
@@ -252,7 +267,7 @@
                                             </div>
                                         </div>
                                         {{-- render variant {{$model && $model->is_single == 2 ? '' : 'hidden'}}   --}}
-                                        <div class="variant_child form-group row hidden">
+                                        <div class="variant_child form-group row {{$model->id && $model->is_single != null ? '' : 'hidden'}}">
                                             <div class="col-sm-2"></div>
                                             <div class="col-md-8">
                                                  <div class="">
@@ -276,7 +291,7 @@
                                     </div>
 
                                     {{-- render variant table --}}
-                                    <div class="col-md-9 table_action hidden">
+                                    <div class="col-md-9 table_action {{$model->id && $model->is_single != null ? '' : 'hidden'}}">
                                         <table class="table table-bordered variantsTable" style="margin: 20px 0px;">
                                             <thead></thead>
                                             <tbody></tbody>
@@ -390,11 +405,6 @@
             parent.remove();         
         }
 
-        function trigger() {
-            $('.on_change_load').each(function(i,item){
-                $(item).trigger('change');
-            })
-        }
 
         $('body').on('click','.toogle_render_variant',function(){
             let _this = $(this);    
@@ -445,7 +455,6 @@
             if(val != 0) {
                 _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(variants_select(val,data_id));
                 getSelect2(val,data_id) 
-                // trigger();
             }
             else {
                 _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(
@@ -564,7 +573,6 @@
                 let keys = Object.keys(temp);
                 let value_arr = Object.values(temp);
                 let arr_data_set = [];
-                // console.log(temp,Object.values(temp).join(', '),);
                 attribute_idxs?.map(function(val_child,index_child){
                     if(keys.indexOf(index_child.toString()) !== -1){ // có giá trị trong array keys
                         val_child.map(function(child_temp,prefix){
@@ -584,9 +592,9 @@
             createRowTableHead(attributeTitle)
             let trClass = [];
             attribute.forEach((val,index) =>  {
-                let row = '';
-                if($('input[name="id"]').val() && @json($model->id) && @json($model->is_single) != null){
-                     row = createVariantsRow(attributeVariants[index],val,@json($model->sku_variants)[index]);    
+                let row = '';            
+                if($('input[name="id"]').val() && @json($model->id) && @json($model->sku_variant)){
+                     row = createVariantsRow(attributeVariants[index],val,@json($model->sku_variant)[index]);    
                 }
                 else {
                      row = createVariantsRow(attributeVariants[index],val);    
@@ -636,20 +644,26 @@
         }
 
         function  createVariantsRow(variantsId,arrtributeItem,model = null){  
-            console.log(variantsId,model,arrtributeItem    )
             let td;
+            let attributeString = Object.values(arrtributeItem).join(', ');
             let variantAttribute = Object.values(variantsId).join(', ');
             //chuyển vể dạng 1-2-3 để set vào class tr để dễ filter các bảng
             let replaceModifyClassTable = variantAttribute.replace(/, /g,'-');
             let row = $('<tr>').addClass('variant-row tr-variant-'+ replaceModifyClassTable);
+            let image = ''
+            if($('input[name="id"]').val() && model) {
+               image = model?.album?.split(',')[0];
+            }
             td = $('<td>').addClass('variants-album').append(
-                $('<span>').append($('<img>').attr('src','http://localhost:8000/public/ckfinder/userfiles/images/Post/433610459-1399019177654607-8456780266104156853-n-1711118388-214344.jpg').attr('width','80'))
+                $('<span>').append($('<img>').attr('src',image).attr('width','80'))
                 )
+            row.append(td);
+
+
+            Object.values(arrtributeItem).forEach((val , index) => {
+                td = $('<td>').text(val);   
                 row.append(td);
-                Object.values(arrtributeItem).forEach((val , index) => {
-                    td = $('<td>').text(val);   
-                    row.append(td);
-                })
+            })
 
             td = $('<td>').addClass('hidden variants');
             let price = $('input[name=price]').val() ;
@@ -657,10 +671,11 @@
             if ($('input[name="id"]').val() && model) {
                  option = [
                     {name : 'variants[qualnity][]' , class : 'variants_qualnity',val : model?.stock},
-                    {name : 'variants[price][]' , class : 'variants_price',val : model?.price},
+                    {name : 'variants[price][]' , class : 'variants_price',val : toVND(model?.price)},
                     {name : 'variants[sku][]' , class : 'variants_sku',val : model?.sku_code},
                     {name : 'variants[album][]' , class : 'variants_album',val : model?.album},
                     {name : 'productVariants[id][]' , val : variantAttribute},
+                    {name : 'productVariants[name][]' , val : attributeString},
                 ]
             }
             else{
@@ -670,10 +685,9 @@
                     {name : 'variants[sku][]' , class : 'variants_sku'},
                     {name : 'variants[album][]' , class : 'variants_album'},
                     {name : 'productVariants[id][]' , val : variantAttribute},
+                    {name : 'productVariants[name][]' , val : attributeString},
                 ]
             }
-            
-            console.log(option)
             $.each(option , function(index , value) {
                 let input = $('<input>').attr('type','text').attr('name',value.name)?.addClass(value?.class);   
                 if(value.val) {
@@ -684,7 +698,7 @@
             row.append(td);
             
             row.append($('<td>').addClass('variants-qualnity').text(model?.stock))
-                .append($('<td>').addClass('variants-price').text(model?.price))
+                .append($('<td>').addClass('variants-price').text( model?.price ? toVND(model?.price) : ''))
                 .append($('<td>').addClass('variants-sku').text(model?.sku_code))
             return row;
         }
@@ -715,7 +729,7 @@
         function dataVariantsDyynamic(variants){
             let html = '';
             let imageArray =  variants.variants_album == "" ? [] : variants?.variants_album?.split(',') ;
-            let price = $('input[name=price]').val();
+            let price = variants?.variants_price == undefined ?  $('input[name=price]').val()  : variants?.variants_price;
             let code = $('input[name=code]').val();
             let LisetImage = updateImageVariantsTable(imageArray);
             html = `
@@ -760,7 +774,7 @@
                                                 </div>
                                                 <div class="col-lg-3">
                                                 <label style="font-size: 14px;font-weight:500" for="">Giá</label>
-                                                    <input type="text" class="form-control number-format" value="${variants?.variants_price == undefined ? price : variants?.variants_price}" value="0" name="price" oninput="this.value=this.value.replace(/[^0-9]/g,'')" data-target="variantsPrice"/>
+                                                    <input type="text" class="form-control number-format" value="${price}" value="0" name="price" oninput="this.value=this.value.replace(/[^0-9]/g,'')" data-target="variantsPrice"/>
                                                 </div>
                                         </div>
                                     </div>
@@ -782,7 +796,7 @@
                         html = html + '<img height="120" src="'+ album[i] +'" width="150" alt="">'
                         html = html + '<input type="hidden" name="variantsalbum[]" value="'+ album[i] +'"/>'
                         html = html + '<button type="button" class="btn bg-red trash_album">'
-                        html = html + '<i class="fa-solid fa-trash text-white"></i>'
+                        html = html +  '<i class="fas fa-trash text-white" ></i>'
                         html = html + '</button>'
                         html = html + '</li>'
                 }
@@ -896,9 +910,29 @@
                     //get tiitle    
                     attribute_name_title_table.push(value?.name);
                 })
-                // console.log(attribute_item_id,attribute_name_title_table);
                 createVariants();
       
+            }
+            if(@json($model->attributes_item)) {
+                let parent = $('.render_attribute_parent')
+                $.each(@json($model->attributes_item),function(index,value) {
+                    parent.append(`
+                    <div class="form-group d-flex algin-items-center attribute_item">
+                        <div style="width:65%">
+                            <label for="" class="control-label fw-bold">
+                                ${value?.parent_name}
+                                <span class="text-danger">(*)</span>
+                            </label>
+                            <div class="">
+                                <select name="attribute[]" class="form-control load-attribute-custom" data-parent="${value?.parent_id}" data-placeholder="-- ${value?.parent_name} --">
+                                    <option value="${value?.id}" selected>${value?.name}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
+                    </div>`);
+                    load_attrbute();
+                })
             }
         }
 
@@ -1014,7 +1048,9 @@
             var content = CKEDITOR.instances['content'].getData();
             var desc = CKEDITOR.instances['description'].getData();
             formData += '&content=' + encodeURIComponent(content) + '&description=' + encodeURIComponent(desc) + '&type=' + searchParams.get('type')
-
+            if($('input[name="id"]').val() && $('#is_single').prop('disabled') == true) {
+                formData += '&is_single=on'
+            }
             $('#submit-btn').html('<i class="fa fa-spinner fa-spin"></i> '+'Lưu').attr("disabled", true);
 
             saveProduct(formData);

@@ -42,6 +42,7 @@
            
                 <div class="row">
                     <form id="form-create-promotion" class="w-100 form-horizontal form-ajax" style="padding: 0 15px" enctype="multipart/form-data">
+                        <input type="hidden" name="id" value="{{$model->id}}">
                         <div class="ibox-title d-flex justify-content-between my-3" style="padding: 0 5px">                          
                             <span class="btn">Thông tin chung</span>
                             <button class="btn" id="submit-btn-data" type="submit">Lưu <i class="fa fa-save"></i></button>
@@ -54,13 +55,13 @@
                                             <div class="form-group col-lg-5">                               
                                                 <label class="control-label" style="margin-bottom:10px">Tên chương trình <span class="text-danger">(*)</span></label>
                                                 <div class="">
-                                                <input type="text" name="name" value="{{ old('name') }}" class="form-control">
+                                                <input type="text" name="name" value="{{ $model->name }}" class="form-control">
                                                 </div>           
                                             </div>
                                             <div class="form-group col-lg-5">                               
                                                 <label class="control-label" style="margin-bottom:10px">Mã khuyến mãi <span class="text-danger">(*)</span></label>
                                                 <div class="">
-                                                <input type="text"  name="code" value="{{ old('code') }}" class="form-control">
+                                                <input type="text" {{ $model && $model->code ? 'readonly' : ''}}  name="code" value="{{ $model->code }}" class="form-control">
                                                 </div>           
                                             </div>
                                         </div>
@@ -68,13 +69,14 @@
                                             <div class="form-group col-lg-5">                               
                                                 <label class="control-label" style="margin-bottom:10px">Giá khuyến mãi <span class="text-danger">(*)</span></label>
                                                 <div class="">
-                                                <input type="text" name="amount" value="{{ old('amount') }}" class="form-control number-format" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+                                                <input type="text" name="amount" value="{{ $model->amount }}" class="form-control number-format" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                                 </div>           
                                             </div>
                                             <div class="form-group col-lg-5">                               
                                                 <label class="control-label" style="margin-bottom:10px">Hình ảnh</label>
                                                 <div class="ckfinder_12">
-                                                <input type="text" name="image" class="form-control">
+                                                    <input type="hidden" name="image" class="form-control" value="{{$model->thumbnail}}">
+                                                    <img class="object-fit-cover" style="width:45%;" src={{ $model->thumbnail ?? "https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" }} alt="">
                                                 </div>           
                                             </div>
                                         </div>
@@ -83,10 +85,8 @@
                                         <div class="form-group">                               
                                             <label class="control-label" style="margin-bottom:10px">Mô tả khuyến mãi <span class="text-danger">(*)</span></label>
                                             <div class="">
-                                                <textarea name="description" class="editor" data-target="description" id="description" cols="30" rows="10"></textarea>
-                                            {{-- <textarea name="description" id="" cols="30" class="form-control" rows="10" style="width:100%">
-                                                {!! old('description') !!}
-                                            </textarea> --}}
+                                                <textarea name="description" class="editor" data-target="description" id="description" cols="30" rows="10">{!! $model->description !!}</textarea>
+                                           
                                             </div>           
                                     </div>
                                     </div>
@@ -98,26 +98,26 @@
                                             <div class="" style="margin-top: 8px">
                                                 <label class="control-label"  style="margin-bottom:8px">Thời gian bắt đầu <span class="text-danger">(*)</span></label>
                                                 <div class="">
-                                                    <input type="text"  value="{{ old('startDate') }}" name="startDate" class="form-control datepicker">
+                                                    <input type="text"  value="{{ $model->startDate }}" name="startDate" class="form-control datepicker">
                                                 </div>
                                             
                                             </div>
                                             <div class="" style="margin-top: 8px">
                                                 <label class="control-label"  style="margin-bottom:8px">Thời gian kết thúc <span class="text-danger">(*)</span></label>
                                                 <div class="">
-                                                    <input type="text" value="{{ old('endDate') }}"  name="endDate" class="form-control datepicker">
+                                                    <input type="text" value="{{  $model->endDate }}"  name="endDate" {{$model && $model->neverEndDate == 1 ? 'disabled' : ''}} class="form-control datepicker">
                                                 </div>
                                             
                                             </div>
     
                                             <div class="" style="margin-top: 16px">
                                                 <input type="checkbox" 
-                                                    {{ old('neverEndDate') == 'choose' ? 'checked' : '' }}
-                                                    value="choose" 
+                                                    {{ $model && $model->neverEndDate == 1 ? 'checked' : '' }}
+                                                    value="1" 
                                                     class="no_date_promotion" id="no_date_promotion" name="neverEndDate">  
                                                 <label 
                                                 for="no_date_promotion"
-                                                    style="position: relative; top: -2px;" 
+                                                    style="position: relative; top: -2px;" s
                                                     class="control-label">
                                                     Không có mốc thời gian kết thúc
                                             </label>                         
@@ -133,9 +133,9 @@
                                         <div class="">
                                             <select name="type" class="form-control select_custom" id="custom_validate_selet" data-placeholder="-- Loại khuyến mãi --">
                                                 <option value="">Chọn loại khuyến mãi</option>
-                                                <option value="1">Theo danh mục sản phẩm</option>
+                                                <option {{$model && $model->type == 1 ? 'selected' : ''}} value="1">Theo danh mục sản phẩm</option>
                                                 {{-- <option value="2">Theo sản phẩm (đơn)</option> --}}
-                                                <option value="3">Theo nhiều sku sản phẩm</option>
+                                                <option {{$model && $model->type == 3 ? 'selected' : ''}} value="3">Theo nhiều sku sản phẩm</option>
                                                 <option value="4" disabled>Theo thuộc tính sản phẩm</option>
                                             </select>
                                         </div>           
@@ -162,6 +162,40 @@
 @section('scripts')
 <script src="{{asset('backend2/js/treeSelect.min.js')}}"></script>
 <script>
+
+
+    if($('input[name="id"]').val() && @json($model->id)) {
+        let render = $('.render_attribute_attemps');
+        render.html(`
+            <div class="">
+                <div style="position: relative" class="col-lg-6 mb-4">
+                    <label class="control-label mb-2" >Tìm kiếm sản phẩm </label>
+                    <input type="text" value="" class="form-control on_keyup_promotion_product" placeholder="-- Tìm kiếm sản phẩm --">
+                    <span style="position: absolute;top: 9px;left: 16px;font-size: 18px;">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </span>
+                    <span class="loading hidden" style="position: absolute;top: 7px;right: 11px;font-size: 21px;">
+                        <i class="fa-solid fa-spinner fa-spin-pulse"></i>
+                    </span>
+                </div>
+                <div class="data_render_product_promotion" style="overflow:auto">
+                       
+                </div>
+                <div class="paganation_render">
+                 
+                </div>
+            </div>
+        `)
+        let value = null
+        if($('input[name="id"]').val()) {
+            value = {
+                'product' : @json($model->products->pluck('sku_code')),
+                'variant' : @json($model->sku_variants->pluck('sku_code'))
+            }
+        }
+        AjaxGetProductPromotion(value)
+    }
+
     const VND = new Intl.NumberFormat('vi-VN', {
         style: 'currency',
         currency: 'VND',
@@ -210,7 +244,6 @@
             treeSelect();
         }
         if(_this.val() == 2  || _this.val() == 3 ) {
-            $('input[name="id"]').val(_this.val())
             render.html(`
             <div class="">
                 <div style="position: relative" class="col-lg-6 mb-4">
@@ -235,7 +268,7 @@
         }
     })
 
-    function AjaxGetProductPromotion(value = null,renderOption = []){
+    function AjaxGetProductPromotion(value = null){
         $.ajax({
             type: 'GET',
             url:  '{{route('private-system.promotions.getData.promtions')}}',
@@ -243,7 +276,7 @@
             success : function(data){         
                 if(data?.rows) {
                     let model = $('.change_keyup_promotion_select2').attr('data-model');
-                    let render = ObjectProductPromotion(data?.rows?.data,promotion)
+                    let render = ObjectProductPromotion(data?.rows?.data,promotion,value)
                     let links = data?.rows?.links;
                     if(data?.rows?.data.length == 0) {
                         $('.data_render_product_promotion').html('<span class="text-danger">Trống</span>');
@@ -266,7 +299,7 @@
         });
     }
 
-    function ObjectProductPromotion(option , data = []) {
+    function ObjectProductPromotion(option , data = [],value = null) {
        let html = '';
        let check = [];
        if(data.length > 0) {
@@ -276,7 +309,7 @@
        }
        $.each(option , function(index , val) {
         if(val?.variant_id) {
-            let variantIdCheck = val?.variant_sku ;
+            let variantIdCheck = val?.variant_sku;
             let album  = [];
             if(val?.variant_album) {
                 album = JSON.parse(val?.variant_album)?.split(',');
@@ -293,8 +326,7 @@
                         <div class="data_item" style="width:89%;
                         display:flex;justify-content:space-between;align-items:center">
                             <div style="width:5%">
-                                <input type="checkbox" ${check.includes(variantIdCheck) == true ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}_${val?.variant_id}" value="${val?.variant_id}" name="variant_id[]">
-                                <input type="hidden" value="${val?.variant_id}" name="product_variant_id">
+                                <input type="checkbox"  ${(check.includes(variantIdCheck) == true ) || ( @json($model->id) && value != null && value['variant']?.includes(variantIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}_${val?.variant_id}" value="${val?.variant_id}" name="variant_id[]">
                             </div>
                             <div style="width:16%" class="image_thumbnail">
                                 <img class="w-100" src="${album[0]}" alt="">
@@ -335,7 +367,7 @@
                         <div class="data_item" style="width:89%;
                         display:flex;justify-content:space-between;align-items:center">
                             <div style="width:5%">
-                                <input type="checkbox" ${check.includes(productIdCheck) == true ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}" value="${val?.product_id}" name="product_id[]">
+                                <input type="checkbox" ${(check.includes(productIdCheck) == true) || (@json($model->id) &&  value && value['product']?.includes(productIdCheck)) ? 'checked' : ''} class="SendDataPromotion" id="product_${val?.product_id}" value="${val?.product_id}" name="product_id[]">
                             </div>
                             <div style="width:16%" class="image_thumbnail">
                                 <img class="w-100" src="${val?.image}" alt="">
@@ -426,7 +458,14 @@
         let option = {
             'page' : page
         }
-        AjaxGetProductPromotion(option);
+        let value = null;
+        if($('input[name="id"]').val()){
+            value = {
+                'product' : @json($model->id) &&  @json($model->products) != null ? @json($model->products->pluck('sku_code')) : null,
+                'variant' : @json($model->id) &&  @json($model->sku_variants) != null ?   @json($model->sku_variants->pluck('sku_code')) : null
+            }
+        }
+        AjaxGetProductPromotion(option,value);
         e.preventDefault();
     })
 
@@ -455,11 +494,10 @@
     $('#form-create-promotion').submit(function(e){   
             e.preventDefault();
             var formData = $(this).serialize();
-            console.log(formData);
             // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
             var desc = CKEDITOR.instances['description'].getData();
             formData += '&description=' + encodeURIComponent(desc) + '&promotion=' + JSON.stringify(promotion)
-
+            
             $('#submit-btn-data').html('<i class="fa fa-spinner fa-spin"></i> '+'Lưu').attr("disabled", true);
 
             saveProductData(formData);
@@ -472,7 +510,6 @@
             data: formData,
             dataType: 'json',
             success: function(result) {
-                console.log(result);
                 if(result.status == 'success'){
                     show_message(result?.message,result?.status)
                     window.location.href = result?.redirect;

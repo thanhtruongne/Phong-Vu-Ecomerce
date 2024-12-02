@@ -3,66 +3,58 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\ProductRepositories;
-use App\Repositories\SliderRepositories;
-use App\Repositories\SystemRepositories;
-use App\Services\WidgetService;
+use App\Models\Slider;
 use Illuminate\Http\Request;
+use Modules\Products\Entities\ProductCategory;
+use Modules\Products\Entities\Brand;
+use Modules\Products\Entities\Products;
+use Modules\Widget\Entities\Widget;
 
-class HomeController extends BaseController
-{  
-     protected $sliderRepositories,$widgetService,$productRepositories;
-    // protected $language;
-   public function __construct(
-     // LanguageRepositories $languageRepositories,
-     SliderRepositories $sliderRepositories,
-     // WidgetService $widgetService,
-     // ProductRepositories $productRepositories
-    )
-   {
-     $this->sliderRepositories = $sliderRepositories;
-     // $this->widgetService = $widgetService;
-     // $this->productRepositories = $productRepositories;
-     parent::__construct();
-   }
-
-
-   public function home(){
-     //hạn chế dùng phương thức này vì khi gọi api ,goi dư các dữ liệu render
-     $config = [ 
-          'js' => [
-              'frontend/js/library/custom.js'
-          ]
-     ];
-//      $widget = $this->widgetService->foundTheWidgetByKeyword([
-//           //product website
-//           ['keyword' => 'Brand_widget'],
-//           ['keyword' => 'category_outStanding','data-object' => true],
-//           ['keyword' => 'macbook_widget','promotion_variant' => true],
-//           ['keyword' => 'MSI_widget','data-object' => true,'promotion_variant' => true],
-//           ['keyword' => 'Ram_widget','data-object' => true],
-//           ['keyword' => 'VGA_widget','data-object' => true],
-//           ['keyword' => 'CPU_widget','data-object' => true],
-//           //brand website
-//      ]);
+interface  HomeDataControl{
+  public function home(Request $request);
   
-//      $Seo = $this->Seo;
-//      // Lấy ra các slider
-    $slider = $this->sliderRepositories->findCondition(...$this->argumentSlider());
-//     //Sản phẩm nổ bật
-//     $productOutStanding = $this->productRepositories->getoutStandingProduct(12);
-    return view('Frontend.page.home',compact('slider','config'));
-   }
+  public function productCategory(string $slug = '',Request $request);
+}
 
-   private function argumentSlider() {
-     return [
-          'condition' => [
-               ['status','=',1],
-               ['keyword','=','main-slide']
-          ],
-          'params' => [], 
-          'relation' => [],
-          'type' => 'first'
-     ];
-   }
+class HomeController extends Controller implements HomeDataControl
+{  
+  
+  public function home(Request $request){
+    $widgets = Widget::whereNotNull('name')->where('status',1)->get();
+    $data_widget = $this->getWidgetData($widgets);
+    $slider = Slider::whereKeyword('slider-home')->first();
+    $productCategory = ProductCategory::whereNull('parent_id')->get();
+    $brands = Brand::whereNotNull('image')->with('products')->get();
+    $products = $this->getProductsHome();
+    return view('Frontend.page.home',['slider' => $slider,'productCategory' => $productCategory,'widgets' => $data_widget,'brands' => $brands,'products' => $products]);
+  }
+
+
+  public function productCategory(string $slug = '',Request $request) {
+    $productCategory = ProductCategory::where('url',$slug)->first();
+    if(!$productCategory) {
+      abort(404);
+    }
+    $childCatehgory = ProductCategory::select(['id','name','icon','url','ikey'])
+                      ->where('parent_id',$productCategory->id)
+                      ->where('status',1)
+                      ->get();
+
+    //filter
+    $products = $this->getProductByCategory($request,$productCategory,[]);
+    $filters = $this->getFilterProductCategory($products);
+    return view('Frontend.page.products.productCategory',
+    [
+            'productCategory' => $productCategory ,
+            // 'products' => $products ,
+            'childCatehgory' => $childCatehgory,
+            'filters' => $filters,
+          ]);
+
+  }
+
+
+
+
+
 }

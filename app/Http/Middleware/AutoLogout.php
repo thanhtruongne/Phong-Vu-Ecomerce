@@ -12,9 +12,12 @@ class AutoLogout
         if (!Session::has('lastActivityTime')) {
             Session::put('lastActivityTime', time());
         } elseif (time() - Session::get('lastActivityTime') > $this->timeout) {
-            $isAdmin = \Auth::user()->isAdmin();
+            $isAdmin = auth()->user()->isAdmin();
             Session::forget('lastActivityTime');
-            \Auth::logout();
+            session()->flush();
+            auth()->logout();
+            $request->session()->invalidate();
+    
             if ($request->ajax())
                 return response()->json(['message' => 'Session expired'], 419);
             return redirect($isAdmin ? route('private-system.be.login.template') : route('login'))->withErrors(['Bạn đã không thao tác trong 15 phút']);

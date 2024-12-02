@@ -372,7 +372,6 @@ if(!function_exists('conbineArraySystem')) {
 
 if(!function_exists('renderCombineMenu')) {
     function renderCombineMenu($payload , int $parent_id = 0) {
-    //   dd($payload);
         $data = [];
         if(!is_null($payload) && !empty($payload)) {
             foreach($payload as $key => $item) {                
@@ -414,15 +413,13 @@ if(!function_exists('renderMenuDynamicFrontEndParent')) {
         $parent = '';
         if(isset($data) && !is_null($data)) {
             foreach($data as $key => $item) {
-                $name = $item['item']->name;
-                // dd($name);
-                $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
+                $name = $item['name'];
                 $slug = Str::slug($name);
-                $parent .= '<a href="'.$canonical.'" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
+                $parent .= '<a href="#" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
                 $parent .= '<div class="css-73wobg">';
                 $parent .= '<div class="image_category">';
                 $parent .= '<div style="position: relative;display: inline-block;overflow: hidden;height: 100%;width: 100%;">';
-                $parent .= '<img class="h-100 w-100" src="'.$item['item']->image.'"/>';
+                $parent .= '<img class="h-100 w-100" src="#"/>';
                 $parent .= '</div>';
                 $parent .= '</div>';
                 $parent .= '<div  class="css-13yxnyc" style="flex: 1 1 0%;">';
@@ -443,59 +440,50 @@ if(!function_exists('renderMenuDynamicFrontEndParent')) {
 
 
 if(!function_exists('renderMenuDynamicFrontEndChild')) {
-    function renderMenuDynamicFrontEndChild($data , $parent_id = 0 , int $count = 1 , $type = 'html') {
+    function renderMenuDynamicFrontEndChild($data , int $count = 1) {
         $child = '';
-        if(isset($data) && !is_null($data)) {
-            if($type = 'html') {
-                // dd($data);
-                foreach($data as $key => $item) {
-                            $name = $item['item']->name;
-                            $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
-                            // $child .= ' <a href="'.$canonical.'" class="css-1h3fn00">';
-                            // $child .= '<div class="" style="color:#434657;margin-bottom: 4px">'.$name.'</div>';
-                            // $child .= ' </a>';
-                            // $child .= '---';
-                            $slug = Str::slug($name);
-                            if($count == 1) {
-                                $child .= '<a href="'.$canonical.'" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
-                                $child .= '<div class="css-73wobg">';
-                                $child .= '<div class="image_category">';
-                                $child .= '<div style="position: relative;display: inline-block;overflow: hidden;height: 100%;width: 100%;">';
-                                $child .= '<img class="h-100 w-100" src="'.$item['item']->image.'"/>';
-                                $child .= '</div>';
-                                $child .= '</div>';
-                                $child .= '<div  class="css-13yxnyc" style="flex: 1 1 0%;">';
-                                $child .= ''.$name.'';
-                                $child .= '</div>';
-                                $child .= '</div>';
-                                $child .= '</a>';
-                                $child .= '---';
-                            }
-                            else {
-                                $color = count($item['children']) > 0  ? '#1435c3' : '#434657';
-                                $bold = count($item['children']) > 0  ? 'fw-bold' : '';
-                                $fontsize =  count($item['children']) > 0  ? 'font-size:17px;' : '';
-                                $child .= ' <a href="'.$canonical.'" class="css-1h3fn00">';
-                                $child .= '<div class="'.$bold.'" style="color:'.$color.';margin-bottom: 4px;'.$fontsize.'">'.$name.'</div>';
-                                $child .= ' </a>';
-                                $child .= '---';
-                            }
-                           
-                        if(count($item['children'])) {    
-                            $child .= '<div class="css-fej9ea menu_'.$slug.' w-100 hidden">';
-                            $child .= '<div class="" style="margin-bottom:1.5rem">';
-                            $child .= renderMenuDynamicFrontEndChild($item['children'],$item['item']->parent, $count + 1 , $type);
-                            $child .= '</div>';
-                            $child .= '</div>';
-                            
-                        }   
-               
-                }
-                return $child;
+        if(isset($data) && !empty($data)) {
+            foreach($data as $key => $item) {
+                    $name = $item['name'];
+                    // $canonical = makeTheURL($item['item']->canonical ?? '',true,true);
+                    $slug = Str::slug($name);
+                    if($count == 1) {
+                        $child .= '<a href="#" class="css-1h3fn00 set_ui_menu" data-title="menu_'.$slug.'">';
+                        $child .= '<div class="css-73wobg">';
+                        $child .= '<div class="image_category">';
+                        $child .= '<div class="position-relative d-inline-block h-100 d-100" style="overflow: hidden;">';
+                        $child .= '<img class="h-100 w-100" src=""/>';
+                        $child .= '</div>';
+                        $child .= '</div>';
+                        $child .= '<div  class="css-13yxnyc" style="flex: 1 1 0%;">';
+                        $child .= $name;
+                        $child .= '</div>';
+                        $child .= '</div>';
+                        $child .= '</a>';
+                        $child .= '---';
+                    }
+                    else {
+                        $color = count($item['children']) > 0  ? '#1435c3' : '#434657';
+                        $bold = count($item['children']) > 0  ? 'fw-bold' : '';
+                        $fontsize =  count($item['children']) > 0  ? 'font-size:17px;' : '';
+                        $child .= ' <a href="#" class="css-1h3fn00">';
+                        $child .= '<div class="'.$bold.'" style="color:'.$color.';margin-bottom: 4px;'.$fontsize.'">'.$name.'</div>';
+                        $child .= ' </a>';
+                        $child .= '---';
+                    }
+                    
+                if(count($item['children'])) {    
+                    $child .= '<div class="css-fej9ea menu_'.$slug.' w-100 hidden">';
+                    $child .= '<div class="" style="margin-bottom:1.5rem">';
+                    $child .= renderMenuDynamicFrontEndChild($item['children'], $count + 1);
+                    $child .= '</div>';
+                    $child .= '</div>';
+                    
+                }   
             }
+          
         }
-       
-      
+        return $child;
     }
 } 
 

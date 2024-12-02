@@ -155,14 +155,23 @@ class ProductCatelogeController extends Controller
             ],$request,ProductCategory::getAttributeName()
         );
         $model = ProductCategory::firstOrCreate(['id' => $request->id]);
-        $model->name = $request->name;
+        $model->fill($request->all());
+        // $model->name = $request->name;
+        // $model->icon = $request->icon;
         $model->ikey =\Str::slug($request->name);
-        $model->status = $request->status;
+        // $model->status = $request->status;
         $model->save();
 
         if($request->category_parent_id){
-            $parent = ProductCategory::find($request->category_parent_id);
+            $parent = ProductCategory::findOrFail($request->category_parent_id);
             $parent->appendNode($model);
+           
+            if($model && $request->id && !$request->url) { //  tạo url mặc dịnh nếu k thay đổi
+                $slug_parent = ProductCategory::ancestorsAndSelf($request->category_parent_id);
+                $arr = $slug_parent->pluck('ikey')->toArray();
+                $model->url = implode('-',array_unique(array_merge($arr,explode('-',$model->ikey))));
+                $model->save();          
+            }
         }
         return response()->json(['message' => 'Lưu thành công' , 'status' => 'success']);
     }

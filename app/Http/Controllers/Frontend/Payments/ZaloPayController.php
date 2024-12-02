@@ -37,7 +37,7 @@ class ZaloPayController
         ]);
         
         $resp = file_get_contents('https://sb-openapi.zalopay.vn/v2/query', false, $context);
-        $result = json_decode($resp, true);
+        $result = json_decode(json: $resp, true);
    
         if($result['return_code'] == 1) {
             $code = explode('_',$app_trans_id);

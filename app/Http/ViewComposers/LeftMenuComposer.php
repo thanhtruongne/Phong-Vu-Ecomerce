@@ -3,7 +3,7 @@
 namespace App\Http\ViewComposers;
 use Illuminate\View\View;
 
-class LeftMenuComposer {
+class LeftMenuComposer  {
     protected $leftMenuBackend;
 
     public function __construct()
@@ -15,19 +15,10 @@ class LeftMenuComposer {
      */
     public function compose(View $view)
     {
-        // $payload = $this->methodPassArgument();
-
-        // $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
-        // $menusChild = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu ?? [])) ?? [];
-        // $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
-        // $renderChild = explode('---',$menusChild); array_shift($renderChild);
-        // $renderParent = explode('---', $menusParent);
-        
-        // $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
         $view->with('leftMenuBackend',$this->leftMenuComposer());
     }
     
-    public function leftMenuComposer(){
+    private function leftMenuComposer(){
         $item = [
             
             'dashboard' => [
@@ -41,31 +32,31 @@ class LeftMenuComposer {
                 'url_name' => 'dashboard',
                 'url_child' => [],
             ],
-            'manager_menus' => [
-                'id' => 5,
-                'name' => trans('admin.manager_menu'),
-                'url' => '#',
-                'is_open' => 1,
-                'icon' => '<i class="fas fa-tachometer-alt"></i>',
-                'url_name' => 'menu',
-                'url_item_child' => ['menus_cateloge','menus'],
-                'item_childs' => [
-                    [
-                        'name' => trans('admin.manager_menu'),
-                        'url' =>route('private-system.product-cateloge'),
-                        'url_name'=> 'menus',
-                        'icon' => '<i class="fa fa-archive"></i>',
-                        // 'permission' => User::canPermissionCompetencyReport(),
-                    ],
-                    [
-                        'name' => trans('admin.manager_menu_cateloge'),
-                        'url' => route('private-system.menus.cateloge.index'),
-                        'url_name'=> 'menus/cateloge',
-                        'icon' => '<i class="fa fa-archive"></i>',
-                        // 'permission' => User::canPermissionCompetencyReport(),
-                    ],
-                ],
-            ],
+            // 'manager_menus' => [
+            //     'id' => 5,
+            //     'name' => trans('admin.manager_menu'),
+            //     'url' => '#',
+            //     'is_open' => 1,
+            //     'icon' => '<i class="fas fa-tachometer-alt"></i>',
+            //     'url_name' => 'menu',
+            //     'url_item_child' => ['menus_cateloge','menus'],
+            //     'item_childs' => [
+            //         [
+            //             'name' => trans('admin.manager_menu'),
+            //             'url' =>route('private-system.product-cateloge'),
+            //             'url_name'=> 'menus',
+            //             'icon' => '<i class="fa fa-archive"></i>',
+            //             // 'permission' => User::canPermissionCompetencyReport(),
+            //         ],
+            //         [
+            //             'name' => trans('admin.manager_menu_cateloge'),
+            //             'url' => route('private-system.menus.cateloge.index'),
+            //             'url_name'=> 'menus/cateloge',
+            //             'icon' => '<i class="fa fa-archive"></i>',
+            //             // 'permission' => User::canPermissionCompetencyReport(),
+            //         ],
+            //     ],
+            // ],
             'manager_user' => [
                 'id' => 2,
                 'name' => trans('admin.manager_user'),
@@ -130,23 +121,30 @@ class LeftMenuComposer {
                 'url_item_child' => ['manager-product-attribute', 'manager-product-categories'],
                 'item_childs' => [
                     [
+                        'name' => trans('admin.manager_product'),
+                        'url' =>route('private-system.product'),
+                        'url_name'=> 'product',
+                        'icon' => '<i class="fa fa-archive"></i>',
+                        // 'permission' => User::canPermissionCompetencyReport(),
+                    ],
+                    [
                         'name' => trans('admin.manager_product_categories'),
                         'url' =>route('private-system.product-cateloge'),
-                        'url_name'=> 'manager-product-categories',
+                        'url_name'=> 'product/categories',
                         'icon' => '<i class="fa fa-archive"></i>',
                         // 'permission' => User::canPermissionCompetencyReport(),
                     ],
                     [
                         'name' => trans('admin.manager_product_attribute'),
                         'url' => route('private-system.product-attribute'),
-                        'url_name'=> 'manager-product-attribute',
+                        'url_name'=> 'product/attribute',
                         'icon' => '<i class="fa fa-archive"></i>',
                         // 'permission' => User::canPermissionCompetencyReport(),
                     ],
                     [
-                        'name' => trans('admin.manager_product_item'),
-                        'url' => route('private-system.product'),
-                        'url_name'=> 'product',
+                        'name' => trans('admin.manager_brand'),
+                        'url' => route('private-system.product-brand'),
+                        'url_name'=> 'product/brand',
                         'icon' => '<i class="fa fa-archive"></i>',
                         // 'permission' => User::canPermissionCompetencyReport(),
                     ],
@@ -182,35 +180,22 @@ class LeftMenuComposer {
                 //     ],
                 // ],
             ],
-            // 'categories' => [
-            //     'id' => 4,
-            //     'name' => trans('market.permission_role_manager'),
-            //     // 'url' => route('categories'),
-            //     'url' => '',
-            //     'is_open' => '',
-            //     'url_name' => 'permissions',
-            //     'icon' => '<i class="fas fa-suitcase"></i>',
-            //     // 'permission' => ,
-            //     'url_item_child' => ['role', 'permissions'],
-            //     'item_childs' => [
-            //         [
-            //             'name' => trans('market.permission_manager'),
-            //             'url_name' =>'permissions',
-            //             //  'url' => route('permission.index'),
-            //              'url' => '',
-            //           'icon' => '<i class="fas fa-suitcase"></i>',
-            //             // 'permission' => User::canPermissionCompetencyReport(),
-            //         ],
-            //         [
-            //             'name' => trans('market.role_manager'),
-            //             'url_name' =>'permissions/role',
-            //             //  'url' => route('categories'),
-            //              'url' => '',
-            //             'icon' => '<i class="fas fa-suitcase"></i>',
-            //             // 'permission' => User::canPermissionCompetencyReport(),
-            //         ],
-            //     ],
-            // ],
+            'manager_slider' => [
+                'id' => 12,
+                'name' => trans('admin.manager_slider'),
+                'url' => route('private-system.slider'),
+                'is_open' => '',
+                'url_name' => 'slider',
+                'icon' => '<i class="fas fa-suitcase"></i>',
+            ],
+            'manager_widget' => [
+                'id' => 15,
+                'name' => trans('admin.manager_widget'),
+                'url' => route('private-system.widget'),
+                'is_open' => '',
+                'url_name' => 'widget',
+                'icon' => '<i class="fas fa-suitcase"></i>',
+            ],
         ];
         $this->leftMenuBackend = $item;
         
