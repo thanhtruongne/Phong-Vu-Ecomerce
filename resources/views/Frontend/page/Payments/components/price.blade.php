@@ -13,14 +13,9 @@
         </span>
     </div>
 </div>
-@if ($errors->has('total'))
-<div class="css-fwmmrl mt-2 mb-2" style="font-size: 15px">
-    {{  $errors->first('total') }}
-</div>
-@endif
 <div class="footer_cart">
     <div class="">
-        <button style="text-decoration: none" type="submit" class="css-v463h2">
+        <button style="text-decoration: none" type="submit" id="btn_submit_checkout" class="css-v463h2">
             Thanh toán
         </button>
     </div>

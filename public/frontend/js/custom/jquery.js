@@ -1,3 +1,20 @@
+    function show_message(message,status){
+        Swal.fire({
+            text: message,
+            icon: status
+        })
+    }
+
+    function debounce(func, delay) {
+        let timer;
+        return function(...args) {
+            const context = this;
+            clearTimeout(timer);
+            timer = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+
+    
 
     var arr = [0, 12000000];
     var Timer;
@@ -169,16 +186,11 @@
                     let price_promtion_save = value?.promotion  ? (+price - +promotion?.amount) : null;
                     let slug =  value?.sku_id ?  value?.variant_slug : value?.slug;
                     let sku = value?.sku_id ?  value?.variant_sku : value?.product_sku;
-                    let url  = slug + '--' + sku;
-                    console.log(url);     
-
-
-
-
+                    let url  = '/'+slug + '--' + sku; 
                     html +=`
                     <div class="" style="background: white;margin-bottom: 2px;width: calc(20% - 2px);">
                         <div class="css-1msrncq fill_parent">
-                            <a href="#" class="d-block" style="text-decoration: none">
+                            <a href="${url}" class="d-block" style="text-decoration: none">
                                 <div class="" style="position-relative" style="margin-bottom:0.5rem">
                                     <div class="" style="margin-bottom: 0.25rem">
                                         <div class="position-relative"  style="padding-bottom: 100%">

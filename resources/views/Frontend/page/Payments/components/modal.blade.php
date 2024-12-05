@@ -12,15 +12,10 @@
                     <div class="css-kwckz4">
                         <input 
                         class="w-100 bg-white h-100"
-                        type="text" value="{{ old('name') }}" name="name" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                        type="text" value="" name="receiver_name" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                     </div>
                 </div>
             </div>
-            @if ($errors->has('name'))
-                <div class="css-fwmmrl">
-                   {{  $errors->first('name') }}
-                </div>
-            @endif
             
         </div>
     </div>
@@ -37,15 +32,10 @@
                         <div class="css-kwckz4">
                             <input 
                             class="w-100 bg-white h-100"
-                            type="text" value="{{ old('phone') }}" name="phone" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="text" value="" name="receiver_phone" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
-                @if ($errors->has('phone'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('phone') }}
-                    </div>
-                @endif
             </div>
         </div>
         <div class="teko-col-4 css-iu028d">
@@ -60,15 +50,10 @@
                         <div class="css-kwckz4">
                             <input 
                             class="w-100 bg-white h-100"
-                            type="email" value="{{ old('email') }}"  name="email" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="email" value=""  name="receiver_email" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
-                @if ($errors->has('email'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('email') }}
-                    </div>
-                @endif
             </div>
         </div>
     </div>
@@ -86,30 +71,12 @@
             </div>
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
-                    <div class="css-rznjps">
-                        <div class="css-kwckz4">    
-                            <select name="province_code" class="provinces location"  data-target='districts' style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)" >
-                                <option selected value="">Chọn thành phố / tỉnh</option>
-                                        {{-- @dd($provinces); --}}
-                                    @if(!empty($provinces))
-                                        @foreach ($provinces as $province)      
-                                                           
-                                            <option 
-                                            @if (old('province_code') == $province['code'] )
-                                                selected
-                                            @endif value='{{ $province['code'] }}'>{{ $province['full_name'] }}</option>
-                                        @endforeach
-                                    @endif
-                            </select>
-                       
-                        </div>
+                    <div class="css-rznjps">   
+                        <select name="receiver_province" class="load-provinces form-control location provinces"  data-target='districts' style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)" >
+                            <option selected value="">Chọn thành phố / tỉnh</option>
+                        </select>
                     </div>
                 </div>
-                @if ($errors->has('province_code'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('province_code') }}
-                    </div>
-                @endif
             </div>
         </div>
         <div class="teko-col-4 css-iu028d">
@@ -120,19 +87,12 @@
             </div>
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
-                    <div class="css-rznjps">
-                        <div class="css-kwckz4">    
-                            <select class="districts location" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)"  name="district_code" data-target='wards'>
-                                    
+                    <div class="css-rznjps"> 
+                            <select class="districts select_district location form-control" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)"  name="receiver_district" data-target='wards'>
+                                    <option value="">Chọn</option>
                             </select>
-                        </div>
                     </div>
                 </div>
-                @if ($errors->has('district_code'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('district_code') }}
-                    </div>
-                @endif
             </div>
         </div>
     </div>
@@ -147,19 +107,11 @@
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
                     <div class="css-rznjps">
-                        <div class="css-kwckz4">
-                            <select class="wards location" name="ward_code" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
-                                      
+                            <select class="wards location select_district form-control" name="receiver_ward" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                                <option value="">Chọn</option>
                             </select>
-                       
-                        </div>
                     </div>
                 </div>
-                @if ($errors->has('ward_code'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('ward_code') }}
-                    </div>
-                @endif
             </div>
         </div>
         <div class="teko-col-4 css-iu028d">
@@ -174,15 +126,10 @@
                         <div class="css-kwckz4">
                             <input 
                             class="w-100 bg-white h-100"
-                            type="text" value="{{ old('address') }}"  name="address" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="text" value=""  name="receiver_address" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
-                @if ($errors->has('address'))
-                    <div class="css-fwmmrl">
-                        {{  $errors->first('address') }}
-                    </div>
-                @endif
             </div>
         </div>
     </div>

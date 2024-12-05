@@ -13,8 +13,6 @@ class Order extends Model
     
     protected $table = 'order';
     protected $fillable = [
-        'name',
-        'email',
         'address',
         'phone',
         'cart',
@@ -24,7 +22,6 @@ class Order extends Model
         'desc',
         'promotions',
         'customer_id',
-        'guest_cookie',
         'method',
         'code',
         'confirm',

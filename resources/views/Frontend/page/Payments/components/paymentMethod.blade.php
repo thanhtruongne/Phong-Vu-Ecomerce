@@ -8,7 +8,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <input 
                             {{ isset($method) && !empty($method) && $method == $payment['value'] ? 'checked' : '' }} 
-                            class="form-check-input me-2" name="method" type="radio" id="{{ $payment['value'] }}" value="{{ $payment['value']  }}"/>
+                            class="form-check-input me-2" name="method_payment" type="radio" id="{{ $payment['value'] }}" value="{{ $payment['value']  }}"/>
                             <label class="form-check-label" for="{{ $payment['value'] }}">
                                 {{ $payment['title'] }}
                                 @if (!empty($payment['logo']))

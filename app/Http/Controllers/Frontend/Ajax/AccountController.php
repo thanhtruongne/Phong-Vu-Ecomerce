@@ -16,10 +16,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 
-class AccountController
+class AccountController extends Controller
 {  
-    protected $userRepositories,$orderRepositories;
-  
     public function UpdateAccount(Request $request) {
          
     }

@@ -10,12 +10,7 @@ use Illuminate\Http\Request;
 
 class ShippingGHTK extends BaseController
 {  
-    protected $orderRepositories;
-
-    public function __construct(OrderRepositories $orderRepositories){
-        $this->orderRepositories = $orderRepositories;
-    }
-  
+ 
     public function CalcShippingByGhtk(Request $request){
         $pick_adress = config('apps.payment.pick_address');
         $temp = array(
@@ -29,15 +24,15 @@ class ShippingGHTK extends BaseController
             "value" => +$request->input('value'),
             "transport" => "fly",
             "deliver_option" => "xteam",
-            "tags"  => [1]
+            "tags"  => [1,7]
         );
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://services-staging.ghtklab.com/services/shipment/fee?" . http_build_query($temp),
+            CURLOPT_URL => "https://services.giaohangtietkiem.vn/services/shipment/fee?" . http_build_query($temp),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
             CURLOPT_HTTPHEADER => array(
-                "Token: ".env('API_GHTK_KEY')."",
+                "Token: ".env('TOKEN_GHTK')."",
             ),
         ));
         
@@ -102,16 +97,16 @@ $response = json_decode($response,true);
     if($response['success'] == true){
         // Update transport order
         try {
-            $this->orderRepositories->UpdateWhere([['code','=',$response['order']['partner_id']]],['is_transport' => 1]);
-            $order = $this->orderRepositories->findCondition([['code','=',$response['order']['partner_id']]],[],[],'first',[]);
+            // $this->orderRepositories->UpdateWhere([['code','=',$response['order']['partner_id']]],['is_transport' => 1]);
+            // $order = $this->orderRepositories->findCondition([['code','=',$response['order']['partner_id']]],[],[],'first',[]);
             $data = [
                 'label_id' => $response['order']['label'],
                 'partner_id' => $response['order']['partner_id'],
                 'option' => $response['order'],
                 'status' => $response['order']['status'],
             ];
-            $order->order_transport_fee()->create($data);
-            return redirect()->route('private-system.management.order.detail',$order->code)->with('success','Tạo transport thành công với đơn vị GHTK');
+            // $order->order_transport_fee()->create($data);
+            // return redirect()->route('private-system.management.order.detail',$order->code)->with('success','Tạo transport thành công với đơn vị GHTK');
         }catch(Exception $e) {
             return $e->getMessage();die();
         }

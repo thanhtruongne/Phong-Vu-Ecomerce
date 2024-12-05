@@ -10,10 +10,14 @@ use Modules\Products\Entities\Brand;
 use Modules\Products\Entities\Products;
 use Modules\Widget\Entities\Widget;
 
-interface  HomeDataControl{
+
+
+interface HomeDataControl{
   public function home(Request $request);
   
   public function productCategory(string $slug = '',Request $request);
+
+  public function detailProduct(string $url = '',string $slug = '',Request $request);
 }
 
 class HomeController extends Controller implements HomeDataControl
@@ -39,9 +43,9 @@ class HomeController extends Controller implements HomeDataControl
                       ->where('parent_id',$productCategory->id)
                       ->where('status',1)
                       ->get();
-
+    $arr_child = $productCategory->descendants->pluck('id')->toArray();
     //filter
-    $products = $this->getProductByCategory($request,$productCategory,[]);
+    $products = $this->getProductByCategory($request,$arr_child,[]);
     $filters = $this->getFilterProductCategory($products);
     return view('Frontend.page.products.productCategory',
     [
@@ -50,6 +54,27 @@ class HomeController extends Controller implements HomeDataControl
             'childCatehgory' => $childCatehgory,
             'filters' => $filters,
           ]);
+
+  }
+
+  public function detailProduct(string $url = '' ,string $sku = '',Request $request) {
+    $product = $this->getProductDetailByRequest($url,$sku);
+    if(!$product) {
+       abort(404);  
+    }
+    $category_bread = ProductCategory::ancestorsAndSelf($product->product_category_id);
+    $related_id =  $category_bread->pluck('id')->toArray();
+    $childCategory =  $category_bread->pluck('name','url')->toArray();
+    $productRelated = $this->getProductByCategory($request,$related_id,[],null);
+    return view('Frontend.page.products.product.detail',
+
+[
+        'product' => $product , 
+        'childCategory' => $childCategory,
+        'productRelated' => $productRelated
+      ]
+    );
+
 
   }
 

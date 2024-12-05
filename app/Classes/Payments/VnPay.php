@@ -11,12 +11,12 @@ class VnPay {
         $vnp_Url = $this->url;
         $vnp_Returnurl = $this->return_url;
         $vnp_TmnCode =env('CODE_WEBSITE');//Mã website tại VNPAY 
-        $vnp_HashSecret =env('SERECT_KEY'); //Chuỗi bí mật
+        $vnp_HashSecret =env('SERECT_KEY_VNPAY'); //Chuỗi bí mật
         
         $vnp_TxnRef = $order->code; //Mã đơn hàng. Trong thực tế Merchant cần insert đơn hàng vào DB và gửi mã này 
-        $vnp_OrderInfo = $order->desc ?? 'No description';
+        $vnp_OrderInfo = $order->note ?? 'No description';
         $vnp_OrderType = 'other';
-        $vnp_Amount = ($order->cart['total'] + $order->shipping_options['total']) * 100;
+        $vnp_Amount = $order->total_amount * 100;
         $vnp_Locale = 'vn';
         $vnp_IpAddr = $_SERVER['REMOTE_ADDR'];
         //Add Params of 2.0.1 Version
