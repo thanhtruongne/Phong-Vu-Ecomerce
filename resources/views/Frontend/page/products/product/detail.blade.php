@@ -6,35 +6,30 @@
 
 
 @section('content')
-
+    @php
+        $breadcum = [];
+        if($childCategory) {
+            foreach ($childCategory as $key => $breadcrumb) {
+                $breadcum[] = [
+                    'name' => $breadcrumb,
+                    'url' => $key
+                ];
+            }
+        }
+    @endphp
     <div class="container">
         <div class="w-100">
-           <div class="breadcrumbs css-seb2g4">
-            @if (count($option['cateloge']) <= 1)
-            {{-- @dd($option['cateloge']) --}}
-                {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][1]['canonical'] ,$option['cateloge'][1]) }}
-            @else 
-                {{ Breadcrumbs::view('partial.frontend.breadcrumbs',$option['cateloge'][2]['canonical'] ,$option['cateloge'][1],$option['cateloge'][2],$option['cateloge']['parent']) }}
-            @endif
-               
-          
-          
-           </div>
-           @php
-               $name = $product->name;
-            //    dd($variant);
-               $product_price_after_discount = '';
-               if(isset($variant) && !empty($variant)) {
-                    $name = $name.'('.$variant->name.')';
-                    $product_price_after_discount = !empty($variant->promotions) 
-                        ? $variant->promotions[0]['product_variant_price'] - +$variant->promotions[0]['discount']
-                        : $variant->price;
-               }
-               else $product_price_after_discount = $product->price;
-           
-               $canonical = makeTheURL(Str::slug($product->name),true,false);
-
-    
+            <div class="breadcrumbs css-seb2g4">
+                @include('Frontend.component.breadcrumbs',$breadcum)
+            </div>
+            @php
+                $promotion = $product->sku_id ? $product->variant_promotion_price : $product->promotion->select(['name','id','amount'])->first(); 
+                $name =  $product->sku_id ?  $product->variant_name : $product->product_name;                                
+                $image = $product->sku_id ?  $product->variant_image : $product->image;
+                $price = $product->sku_id ?  $product->variant_price : $product->price;
+                $sku = $product->sku_id ?  $product->variant_sku : $product->product_sku;
+                $price_promtion_save = isset($promotion) && !empty($promotion)  ? ((int)$price - (int)$promotion['amount']) : null;
+                $album = $product->sku_id ?  $product->variant_album : $product->album;     
            @endphp
            <div class="d-flex" style="margin: 0px 0px 24px;min-width: 0px;">
                 <div class="" style="margin: 0px 16px 0px 0px;min-width: 0px;width: 75.6%;">
@@ -45,8 +40,7 @@
                                     {{-- album --}}
                                     <div id="album_miltiple">
                                         @include('Frontend.page.products.product.component.album',
-                                        ['data' => !empty($variant) ? $variant : $product 
-                                        ,'type' => 'variant'])
+                                        ['album' => $album])
                                     </div>
                                     
 
@@ -57,10 +51,10 @@
                                          {!! $product->content !!}
                                     </div>
                                 </div>
-                                <div class="find_original_name" data-name="{{ $product->name }}"
+                                <div class="find_original_name" data-name="{{ $name }}"
                                      style="margin: 0px;min-width: 0px;width: 59.5%;">
                                     {{-- title --}}
-                                    <div class="title_product_dynamic" data-canonical="{{ $canonical }}">
+                                    <div class="title_product_dynamic">
                                         <h1 style="font-size: 24px;line-height: 1.33;margin-bottom: 8px;">
                                             {{ $name }}
                                         </h1>
@@ -68,38 +62,26 @@
                                             <div class="css-1f5a6jh" style="font-size: 14px;margin-top: -4px;">
                                                 Thương hiệu :
                                                 <a href="" style="text-decoration: none;color: unset;cursor: pointer;">
-                                                    {{ $product->product_cataloge->name  }}
+                                                    {{ $product->brand_name  }}
                                                 </a>
                                                 <span style="margin:0 8px">|</span>
-                                                SKU : <span class="sku_after_variant"> {{ !empty($variant) ? $variant->sku :  $product->code_product }}</span>
+                                                SKU : <span class="sku_after_variant"> {{ $sku }}</span>
                                             </div>
                                             {{-- variants --}}
-                                             @include('Frontend.page.products.product.component.variant'
-                                             ,[
-                                                'attribute' => $attribute,
-                                              ])
+                                             @include('Frontend.page.products.product.component.variant')
                                             
                                             {{-- Price --}}
-                                            <div class="css-2zf5gn">
+                                            <div class="css-2zf5gn mt-3">
                                                 <div type="title" class="att-product-detail-latest-price css-roachw price_original" color="primary500">
-                                                    {{ convert_price($product_price_after_discount,true)  }} ₫
+                                                    {{ convert_price($price_promtion_save,true)  }} ₫
                                                 </div>
-                                                @if (isset($variant->promotions) && !empty($variant->promotions))
+                                                @if (isset($promotion) && !empty($promotion))
                                                     <div class="css-3mjppt d-flex">
                                                         <div type="caption" class="att-product-detail-retail-price css-18z00w6 price_discount" color="textSecondary">
-                                                            {{ convert_price($variant->price,true) }} đ 
+                                                            {{ convert_price($price,true) }} đ 
                                                         </div>
                                                         <div type="caption" color="primary500" class="css-2rwx6s discount_type">
-                                                            - {{ $variant->promotions[0]['discountValue'] }} {{ $variant->promotions[0]['discountType'] }}
-                                                        </div>
-                                                    </div>
-                                                @elseif(isset($product->promotions) && !empty($product->promotions))
-                                                    <div class="css-3mjppt d-flex">
-                                                        <div type="caption" class="att-product-detail-retail-price css-18z00w6 price_discount" color="textSecondary">
-                                                            {{ convert_price($product->price,true) }} đ 
-                                                        </div>
-                                                        <div type="caption" color="primary500" class="css-2rwx6s discount_type">
-                                                            - {{ $product->promotions[0]['discountValue'] }} {{ $product->promotions[0]['discountType'] }}
+                                                            - {{ number_format(100 - (((int)$price_promtion_save / (int)$price) * 100),2) }} %
                                                         </div>
                                                     </div>
                                                 @endif
@@ -109,25 +91,30 @@
                                                 <div width="100%" color="divider" class="css-1fm9yfq"></div>
                                             </div>
                                             {{-- Voucher sẽ phát triển thêm --}}
-                                            <div class="" style="display: flex;gap: 0.5rem;margin-top: 1rem;">
-                                            
-                                                    <div class="" style="flex: 1 1 0%;">
-                                                        <button class="css-1nb4xqk ">
-                                                            <div class="css-fdtrln">Mua</div>
-                                                            <span style="margin-left:0px">
-                                                                <div class="css-157jl91"></div>
-                                                            </span>
-                                                        </button>
-                                                    </div>
-
-                                                    <div class="" style="flex: 1 1 0%;">
-                                                        <button class="css-1nhnj3v add_to_cart" style="margin-top: 1rem;" data-name=>
-                                                            Thêm vào giỏ hàng                                               
-                                                        </button>
-                                                    </div>
+                                            <div class="" style="display: flex;gap: 0.5rem;margin-top: 1rem;">                  
+                                                <div class="" style="flex: 1 1 0%;">
+                                                    <button class="css-1nb4xqk ">
+                                                        <div class="css-fdtrln">Mua</div>
+                                                        <span style="margin-left:0px">
+                                                            <div class="css-157jl91"></div>
+                                                        </span>
+                                                    </button>
+                                                </div>
+                                                @php
+                                                    $bool = false;
+                                                    $id_check = $product->sku_id ?  $product->sku_id : $product->id;   
+                                                    $key_code = $id_check.'_'.$sku;
+                                                    $attempt_check = session()->get('cart_check');;
+                                                    if($attempt_check && in_array($key_code,$attempt_check)) {
+                                                        $bool = true;
+                                                    }
+                                                @endphp
+                                                <div class="" style="flex: 1 1 0%;">
+                                                    <button class="css-1nhnj3v add_to_cart {{$bool ? 'opacity_active' : ''}}" {{$bool ? 'disabled' : ''}} style="margin-top: 1rem;">
+                                                       {{$bool ? 'Đã thêm vào giỏ hàng'  : 'Thêm vào giỏ hàng'}}                         
+                                                    </button>
+                                                </div>
                                             </div>
-                                            
-                
                                         </div>
                                     </div>
                                 </div>
@@ -172,14 +159,14 @@
            <div class="desc">
                 <div class="teko-row css-29qdu">
                     <div class="teko-col teko-col-8 css-a5pz1h">
-                        <div class="" style="background: white;border-radius: 0.5rem;">
+                        <div class="bg-white" style="border-radius: 0.5rem;">
                             <div class="css-ftpi71">
                                 <div type="title" color="textTitle" class="title css-1dlj6qw">Mô tả sản phẩm</div>
                             </div>
                             {{-- render --}}
                             <div class="" style="padding: 1rem;">
                                 <div class="w-100">
-                                    {!! $product->desc !!}
+                                    {!! $product->description !!}
                                 </div>
                             </div>
                         </div>
@@ -189,23 +176,23 @@
 
 
            {{-- Product liên quan --}}
-           @include('Frontend.page.products.product.component.related',['product_related' => $option['product_related'] , 'cateloge' => $option['cateloge']])
+           @include('Frontend.page.products.product.component.related',['product_related' => $productRelated ])
           
            
         </div>
     </div>
-   
-    <input type="hidden" name="product_id" value="{{ !empty($variant) ?  $variant->product_id : $product->id }}">
-    <input type="hidden" name="product_variant_id" value="{{ !empty($variant) ?  $variant->variant_id : '' }}">
-    <input type="hidden" name="qualnity" value="1">
-    <input type="hidden" name="price" value="{{ $variant->price ?? $product->price }}">
-    <input type="hidden" name="price_after_discount" value="{{ $product_price_after_discount ?? 0 }}">
-
-    <input type="hidden" name="discountValue" value="{{!empty($variant) ? $variant->promotions[0]['discountValue'] ?? null : $product->promotions['discountValue'] ?? null }}">
-    <input type="hidden" name="discountType" value="{{!empty($variant) ?  $variant->promotions[0]['discountType'] ?? null : $product->promotions['discountType'] ?? null }}">
-    <input type="hidden" name="attribute_id" value="{{!empty($variant) ?  $variant->code : $product->code_product }}">
-    <input type="hidden" name="attribute_name" value="{{!empty($variant) ?  $variant->name : $product->name}}">
-
+    <input type="hidden" name="product_id" value="{{$product->id }}"> 
+    <input type="hidden" name="product_variant_id" value="{{ $product->sku_id }}">
+    <input type="hidden" name="sku_code" value="{{ $sku }}">
+    <input type="hidden" name="image" value="{{ $image }}">
+    <input type="hidden" name="sku_idx" value="{{$product->sku_idx}}"> 
+    <input type="hidden" name="price" value="{{ $price }}"> 
+    <input type="hidden" name="price_after_discount" value="{{ $price_promtion_save ?? 0 }}">
+    <input type="hidden" name="brand" value="{{ $product->brand_name}}">
+    <input type="hidden" name="product_category_id" value="{{ $product->product_category_id}}"> 
+    <input type="hidden" name="promotion_name" value="{{ $promotion ? $promotion['name'] : null}}">
+    <input type="hidden" name="promotion_amount" value="{{ $promotion ? $promotion['amount'] : null}}">
+    <input type="hidden" name="brand" value="{{ $product->brand_name}}">
     @push('scripts')
         
         <script>

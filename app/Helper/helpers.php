@@ -348,6 +348,7 @@ if(!function_exists('execPostRequest')) {
         $result = curl_exec($ch);
         //close connection
         curl_close($ch);
+        
         return $result;
     }
 }

@@ -215,7 +215,7 @@ class ProductsController extends Controller
              
             if($request->id){
                 $name = str_contains($model->name,'(') ?  explode('(',$model->name) : null;
-                $model->slug = $name ? $name[0] :  \Str::slug($request->name);
+                $model->slug = $name ? \Str::slug($name[0]) : \Str::slug($request->name);
                 if($name)
                     $model->name = $name[0] . ' ('.implode('/',$attribute_name_convert) .')';
                 else  {

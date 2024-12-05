@@ -1,22 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Backend\Ajax;
+namespace App\Http\Controllers\Front\Ajax;
 
 use App\Http\Controllers\Controller;
-use App\Repositories\DistrictRepositoreis;
-use App\Repositories\ProvinceRepositories; 
 use Illuminate\Http\Request;
 
 class LocationController extends Controller
 {
-    protected $districtRepositories;
-    protected $proinceRepositories;
-
-    public function __construct(ProvinceRepositories $province,DistrictRepositoreis $district)
-    {
-        $this->proinceRepositories = $province;
-        $this->districtRepositories = $district;
-    }
     public function getLocation(Request $request) {
         $html = '' ; 
        

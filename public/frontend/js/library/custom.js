@@ -323,11 +323,11 @@
 Data.TypingAddressCheck = () => {
     let clear = null;
     $('input[name="address"]').on('input',function(){
-        if(clear) clearTimeout(clear);
+    if(clear) clearTimeout(clear);
 
-        clear = setTimeout(() => {        
-            return Data.chooseShippingGHTK();   
-        }, 1500);
+    clear = setTimeout(() => {        
+        return Data.chooseShippingGHTK();   
+    }, 1500);
         
     })
 }

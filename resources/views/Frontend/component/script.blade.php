@@ -12,10 +12,12 @@
 <script src="{{asset('frontend/js/plugins/nouislider.min.js')}}"></script>
 <script src="{{asset('frontend/js/plugins/metisMenu.min.js')}}"></script>
 <script src="{{asset('frontend/js/plugins/wNumb.min.js')}}"></script>
+<script src="{{asset('backend2/plugins/select2/js/select2.min.js')}}"></script>
 {{-- load custom jquery --}}
-<script src="{{asset('frontend/js/custom/custom.js')}}"></script>
+<script src="{{asset('backend2/plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
 <script src="{{asset('frontend/js/custom/jquery.js')}}"></script>
-
+<script src="{{asset('frontend/js/custom/custom.js')}}"></script>
+<script src="{{asset('frontend/js/custom/cart.js')}}"></script>
 
 <script type="text/javascript">
     $.ajaxSetup({
@@ -62,38 +64,37 @@
         perView: 10,
     })
     glide_category.mount();
-  
-   window.addEventListener('load', function() {
+//    window.addEventListener('load', function() {
 
-$("#img_01").elevateZoom({
+    $("#img_01").elevateZoom({
 
-    constrainType: "height",
+        constrainType: "height",
 
-    constrainSize: 274,
+        constrainSize: 274,
 
-    zoomType: "lens",
+        zoomType: "lens",
 
-    containLensZoom: true,
+        containLensZoom: true,
 
-    gallery: 'gallery_01',
+        gallery: 'gallery_01',
 
-    cursor: 'pointer',
+        cursor: 'pointer',
 
-    galleryActiveClass: "active"
+        galleryActiveClass: "active"
 
-});
+    });
 
-$("#img_01").bind("click", function(e) {
+    $("#img_01").bind("click", function(e) {
 
-    var ez = $('#img_01').data('elevateZoom');
+        var ez = $('#img_01').data('elevateZoom');
 
-    $.fancybox(ez.getGalleryList());
+        $.fancybox(ez.getGalleryList());
 
-    return false;
+        return false;
 
-});
+    });
 
-})
+    // })
 
 </script>
 

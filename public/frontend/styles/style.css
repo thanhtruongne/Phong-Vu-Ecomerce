@@ -27,6 +27,9 @@ header .promotion_media_header {
     height: 42px;
     background-color: #1435c3;
 }
+span.select2-selection__rendered {
+    padding-top: 4px !important;
+}
 .css-1cpfnn9 {
     border-style: none;
     border-radius: 0.5rem;

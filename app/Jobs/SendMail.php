@@ -12,12 +12,10 @@ class SendMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
+
+    public function __construct($order)
     {
-        //
+        
     }
 
     /**
@@ -25,6 +23,6 @@ class SendMail implements ShouldQueue
      */
     public function handle(): void
     {
-        //
+        
     }
 }

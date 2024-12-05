@@ -11,7 +11,7 @@ class ZaloPayHelper
   static function init()
   {
     # Public key nhận được khi đăng ký ứng dụng với zalopay
-    self::$PUBLIC_KEY = env('PUBLIC_KEY_ZALO');
+    self::$PUBLIC_KEY = file_get_contents('../publickey.pem');
     self::$UID = round(microtime(true) * 1000);
   }
 
@@ -82,7 +82,9 @@ class ZaloPayHelper
    */
   static function newCreateOrderData(Array $params)
   {
-    $embeddata = [];
+    $embeddata = [
+      ''
+    ];
     
     if (array_key_exists("embeddata", $params)) {
       $embeddata = $params["embeddata"];
@@ -91,13 +93,13 @@ class ZaloPayHelper
     $order = [
       "appid" => env('APP_ID_ZALO'),
       "apptime" =>  round(microtime(true) * 1000),
-      "apptransid" => self::GenTransID(),
+      "apptransid" => $params['code'],
       "appuser" => array_key_exists("appuser", $params) ? $params["appuser"] : "demo",
       "item" => json_encode(array_key_exists("item", $params) ? $params["item"] : []),
       "embeddata" => json_encode($embeddata),      
       "bankcode" =>  array_key_exists("bankcode", $params) ? $params["bankcode"] : "zalopayapp",
       "description" => array_key_exists("description", $params) ? $params['description'] : "",
-      "amount" => $params['amount'],
+      "amount" => '100000',
     ];
 
     return $order;
@@ -111,7 +113,14 @@ class ZaloPayHelper
    */
   static function createOrder(Array $order) {
     $order['mac'] = ZaloPayMacGenerator::createOrder($order);
-    $result = Http::postForm(env('API_ZALO_CREATEORDER'), $order);
+    $context = stream_context_create([
+      "http" => [
+        "header" => "Content-type: application/x-www-form-urlencoded\r\n",
+        "method" => "POST",
+        "content" => http_build_query($order)
+      ]
+    ]);
+   $result = json_decode(file_get_contents(env('API_ZALO_CREATEORDER'), false, $context),true);
     return $result;
   }
 

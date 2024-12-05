@@ -6,8 +6,8 @@
             <input 
             maxlength="255"
             type="text" 
-            name="desc"
-            value="{{ old('desc') }}"
+            name="note"
+            value=""
             style="flex: 1 1 0%;outline:none;width: 100%;border: none;font-size: 13px;color: rgb(67, 70, 87);" placeholder="Nhập thông tin ghi chú cho nhà bán hàng">
         </div>
     </div>

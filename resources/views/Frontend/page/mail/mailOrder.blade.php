@@ -1,19 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-     <style>
-        h1 {
-            color: red;
-        }
-     </style>
-
-    <title>Document</title>
-</head>
-<body>
-    <h1> ĐƠN HÀNG:{{ $data->code }}</h1>
+ <h1> ĐƠN HÀNG:{{ $data->code }}</h1>
     <div class="w-100" >
         <div class="css-gjf6g1">
            <div style="flex-wrap: wrap;display:flex;justify-content:center">
@@ -127,7 +112,3 @@
             </div>
         </div>
     </div>
-
-  
-</body>
-</html>
