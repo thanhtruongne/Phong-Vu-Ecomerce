@@ -16,7 +16,7 @@ return [
     |
     */
 
-    'driver' => env('SCOUT_DRIVER', 'elastic'),
+    'driver' => env('SCOUT_DRIVER', 'elasticsearch'),
 
     /*
     |--------------------------------------------------------------------------
@@ -117,6 +117,13 @@ return [
         'secret' => env('ALGOLIA_SECRET', ''),
     ],
 
+    'elasticsearch' => [
+        'hosts' => [
+            env('ELASTICSEARCH_HOST', 'http://127.0.0.1:9200'),
+        ]
+        
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Meilisearch Configuration
@@ -139,7 +146,7 @@ return [
             // ],
         ],
     ],
-
+   
     /*
     |--------------------------------------------------------------------------
     | Typesense Configuration

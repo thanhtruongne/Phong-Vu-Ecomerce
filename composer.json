@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.1",
         "ext-gd": "*",
-        "babenkoivan/elastic-scout-driver": "^3.2",
         "bensampo/laravel-enum": "^6.11",
         "ckfinder/ckfinder-laravel-package": "^5.0",
         "egulias/email-validator": "^4.0",
@@ -17,9 +16,10 @@
         "kalnoy/nestedset": "^6.0",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
-        "laravel/scout": "^10.11",
+        "laravel/scout": "^9.0",
         "laravel/tinker": "^2.8",
         "maatwebsite/excel": "3.1.58",
+        "matchish/laravel-scout-elasticsearch": "^7.9",
         "mews/purifier": "3.4",
         "mindscms/laravelshoppingcart": "^2.1",
         "nwidart/laravel-modules": "5.0",
@@ -86,6 +86,12 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://repo.packagist.org"
+        }
+    }
 }

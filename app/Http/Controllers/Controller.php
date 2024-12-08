@@ -191,7 +191,7 @@ public function getProductByCategory(Request $request,array $productCategory = [
             }
         }
         // $query->where('a.status',1);
-        $query->with(['promotion','attributes_item']);
+        $query->with(['promotion']);
         $query->distinct();
         $query->offset($offset);
         $query->limit($limit);

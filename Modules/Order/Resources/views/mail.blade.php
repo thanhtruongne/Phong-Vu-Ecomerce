@@ -3,13 +3,13 @@
     <div class="css-gjf6g1">
        <div style="flex-wrap: wrap;display:flex;justify-content:center">
             @php
-                $address = $data->address.', '.$data->ward->full_name.', '.$data->district->full_name.','.$data->province->full_name;
+                $address = $order->address.', '.$order->ward->full_name.', '.$order->district->full_name.','.$order->province->full_name;
             @endphp
             <div class="" style="width:80%;box-sizing: border-box;margin: 0px;min-width: 0px;">
                 <div style="display:flex;justify-content:center;align-items:center;margin-bottom: 1rem;">
                     
                     <h5 style="font-weight: 500; line-height: 1.3;font-size:1.25rem">
-                        ĐƠN HÀNG:{{ $data->code }}
+                        ĐƠN HÀNG:{{ $order->code }}
                     </h5>
                 </div>
                 <div class="css-1o0q5vl" style="display:flex;justify-content:between;align-items:center">
@@ -18,12 +18,12 @@
                             Thông tin người nhận    
                         </div>
                         <div class="" style="line-height: 1.7;">
-                            <div class=""><strong>Người nhận:</strong> <span>{{ $data->name }}</span></div>
+                            <div class=""><strong>Người nhận:</strong> <span>{{ $order->reveiver_name }}</span></div>
                             <div>
                                 <strong>Địa chỉ: </strong>
                                 <span>{!! $address !!}</span>
                             </div>
-                            <div><strong>Điện thoại: </strong><span>{{ $data->phone }}</span></div>
+                            <div><strong>Điện thoại: </strong><span>{{ $order->reveiver_phone }}</span></div>
                         </div>
                     </div>
                     <div class="css-qry4qr">
@@ -32,8 +32,8 @@
                         </div>
                         <div class="" style="line-height: 1.7;">
                             <div class=""><strong>Trạng thái đơn hàng:</strong> <span>{{ $data->confirm }}</span></div>
-                            <div class=""><strong>Trạng thái thanh toán:</strong> <span>{{ $data->payment }}</span></div>
-                            <div><strong>Phí giao hàng: </strong><span>{{ convert_price($data->shipping_options['total'],true) }}</span></div>
+                            <div class=""><strong>Trạng thái thanh toán:</strong> <span>{{ $data->pay_time ? 'Thành công' : 'Pending' }}</span></div>
+                            <div><strong>Phí giao hàng: </strong><span>{{ convert_price($order->freight_amount,true) }}</span></div>
                             <div><strong>Thời gian tạo: </strong><span>{{ \Carbon\Carbon::parse($data->createdAt)->format('H:i d/m/Y') }}</span></div>
                         </div>
                     </div>
