@@ -2,11 +2,12 @@
 namespace  Modules\Products\Entities;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Scout\Searchable;
 use Modules\Promotions\Entities\Promotions;
 
 class Products extends Model
 {
-    use Cachable;
+    use Cachable,Searchable;
     protected $table = 'product';
     protected $primaryKey = 'id';
     protected $fillable = [
@@ -65,5 +66,32 @@ class Products extends Model
             'attribute' => 'Thuộc tính sản phẩm'
         ];
     }
+        
+    public function toSearchableArray(){
+        $with = [
+            'attributes_item','sku_variant','promotion','product_category','brand'
+        ];
+
+        $this->loadMissing($with);
+
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'product_category_id' => $this->product_category_id,
+            'brand_id' => $this->brand_id,
+            'price' => $this->price,
+            'quantity' => $this->quantity,
+            'status' => $this->status,
+            'is_single' => $this->is_single,
+        ];
+    } 
+
+    public function searchableAs(){
+        return 'product_index';
+    }
+
+
+
+
 }
 

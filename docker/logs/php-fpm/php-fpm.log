@@ -1,0 +1,58 @@
+[06-Dec-2024 16:13:58] NOTICE: fpm is running, pid 15
+[06-Dec-2024 16:13:58] NOTICE: ready to handle connections
+[06-Dec-2024 16:13:58] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:23:26] NOTICE: fpm is running, pid 15
+[06-Dec-2024 16:23:26] NOTICE: ready to handle connections
+[06-Dec-2024 16:23:26] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:31:44] NOTICE: fpm is running, pid 16
+[06-Dec-2024 16:31:44] NOTICE: ready to handle connections
+[06-Dec-2024 16:31:44] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:34:58] NOTICE: fpm is running, pid 15
+[06-Dec-2024 16:34:58] NOTICE: ready to handle connections
+[06-Dec-2024 16:34:58] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 18"
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 37"
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 16:35:48] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $sku declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 16:38:33] NOTICE: fpm is running, pid 15
+[06-Dec-2024 16:38:33] NOTICE: ready to handle connections
+[06-Dec-2024 16:38:33] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 18"
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 37"
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 16:44:06] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $sku declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 16:51:25] NOTICE: fpm is running, pid 15
+[06-Dec-2024 16:51:25] NOTICE: ready to handle connections
+[06-Dec-2024 16:51:25] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 18"
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 37"
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 16:58:52] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $sku declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 17:08:41] NOTICE: fpm is running, pid 15
+[06-Dec-2024 17:08:41] NOTICE: ready to handle connections
+[06-Dec-2024 17:08:41] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 18"
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 37"
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 17:09:17] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $sku declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 17:09:51] WARNING: [pool www] server reached pm.max_children setting (4), consider raising it
+[06-Dec-2024 17:48:39] NOTICE: fpm is running, pid 15
+[06-Dec-2024 17:48:39] NOTICE: ready to handle connections
+[06-Dec-2024 17:48:39] NOTICE: systemd monitor interval set to 10000ms
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 18"
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 20"
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $slug declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 37"
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $url declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 17:49:33] WARNING: [pool www] child 21 said into stderr: "NOTICE: PHP message: PHP Deprecated:  Optional parameter $sku declared before required parameter $request is implicitly treated as a required parameter in /var/www/html/app/Http/Controllers/Frontend/HomeController.php on line 60"
+[06-Dec-2024 17:54:00] NOTICE: fpm is running, pid 15
+[06-Dec-2024 17:54:00] NOTICE: ready to handle connections
+[06-Dec-2024 17:54:00] NOTICE: systemd monitor interval set to 10000ms

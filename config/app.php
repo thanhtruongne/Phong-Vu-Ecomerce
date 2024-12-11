@@ -184,6 +184,7 @@ return [
         Gloudemans\Shoppingcart\ShoppingcartServiceProvider::class,
         Jenssegers\Agent\AgentServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        \Matchish\ScoutElasticSearch\ElasticSearchServiceProvider::class,
         /*
          * Application Service Providers...
          */

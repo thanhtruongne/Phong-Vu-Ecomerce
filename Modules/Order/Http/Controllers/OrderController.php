@@ -37,11 +37,11 @@ class OrderController extends Controller implements OrderInterface
 
         // redirect thanh toán;
         if(!empty($order) && !is_null($order)) {
+            Cart::instance('cart')->destroy(); // clear cart
             $response =  $this->orderPaymentCase($order,$request->method_payment);   
             if($response['code'] === '00'){
                 return response()->json(['message' => 'Redirect thanh toán','status' => StatusReponse::SUCCESS,'url' => $response['data']]);
             }
-            // return response()->json(['message' => 'Tạo đơn hàng thành công','status' => StatusReponse::SUCCESS]);
         }
     }
 

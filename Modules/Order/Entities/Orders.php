@@ -1,6 +1,9 @@
 <?php
 namespace  Modules\Order\Entities;
 
+use App\Models\District;
+use App\Models\Province;
+use App\Models\Ward;
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -41,6 +44,16 @@ class Orders extends Model
     }
     public function order_payment(){
         return $this->belongsTo(OrderPayment::class,'order_id','id');
+    }
+
+    public function province(){
+        return $this->belongsTo(Province::class,'receiver_province','code')->select('full_name');
+    }
+    public function district(){
+        return $this->belongsTo(District::class,'receiver_province','code')->select('full_name');
+    }
+    public function ward(){
+        return $this->belongsTo(Ward::class,'receiver_province','code')->select('full_name');
     }
 
     public static function getAttributeName(){

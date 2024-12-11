@@ -10,6 +10,7 @@
 /vendor
 publickey.pem
 .env
+docker/mysql/mysql.sock
 .env.backup
 .env.production
 .phpunit.result.cache
