@@ -8,6 +8,7 @@
         "php": "^8.1",
         "ext-gd": "*",
         "bensampo/laravel-enum": "^6.11",
+        "beyondcode/laravel-websockets": "^1.14",
         "ckfinder/ckfinder-laravel-package": "^5.0",
         "egulias/email-validator": "^4.0",
         "genealabs/laravel-model-caching": "11.0.1",

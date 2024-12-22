@@ -212,6 +212,7 @@
         e.preventDefault();
         let data = {
             'id'  :  $('input[name="product_id"]').val(),
+            'rowID' : $('input[name="product_id"]').val(),
             'sku_id'  :  $('input[name="product_variant_id"]').val(),
             'sku_code' : $('input[name="sku_code"]').val(),
             'name' : $('.find_original_name .title_product_dynamic').find('h1').text().trim(),
@@ -259,9 +260,12 @@
          data : data,
          success: function(data) {
             if(data?.status == 'success'){
+                if(data?.rowID) {
+                    $('input[name="rowID"]').val(data?.rowID)
+                }
                 show_message(data?.message,data?.status);
                 $('span#count_cart').html(data?.count);
-                $('button.add_to_cart').prop('disabled',true).addClass('opacity_active').html('Đã thêm vào giỏ hàng');
+                // $('button.add_to_cart').prop('disabled',true).addClass('opacity_active').html('Đã thêm vào giỏ hàng');
                 return false;
             } else {
                 show_message(data?.message,data?.status);

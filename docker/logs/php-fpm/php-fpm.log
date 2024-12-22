@@ -56,3 +56,10 @@
 [06-Dec-2024 17:54:00] NOTICE: fpm is running, pid 15
 [06-Dec-2024 17:54:00] NOTICE: ready to handle connections
 [06-Dec-2024 17:54:00] NOTICE: systemd monitor interval set to 10000ms
+[15-Dec-2024 00:10:32 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:23:33 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:23:53 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:32:14 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:39:25 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:45:42 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0
+[15-Dec-2024 00:51:07 UTC] PHP Warning:  Unknown: POST Content-Length of 437 bytes exceeds the limit of 100 bytes in Unknown on line 0

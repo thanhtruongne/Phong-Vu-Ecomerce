@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Slider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Modules\Products\Entities\ProductCategory;
 use Modules\Products\Entities\Brand;
 use Modules\Products\Entities\Products;
@@ -26,9 +27,14 @@ class HomeController extends Controller implements HomeDataControl
   public function home(Request $request){
     $widgets = Widget::whereNotNull('name')->where('status',1)->get();
     $data_widget = $this->getWidgetData($widgets);
-    $slider = Slider::whereKeyword('slider-home')->first();
+    $slider = Cache::tag(['slider','brand'])->remember('sliders',\Carbon::now()->addDays(2),function(){
+      return Slider::whereKeyword('slider-home')->first();
+    });
+    $brands = Cache::tag(['slider','brands'])->remember('brands',\Carbon::now()->addDays(2),function(){
+      return Brand::whereNotNull('image')->with('products')->get();
+    });
+    // $brands = Brand::whereNotNull('image')->with('products')->get();
     $productCategory = ProductCategory::whereNull('parent_id')->get();
-    $brands = Brand::whereNotNull('image')->with('products')->get();
     $products = $this->getProductsHome();
     return view('Frontend.page.home',['slider' => $slider,'productCategory' => $productCategory,'widgets' => $data_widget,'brands' => $brands,'products' => $products]);
   }
@@ -62,13 +68,12 @@ class HomeController extends Controller implements HomeDataControl
     if(!$product) {
        abort(404);  
     }
-    $category_bread = ProductCategory::ancestorsAndSelf($product->product_category_id);
+    $category_bread = ProductCategory::ancestorsAndSelf($product->product_category_id,['id','name','url']);
     $related_id =  $category_bread->pluck('id')->toArray();
     $childCategory =  $category_bread->pluck('name','url')->toArray();
     $productRelated = $this->getProductByCategory($request,$related_id,[],null);
     return view('Frontend.page.products.product.detail',
-
-[
+      [
         'product' => $product , 
         'childCategory' => $childCategory,
         'productRelated' => $productRelated

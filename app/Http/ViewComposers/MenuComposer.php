@@ -5,6 +5,7 @@ namespace App\Http\ViewComposers;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Menu;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class MenuComposer extends Controller{
@@ -34,8 +35,12 @@ class MenuComposer extends Controller{
     }
 
     private function menu(){
-       $menus = Categories::whereNotNull('name')->get()->toTree()->toArray();
-       $data = $this->rebuildTree($menus);
+    //    $menus = Categories::whereNotNull('name')->get()->toTree()->toArray();
+       $data = Cache::rememberForever('categories',function(){
+            $menus =  Categories::whereNotNull('name')->get()->toTree()->toArray();
+            return $this->rebuildTree($menus);
+       });
+    //    $data = $this->rebuildTree($menus);
        $render = renderMenuDynamicFrontEndChild($data);
        $renderChild = explode('---',$render);
        array_shift($renderChild);

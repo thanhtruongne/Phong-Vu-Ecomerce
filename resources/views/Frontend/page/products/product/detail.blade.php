@@ -182,6 +182,7 @@
         </div>
     </div>
     <input type="hidden" name="product_id" value="{{$product->id }}"> 
+    <input type="hidden" name="row_ID">
     <input type="hidden" name="product_variant_id" value="{{ $product->sku_id }}">
     <input type="hidden" name="sku_code" value="{{ $sku }}">
     <input type="hidden" name="image" value="{{ $image }}">

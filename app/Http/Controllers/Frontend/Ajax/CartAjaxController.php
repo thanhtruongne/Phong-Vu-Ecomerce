@@ -22,6 +22,11 @@ class CartAjaxController extends Controller implements InterfaceCart
             ],$request,[
                 'id' => 'Có lỗi xảy ra !'
             ]);
+            $rowID = $request->rowID;
+            if(isset($rowID) && !empty($rowID) && Cart::instance('cart')->get($rowID)){
+                return response()->json(['message' => 'Sản phẩm đã tồn tại trong giỏ hàng','status' => StatusReponse::ERROR ]);
+            }
+
             $data = [
                 'id' => $request->input('id'),
                 'sku_id' => $request->input(key: 'sku_id'),
@@ -49,10 +54,10 @@ class CartAjaxController extends Controller implements InterfaceCart
               array_push($attempt, $item_check);
               session()->put('cart_check',$attempt);
             }
-            Cart::instance('cart')->add($data);
-            return response()->json(['message' => 'Thêm giỏ hàng thành công','status' => StatusReponse::SUCCESS , 'count' => Cart::instance('cart')->count()]);
+            $cart = Cart::instance('cart')->add($data);
+            return response()->json(['message' => 'Thêm giỏ hàng thành công' ,'rowID' => $cart->rowId,'status' => StatusReponse::SUCCESS , 'count' => Cart::instance('cart')->count()]);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(),'status' => StatusReponse::ERROR]);
+            return response()->json(['message' => $th->getMessage(),'line' => $th->getLine() ,'status' => StatusReponse::ERROR]);
         }
        
     }
