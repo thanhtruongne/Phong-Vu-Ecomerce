@@ -19,6 +19,7 @@ class CreatePromotionsTable extends Migration
             $table->string('description')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('code')->unique()->index();
+            $table->string('attributes')->nullable();
             $table->integer('count')->nullable();
             $table->decimal('amount',10)->nullable();
             $table->dateTime('startDate');

@@ -31,26 +31,30 @@ use Illuminate\Support\Facades\Route;
 
 
 // Route::get('/ajax/dashboard/loadVariant',[ProductController::class,'loadProductVariant'])->name('loading.product.variant');
-Route::get('/login',[AuthController::class,'login'])->name('login')->middleware('guest:user');
-Route::post('/store-login',[AuthController::class,'StoreLogin'])->name('store.login'); 
+Route::get('/login',[AuthController::class,'loginForm'])->name('login');
+Route::post('/login',[AuthController::class,'login'])->name('store.login');
+
+
+Route::post('sign-google-login',[AuthController::class,'callBackGoogle'])->name('fe.login-sign-callback-google');
+Route::get('/auth/callback_google',[AuthController::class,'handleLoginCallbackGoogle'])->name('fe.handle-callback-google');
+
+
 
 Route::middleware(['auth'])->group(function() {
-    Route::post('/logout',[AuthController::class,'logout'])->name('logout'); 
-    //account 
-    Route::get('/account',[AccountController::class,'account'])->name('account'); 
-    Route::get('/account/infomation',[AccountController::class,'accountInfo'])->name('account.infomation'); 
+    Route::post('/logout',[AuthController::class,'logout'])->name('logout');
+    //account
+    Route::get('/account',[AccountController::class,'account'])->name('account');
+    Route::get('/account/infomation',[AccountController::class,'accountInfo'])->name('account.infomation');
     Route::post('/account/update/{id}',[AccountController::class,'update'])->name('account.update');
-    Route::get('/account/order',[AccountController::class,'accountOrder'])->name('account.order'); 
-    Route::get('/account/order/{code}',[AccountController::class,'detailOrder'])->name('account.order.detail'); 
+    Route::get('/account/order',[AccountController::class,'accountOrder'])->name('account.order');
+    Route::get('/account/order/{code}',[AccountController::class,'detailOrder'])->name('account.order.detail');
 });
 
-Route::get('/',[HomeController::class,'home'])->name('fe.home');
-
-
+// Route::get('/',[HomeController::class,'home'])->name('fe.home');
 
 // Route::get('/ghtk',[ShippingGHTK::class,'calcShippingByGhtk'])->name('ghtk');
 //guest
-Route::get('/guest/order',[AccountController::class,'guestOrder'])->name('guest.order'); 
+Route::get('/guest/order',[AccountController::class,'guestOrder'])->name('guest.order');
 Route::get('/guest/order/{code}',[AccountController::class,'guestOrderDetail'])->name('guest.order.detail');
 
 
@@ -62,15 +66,15 @@ Route::post('/ajax/addToCart',[CartAjaxController::class,'addToCart'])->name('ad
 Route::post('/ajax/updateQuantityCart',[CartAjaxController::class,'updateCartQty'])->name('updateQtyCart');
 
 //checkout
-Route::get('/checkout',[CartController::class,'checkout'])->name('checkout'); 
-// Route::post('/store/order',[CartController::class,'StoreOrder'])->name('order.store'); 
+Route::get('/checkout',[CartController::class,'checkout'])->name('checkout');
+// Route::post('/store/order',[CartController::class,'StoreOrder'])->name('order.store');
 
 
 
 
 // // #payment
-// Route::get('/confirm-payment/{code}',[FrontendCartController::class,'confirmPayment'])->name('order.confirm.payment'); 
-// Route::post('/store/confirm-order/{code}',[FrontendCartController::class,'StoreConfirmOrder'])->name('order.store.confirm.payment'); 
+// Route::get('/confirm-payment/{code}',[FrontendCartController::class,'confirmPayment'])->name('order.confirm.payment');
+// Route::post('/store/confirm-order/{code}',[FrontendCartController::class,'StoreConfirmOrder'])->name('order.store.confirm.payment');
 
 
 

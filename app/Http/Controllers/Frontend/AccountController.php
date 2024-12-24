@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 class AccountController extends BaseController
-{  
+{
     protected $orderRepositories;
 
     public function __construct(OrderRepositories $orderRepositories){
@@ -18,16 +18,8 @@ class AccountController extends BaseController
         $this->orderRepositories = $orderRepositories;
     }
 
-    public function account(Request $request) {
-        $profile = $request->user();
-        $config = [
-            'js' => [
-              'frontend/js/library/custom.js'
-            ],
-        ];
-        $Seo = $this->Seo;
-        $provinces = Province::get();
-        return view('Frontend.page.Accounts.index',compact('Seo','provinces','config','profile'));
+    public function account() {
+        return view('Frontend.page.Accounts.index');
     }
     public function accountOrder() {
         $config = [
@@ -52,7 +44,7 @@ class AccountController extends BaseController
               'frontend/js/library/custom.js'
             ],
         ];
-        $Seo = $this->Seo;    
+        $Seo = $this->Seo;
         $emailCheck =  explode('_',Cookie::get('guest_cookie'))[1] ;
 
         $order = $this->orderRepositories->findCondition([[

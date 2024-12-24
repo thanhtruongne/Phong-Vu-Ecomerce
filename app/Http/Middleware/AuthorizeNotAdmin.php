@@ -10,12 +10,12 @@ use Illuminate\Http\Request;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Session;
 
-class AuthorizeAdmin
+class AuthorizeNotAdmin
 {
     public function handle(Request $request, Closure $next)
     {
 
-        if (\Auth::check() && \Auth::user()->isAdmin()) {
+        if (\Auth::check() && !\Auth::user()->isAdmin()) {
             return $next($request);
         }
         abort(403);

@@ -23,13 +23,13 @@
                 @include('Frontend.component.breadcrumbs',$breadcum)
             </div>
             @php
-                $promotion = $product->sku_id ? $product->variant_promotion_price : $product->promotion->select(['name','id','amount'])->first(); 
-                $name =  $product->sku_id ?  $product->variant_name : $product->product_name;                                
+                $promotion = $product->sku_id ? $product->variant_promotion_price : $product->promotion->select(['name','id','amount'])->first();
+                $name =  $product->sku_id ?  $product->variant_name : $product->product_name;
                 $image = $product->sku_id ?  $product->variant_image : $product->image;
                 $price = $product->sku_id ?  $product->variant_price : $product->price;
                 $sku = $product->sku_id ?  $product->variant_sku : $product->product_sku;
                 $price_promtion_save = isset($promotion) && !empty($promotion)  ? ((int)$price - (int)$promotion['amount']) : null;
-                $album = $product->sku_id ?  $product->variant_album : $product->album;     
+                $album = $product->sku_id ?  $product->variant_album : $product->album;
            @endphp
            <div class="d-flex" style="margin: 0px 0px 24px;min-width: 0px;">
                 <div class="" style="margin: 0px 16px 0px 0px;min-width: 0px;width: 75.6%;">
@@ -42,7 +42,7 @@
                                         @include('Frontend.page.products.product.component.album',
                                         ['album' => $album])
                                     </div>
-                                    
+
 
                                     <div class="css-9eazwe">
                                         <div width="100%" color="divider" class="css-1fm9yfq"></div>
@@ -69,7 +69,7 @@
                                             </div>
                                             {{-- variants --}}
                                              @include('Frontend.page.products.product.component.variant')
-                                            
+
                                             {{-- Price --}}
                                             <div class="css-2zf5gn mt-3">
                                                 <div type="title" class="att-product-detail-latest-price css-roachw price_original" color="primary500">
@@ -78,20 +78,20 @@
                                                 @if (isset($promotion) && !empty($promotion))
                                                     <div class="css-3mjppt d-flex">
                                                         <div type="caption" class="att-product-detail-retail-price css-18z00w6 price_discount" color="textSecondary">
-                                                            {{ convert_price($price,true) }} đ 
+                                                            {{ convert_price($price,true) }} đ
                                                         </div>
                                                         <div type="caption" color="primary500" class="css-2rwx6s discount_type">
                                                             - {{ number_format(100 - (((int)$price_promtion_save / (int)$price) * 100),2) }} %
                                                         </div>
                                                     </div>
                                                 @endif
-                                               
+
                                             </div>
                                             <div class="css-9eazwe">
                                                 <div width="100%" color="divider" class="css-1fm9yfq"></div>
                                             </div>
                                             {{-- Voucher sẽ phát triển thêm --}}
-                                            <div class="" style="display: flex;gap: 0.5rem;margin-top: 1rem;">                  
+                                            <div class="" style="display: flex;gap: 0.5rem;margin-top: 1rem;">
                                                 <div class="" style="flex: 1 1 0%;">
                                                     <button class="css-1nb4xqk ">
                                                         <div class="css-fdtrln">Mua</div>
@@ -100,18 +100,9 @@
                                                         </span>
                                                     </button>
                                                 </div>
-                                                @php
-                                                    $bool = false;
-                                                    $id_check = $product->sku_id ?  $product->sku_id : $product->id;   
-                                                    $key_code = $id_check.'_'.$sku;
-                                                    $attempt_check = session()->get('cart_check');;
-                                                    if($attempt_check && in_array($key_code,$attempt_check)) {
-                                                        $bool = true;
-                                                    }
-                                                @endphp
                                                 <div class="" style="flex: 1 1 0%;">
-                                                    <button class="css-1nhnj3v add_to_cart {{$bool ? 'opacity_active' : ''}}" {{$bool ? 'disabled' : ''}} style="margin-top: 1rem;">
-                                                       {{$bool ? 'Đã thêm vào giỏ hàng'  : 'Thêm vào giỏ hàng'}}                         
+                                                    <button class="css-1nhnj3v add_to_cart" style="margin-top: 1rem;">
+                                                      Thêm vào giỏ hàng
                                                     </button>
                                                 </div>
                                             </div>
@@ -119,7 +110,7 @@
                                     </div>
                                 </div>
                           </div>
-                           
+
                     </div>
                 </div>
 
@@ -151,7 +142,7 @@
                          </div>
                     </div>
                 </div>
-              
+
 
            </div>
 
@@ -177,25 +168,24 @@
 
            {{-- Product liên quan --}}
            @include('Frontend.page.products.product.component.related',['product_related' => $productRelated ])
-          
-           
+
+
         </div>
     </div>
-    <input type="hidden" name="product_id" value="{{$product->id }}"> 
-    <input type="hidden" name="row_ID">
+    <input type="hidden" name="product_id" value="{{$product->id }}">
     <input type="hidden" name="product_variant_id" value="{{ $product->sku_id }}">
     <input type="hidden" name="sku_code" value="{{ $sku }}">
     <input type="hidden" name="image" value="{{ $image }}">
-    <input type="hidden" name="sku_idx" value="{{$product->sku_idx}}"> 
-    <input type="hidden" name="price" value="{{ $price }}"> 
+    <input type="hidden" name="sku_idx" value="{{$product->sku_idx}}">
+    <input type="hidden" name="price" value="{{ $price }}">
     <input type="hidden" name="price_after_discount" value="{{ $price_promtion_save ?? 0 }}">
     <input type="hidden" name="brand" value="{{ $product->brand_name}}">
-    <input type="hidden" name="product_category_id" value="{{ $product->product_category_id}}"> 
+    <input type="hidden" name="product_category_id" value="{{ $product->product_category_id}}">
     <input type="hidden" name="promotion_name" value="{{ $promotion ? $promotion['name'] : null}}">
     <input type="hidden" name="promotion_amount" value="{{ $promotion ? $promotion['amount'] : null}}">
     <input type="hidden" name="brand" value="{{ $product->brand_name}}">
     @push('scripts')
-        
+
         <script>
             var slider = document.querySelector('.glide_content');
             if(slider){
@@ -206,8 +196,8 @@
             })
             glide.mount();
             }
-            
-        
+
+
         </script>
     @endpush
 @endsection

@@ -10,7 +10,7 @@ class CreateProductTable extends Migration
      * Run the migrations.
      *
      * @return void
-     */ 
+     */
     public function up()
     {
         Schema::create('product', function (Blueprint $table) {
@@ -20,10 +20,10 @@ class CreateProductTable extends Migration
             $table->string('sku_code')->nullable();
             $table->string('image')->nullable();
             $table->text('album')->nullable();
-            $table->integer('views')->default(0);
+            $table->integer('views')->nullable();
             $table->text('description')->nullable();
             $table->string('content')->nullable();
-            $table->unsignedBigInteger('product_category_id')->index()->nullable();    
+            $table->unsignedBigInteger('product_category_id')->index()->nullable();
             $table->unsignedBigInteger('brand_id')->index()->nullable();
             $table->integer('sort')->default(0);
             $table->decimal('price',10)->nullable();

@@ -10,13 +10,13 @@
             <div class="" style="flex: 1 1 auto;max-width: 100%;">
                 <div class="css-rznjps">
                     <div class="css-kwckz4">
-                        <input 
+                        <input
                         class="w-100 bg-white h-100"
-                        type="text" value="" name="receiver_name" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                        type="text" value="{{ $user->full_name }}" name="receiver_name" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
     <div class="w-100 d-flex justify-content-between">
@@ -30,9 +30,9 @@
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
                     <div class="css-rznjps">
                         <div class="css-kwckz4">
-                            <input 
+                            <input
                             class="w-100 bg-white h-100"
-                            type="text" value="" name="receiver_phone" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="text" value="{{  $user->phone }}" name="receiver_phone" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
@@ -48,9 +48,9 @@
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
                     <div class="css-rznjps">
                         <div class="css-kwckz4">
-                            <input 
+                            <input
                             class="w-100 bg-white h-100"
-                            type="email" value=""  name="receiver_email" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="email" value="{{ $user->email }}"  name="receiver_email" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
@@ -58,10 +58,10 @@
         </div>
     </div>
 </div>
-<hr style="margin:16px -17px;">
+<hr>
 <div class="css-7mlvw6" style="font-weight:bold">Địa chỉ nhận hàng</div>
 <div class="css-4sc7mn h-100">
-   
+
     <div class="w-100 d-flex justify-content-between">
         <div class="teko-col-6 css-iu028d">
             <div class="teko-col css-1yvcaye text-start">
@@ -71,7 +71,7 @@
             </div>
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
-                    <div class="css-rznjps">   
+                    <div class="css-rznjps">
                         <select name="receiver_province" class="load-provinces form-control location provinces"  data-target='districts' style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)" >
                             <option selected value="">Chọn thành phố / tỉnh</option>
                         </select>
@@ -87,7 +87,7 @@
             </div>
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
-                    <div class="css-rznjps"> 
+                    <div class="css-rznjps">
                             <select class="districts select_district location form-control" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)"  name="receiver_district" data-target='wards'>
                                     <option value="">Chọn</option>
                             </select>
@@ -107,7 +107,7 @@
             <div class="teko-col css-rznjps d-flex justify-content-center flex-column">
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
                     <div class="css-rznjps">
-                            <select class="wards location select_district form-control" name="receiver_ward" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            <select class="wards select_district form-control" name="receiver_ward" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                                 <option value="">Chọn</option>
                             </select>
                     </div>
@@ -124,9 +124,9 @@
                 <div class="" style="flex: 1 1 auto;max-width: 100%;">
                     <div class="css-rznjps">
                         <div class="css-kwckz4">
-                            <input 
+                            <input
                             class="w-100 bg-white h-100"
-                            type="text" value=""  name="receiver_address" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
+                            type="text" value="{{ $user->address }}"  name="receiver_address" style="flex: 1 1 0%;outline:none;border: none;font-size: 13px;color: rgb(67, 70, 87)">
                         </div>
                     </div>
                 </div>
@@ -137,9 +137,7 @@
 
 @push('scripts')
 <script>
-    var province_id = '{{ old('province_code') }}';
-    var district_id = '{{ old('district_code') }}';
-    var ward_id = '{{ old('ward_code') }}';
+
 </script>
-    
-@endpush    
+
+@endpush

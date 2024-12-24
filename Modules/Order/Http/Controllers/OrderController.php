@@ -38,7 +38,7 @@ class OrderController extends Controller implements OrderInterface
         // redirect thanh toán;
         if(!empty($order) && !is_null($order)) {
             Cart::instance('cart')->destroy(); // clear cart
-            $response =  $this->orderPaymentCase($order,$request->method_payment);   
+            $response =  $this->orderPaymentCase($order,$request->method_payment);
             if($response['code'] === '00'){
                 return response()->json(['message' => 'Redirect thanh toán','status' => StatusReponse::SUCCESS,'url' => $response['data']]);
             }
@@ -71,7 +71,7 @@ class OrderController extends Controller implements OrderInterface
         $model->confirm_status = OrderEnum::PENDINGCONFIRM;
         $model->delete_status = OrderEnum::PENDINGCONFIRM;
         $model->save();
- 
+
         return $model;
     }
     private function orderPaymentCase($order,string $method = '') {
@@ -83,22 +83,22 @@ class OrderController extends Controller implements OrderInterface
                case 'vnpay' :
                     $response =  $this->vnpay($order);
                      break;
-               case 'momo' : 
+               case 'momo' :
                      $response =  $this->momo($order);
                    break;
                case 'cod' :
-                   break;       
+                   break;
            }
-     
+
            return $response;
     }
-     
+
     private function vnpay($order) {
         $vnpay = new VnPay();
         $response = $vnpay->payments($order);
         return $response;
     }
-    
+
     private function momo($order) {
         $momo = new Momo();
         $response = $momo->payments($order);

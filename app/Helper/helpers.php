@@ -1,21 +1,21 @@
-<?php 
+<?php
 use Illuminate\Support\Str;
 if(!function_exists('setActive')) {
-    function setActive($route,array $data = []) { 
+    function setActive($route,array $data = []) {
         if(count($data) == 4) {
             $temp = $data[2].'.'.$data[3];
             if(strcmp($route , $temp) == 0) return 'active';
         }
         else if(count($data) == 3) {
-          
+
             if(in_array($route , $data)) return 'active';
         }
-        return '';   
+        return '';
     }
-    
+
 }
 if(!function_exists('shipping_Rule')) {
-    function shipping_Rule(int $id) { 
+    function shipping_Rule(int $id) {
         $html = [];
         foreach(config('apps.payment.shipping_rule') as $item) {
             if($item['id'] == $id) {
@@ -27,307 +27,307 @@ if(!function_exists('shipping_Rule')) {
             }
         }
     }
-    
+
 }
 if(!function_exists('confirm_order_status')) {
-    function confirm_order_status(string $val = '') { 
+    function confirm_order_status(string $val = '') {
        $html = '';
        switch($val) {
-            case 'unconfirmed' : 
+            case 'unconfirmed' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">
                     Chưa xác nhận
                     <i  class="ms-2 fa-solid fa-xmark"></i>
                 </span>';
                 break;
-            case 'confirmed' : 
+            case 'confirmed' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-primary">Đã xác nhận
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 'paid' : 
+            case 'paid' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">Đã thanh toán
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 'unpaid' : 
+            case 'unpaid' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-danger">
                 Chưa thanh toán
                 <i  class="ms-2 fa-solid fa-credit-card"></i>
                 </span>';
-                break;   
-            case 'pending' : 
+                break;
+            case 'pending' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-secondary">
                 Chưa giao hàng <i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 'process' : 
+            case 'process' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">Đang giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 'success' : 
+                break;
+            case 'success' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                 Giao hàng thành công
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;               
-                
+                break ;
+
        };
        return $html;
     }
-    
+
 }
 if(!function_exists('confirm_order_status_admin')) {
-    function confirm_order_status_admin(string $val = '') { 
+    function confirm_order_status_admin(string $val = '') {
        $html = '';
        switch($val) {
-            case 'unconfirmed' : 
+            case 'unconfirmed' :
                 $html ='<span style="padding: 8px 9px;" class="label label-warning">
                     Chưa xác nhận
                     <i  class="ms-2 fa-solid fa-xmark"></i>
                 </span>';
                 break;
-            case 'confirmed' : 
+            case 'confirmed' :
                 $html ='<span style="padding: 8px 9px;" class="label label-primary">Đã xác nhận
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 'paid' : 
+            case 'paid' :
                 $html ='<span style="padding: 8px 9px;" class="label label-success">Đã thanh toán
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 'unpaid' : 
+            case 'unpaid' :
                 $html ='<span style="padding: 8px 9px;" class="label label-danger">
                 Chưa thanh toán
                 <i  class="ms-2 fa-solid fa-credit-card"></i>
                 </span>';
-                break;   
-            case 'pending' : 
+                break;
+            case 'pending' :
                 $html ='<span style="padding: 8px 9px;" class="label label-secondary">
                 Chưa giao hàng <i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 'process' : 
+            case 'process' :
                 $html ='<span style="padding: 8px 9px;" class="label label-warning">Đang giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 'success' : 
+                break;
+            case 'success' :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                 Giao hàng thành công
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;               
-                
+                break ;
+
        };
        return $html;
     }
-    
+
 }
 if(!function_exists('payment_status')) {
-    function payment_status(string $val = '') { 
+    function payment_status(string $val = '') {
        $html = '';
        switch($val) {
-            case 'vnpay' : 
-                $html ='<span style="background-color:#000000bf;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua VnPay 
+            case 'vnpay' :
+                $html ='<span style="background-color:#000000bf;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua VnPay
                 <img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900651/vnpay-logo-CCF12E3F02-seeklogo.com_iqf7ks.png"/></span>';
                 break;
-            case 'momo' : 
-                $html ='<span style="background-color:#a50064;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua Momo 
+            case 'momo' :
+                $html ='<span style="background-color:#a50064;padding:6px 10px;border-radius:8px" class="text-white fw-bold">Thanh toán qua Momo
                 <img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900882/momo_icon_square_pinkbg_RGB_jauyz1.png"/></span>';
                 break;
-            case 'zalo' : 
-                $html ='<span>Thanh toán qua ZaloPay 
+            case 'zalo' :
+                $html ='<span>Thanh toán qua ZaloPay
                 <img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900961/ZaloPay-vuong_zxeof9.png"/></span>';
                 break;
-            case 'cod' : 
+            case 'cod' :
                 $html ='<span>Thanh toán khi nhận hàng';
-                break;    
+                break;
        };
        return $html;
     }
-    
+
 }
 if(!function_exists('payment_svg')) {
-    function payment_svg(string $val = '') { 
+    function payment_svg(string $val = '') {
        $html = '';
        switch($val) {
-            case 'vnpay' :  
+            case 'vnpay' :
                $html = '<img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900651/vnpay-logo-CCF12E3F02-seeklogo.com_iqf7ks.png"/>';
                 break;
-            case 'momo' : 
+            case 'momo' :
               $html = '<img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900882/momo_icon_square_pinkbg_RGB_jauyz1.png"/>';
                 break;
-            case 'zalo' : 
+            case 'zalo' :
               $html =  '<img style="object-fit:contain" width="50" height="50" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1719900961/ZaloPay-vuong_zxeof9.png"/>';
-                break; 
+                break;
        };
        return $html;
     }
-    
+
 }
 
 if(!function_exists('proccess_shipping_fe')) {
-    function proccess_shipping_fe(string $val = '') { 
+    function proccess_shipping_fe(string $val = '') {
        $html = '';
        switch($val) {
-            case 'pending' :  
+            case 'pending' :
                $html = 'Đang chuẩn bị hàng <i class="ms-1 fa-solid fa-box"></i>';
                 break;
-            case 'process' : 
+            case 'process' :
                 $html = 'Đang giao hàng <i class="ms-1 fa-solid fa-truck-fast"></i>';
                 break;
-            case 'success' : 
+            case 'success' :
                 $html = 'Giao hàng thành công <i class="ms-1 fa-solid fa-check"></i>';
-                break; 
+                break;
        };
        return $html;
     }
-    
+
 }
 
 if(!function_exists('order_shipping_icon')) {
-    function order_shipping_icon(int $val) { 
+    function order_shipping_icon(int $val) {
        $html = '';
        switch($val) {
-            case  1:  
+            case  1:
                $html = 'Đang chuẩn bị hàng <i class="ms-1 fa-solid fa-box"></i>';
                 break;
-            case 'process' : 
+            case 'process' :
                 $html = 'Đang giao hàng <i class="ms-1 fa-solid fa-truck-fast"></i>';
                 break;
-            case 'success' : 
+            case 'success' :
                 $html = 'Giao hàng thành công <i class="ms-1 fa-solid fa-check"></i>';
-                break; 
+                break;
        };
        return $html;
     }
-    
+
 }
 
 if(!function_exists('order_shipping_status')) {
-    function order_shipping_status(int $val) { 
+    function order_shipping_status(int $val) {
        $html = '';
        switch($val) {
-            case 1 : 
+            case 1 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">
                         Chưa tiếp nhận
                     <i  class="ms-2 fa-solid fa-xmark"></i>
                 </span>';
                 break;
-            case 2: 
+            case 2:
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-primary">Đã tiếp nhận
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 3 : 
+            case 3 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">Đã lấy hàng/Đã nhập kho
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 4 : 
+            case 4 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-danger">
                     Đã điều phối giao hàng/Đang giao hàng
                 <i  class="ms-2 fa-solid fa-credit-card"></i>
                 </span>';
-                break;   
-            case 5 : 
+                break;
+            case 5 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                         Đã giao hàng/Chưa đối soát <i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 6 : 
+            case 6 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">Đã đối soát
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 7 : 
+                break;
+            case 7 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                     Không lấy được hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;               
-            case 8 : 
+                break ;
+            case 8 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                        Hoãn lấy hàng <i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 9 : 
+            case 9 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">Không giao được hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 10 : 
+                break;
+            case 10 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                     Delay giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;  
-            case 11 : 
+                break ;
+            case 11 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">
                        Đã đối soát công nợ trả hàng
                     <i  class="ms-2 fa-solid fa-xmark"></i>
                 </span>';
                 break;
-            case 12: 
+            case 12:
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-primary">Đã điều phối lấy hàng/Đang lấy hàng
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 13 : 
+            case 13 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">Đơn hàng bồi hoàn
                 <i  class="ms-2 fa-solid fa-check"></i>
                 </span>';
                 break;
-            case 20 : 
+            case 20 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-danger">
                    Đang trả hàng (COD cầm hàng đi trả)
                 <i  class="ms-2 fa-solid fa-credit-card"></i>
                 </span>';
-                break;   
-            case 21 : 
+                break;
+            case 21 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                        Đã trả hàng (COD đã trả xong hàng)<i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 123 : 
+            case 123 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">Shipper báo đã lấy hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 127 : 
+                break;
+            case 127 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                     Shipper (nhân viên lấy/giao hàng) báo không lấy được hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;               
-            case 128 : 
+                break ;
+            case 128 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                         Shipper báo delay lấy hàng <i  class="ms-2 fa-solid fa-arrow-up-from-bracket"></i>
                 </span>';
                 break;
-            case 45 : 
+            case 45 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-warning">Shipper báo đã giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break;    
-            case 49 : 
+                break;
+            case 49 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                    Shipper báo không giao được giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;     
-            case 410 : 
+                break ;
+            case 410 :
                 $html ='<span style="padding: 8px 9px;" class="badge text-bg-success">
                     Shipper báo delay giao hàng
                 <i  class="ms-2 fa-solid fa-truck-fast"></i>
                 </span>';
-                break ;             
+                break ;
        };
        return $html;
     }
-    
+
 }
 
 
@@ -348,7 +348,7 @@ if(!function_exists('execPostRequest')) {
         $result = curl_exec($ch);
         //close connection
         curl_close($ch);
-        
+
         return $result;
     }
 }
@@ -365,29 +365,29 @@ if(!function_exists('conbineArraySystem')) {
             foreach($data as $key => $val) {
                $payload[$val->{$keyword}] = $val->{$content} ;
             }
-           
+
         }
         return $payload;
     }
-} 
+}
 
 if(!function_exists('renderCombineMenu')) {
     function renderCombineMenu($payload , int $parent_id = 0) {
         $data = [];
         if(!is_null($payload) && !empty($payload)) {
-            foreach($payload as $key => $item) {                
-                if($item->parent == $parent_id) {  
+            foreach($payload as $key => $item) {
+                if($item->parent == $parent_id) {
                     $data[] = [
                         'item' => $item,
                         'children' => renderCombineMenu($payload,$item->id)
-                    ];  
+                    ];
                 }
             }
-        }   
-        return $data;   
-     
+        }
+        return $data;
+
     }
-} 
+}
 
 if(!function_exists('makeTheURL')) {
     function makeTheURL(string $canonical = '' , bool $domain = true , bool $suffix = false) {
@@ -431,13 +431,13 @@ if(!function_exists('renderMenuDynamicFrontEndParent')) {
                 $parent .= '---';
             }
 
-            
+
             return $parent;
         }
-       
-      
+
+
     }
-} 
+}
 
 
 if(!function_exists('renderMenuDynamicFrontEndChild')) {
@@ -472,63 +472,63 @@ if(!function_exists('renderMenuDynamicFrontEndChild')) {
                         $child .= ' </a>';
                         $child .= '---';
                     }
-                    
-                if(count($item['children'])) {    
+
+                if(count($item['children'])) {
                     $child .= '<div class="css-fej9ea menu_'.$slug.' w-100 hidden">';
                     $child .= '<div class="" style="margin-bottom:1.5rem">';
                     $child .= renderMenuDynamicFrontEndChild($item['children'], $count + 1);
                     $child .= '</div>';
                     $child .= '</div>';
-                    
-                }   
+
+                }
             }
-          
+
         }
         return $child;
     }
-} 
+}
 
 
 
 if(!function_exists('renderSystemInputText')) {
     function renderSystemInputText(string $name = '' , array $combineArraySystem = []) {
-           return 
+           return
             '
             <div class="col-sm-10">
-                <input 
+                <input
                 type="text"
-                value="'.old($name,!empty($combineArraySystem[$name]) ? $combineArraySystem[$name] : '').'" 
+                value="'.old($name,!empty($combineArraySystem[$name]) ? $combineArraySystem[$name] : '').'"
                 name="config['.$name.']"
                 class="form-control">
-            </div>    
+            </div>
             ';
     }
 }
 
 if(!function_exists('renderSystemInputImages')) {
     function renderSystemInputImages(string $name = '' ,string $placeHoder = '' ,  array $combineArraySystem = []) {
-           return 
+           return
             '
             <div class="col-sm-10 ckfinder_2" data-type="'.$name.'">
-                <input 
+                <input
                 type="text"
-                value="'.old($name,!empty($combineArraySystem[$name]) ? $combineArraySystem[$name] : '').'" 
+                value="'.old($name,!empty($combineArraySystem[$name]) ? $combineArraySystem[$name] : '').'"
                 name="config['.$name.']"
                 placeholder="'.$placeHoder.'"
                 class="form-control upload_url">
-            </div>    
+            </div>
             ';
     }
 }
 if(!function_exists('renderSystemInputTextArea')) {
     function renderSystemInputTextArea(string $name = '',array $combineArraySystem = []) {
-           return 
+           return
             '
             <div class="col-sm-10">
                <textarea name="config['.$name.']" class="form-control">
                 '.old($name , !empty($combineArraySystem[$name]) ? $combineArraySystem[$name] : '').'
                </textarea>
-            </div>    
+            </div>
             ';
     }
 }
@@ -540,9 +540,9 @@ if(!function_exists('renderSystemInputSelect')) {
         $html .= '<select class="select2 form-control" name="config['.$name.']">';
         foreach($data as $key => $val) {
             $html .= '<option '.(!empty($combineArraySystem) &&  +$combineArraySystem[$name] == $key ? 'selected': " " ).'  value="'.$key.'" name="'.$name.'">'.$val.'</option>';
-        }       
-        $html .=  '</select>';  
-        $html .=  '</div>';     
+        }
+        $html .=  '</select>';
+        $html .=  '</div>';
         return $html;
     }
 }
@@ -563,35 +563,35 @@ if(!function_exists('renderDiscountInfomation')) {
           $discounType = $promotion->info['info']['type'] ;
           return '<div>Chiết khấu: <span class="label label-primary">'.$discountValue.$discounType.'</span></div>';
        }
-       else  return '<div> <a href="'.route('private-system.management.promotion.edit',$promotion->id).'" class="text-primary">Xem chi tiết</a> </div>'; 
-       
+       else  return '<div> <a href="'.route('private-system.management.promotion.edit',$promotion->id).'" class="text-primary">Xem chi tiết</a> </div>';
+
     }
 }
 if(!function_exists('renderInfomationPromotion')) {
     function renderInfomationPromotion($promotion) {
        $data = '';
         switch($promotion->promotionMethod) {
-            case 'order_amount_range' : 
+            case 'order_amount_range' :
                 $data = 'Chiết khấu theo tổng giá trị đơn hàng';
                 break;
-            case 'product_and_qualnity' : 
+            case 'product_and_qualnity' :
                 $data = 'Chiết khấu theo từng sản phẩm';
-                break;   
-            case 'product_and_range' : 
+                break;
+            case 'product_and_range' :
                 $data = 'Chiết khấu theo từng số lượng sản phẩm';
-                break; 
-            case 'discount_by_qualnity' : 
+                break;
+            case 'discount_by_qualnity' :
                 $data = 'Giảm giá khi mua sản phẩm';
                 break;
         }
         return '<span>'.$data.'</span>';
-       
+
     }
 }
 
 if(!function_exists('profile')) {
     function profile() {
-       return session()->get('profile'); 
+       return session()->get('profile');
     }
 }
 
@@ -605,7 +605,6 @@ function json_result($result_data, $decode = false)
 }
 
 }
-
 
 if(!function_exists('formatCurrencyVND')) {
     function formatCurrencyVND($value)
@@ -655,8 +654,8 @@ if(!function_exists('numberFormat')) {
             return number_format($number, $decimail, ',', '.');
         return number_format($number, $decimail);
     }
-    
-    
+
+
 }
 
 if(!function_exists('format_money')) {
@@ -664,12 +663,12 @@ if(!function_exists('format_money')) {
     function format_money($number, $decimals = 2)
     {
         $formattedNumber = number_format($number, $decimals, '.', ','); // Sử dụng number_format() để định dạng số tiền
-    
+
         // Thay thế dấu phẩy thành dấu chấm và dấu chấm thành dấu phẩy
         $formattedNumber = str_replace(',', '|', $formattedNumber);
         $formattedNumber = str_replace('.', ',', $formattedNumber);
         $formattedNumber = str_replace('|', '.', $formattedNumber);
-    
+
         return $formattedNumber;
     }
 }
@@ -691,7 +690,7 @@ if(!function_exists('get_datetime')) {
         if (empty($date)) {
             return '';
         }
-    
+
         return date($format, strtotime($date));
     }
 }

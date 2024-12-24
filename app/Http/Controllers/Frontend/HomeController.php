@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Slider;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 use Modules\Products\Entities\ProductCategory;
 use Modules\Products\Entities\Brand;
 use Modules\Products\Entities\Products;
@@ -15,22 +14,22 @@ use Modules\Widget\Entities\Widget;
 
 interface HomeDataControl{
   public function home(Request $request);
-  
+
   public function productCategory(string $slug = '',Request $request);
 
   public function detailProduct(string $url = '',string $slug = '',Request $request);
 }
 
 class HomeController extends Controller implements HomeDataControl
-{  
-  
+{
+
   public function home(Request $request){
     $widgets = Widget::whereNotNull('name')->where('status',1)->get();
     $data_widget = $this->getWidgetData($widgets);
-    $slider = Cache::tag(['slider','brand'])->remember('sliders',\Carbon::now()->addDays(2),function(){
+    $slider = \Cache::tags(['slider','brand'])->remember('sliders',\Carbon::now()->addDays(2),function(){
       return Slider::whereKeyword('slider-home')->first();
     });
-    $brands = Cache::tag(['slider','brands'])->remember('brands',\Carbon::now()->addDays(2),function(){
+    $brands = \Cache::tags(['slider','brands'])->remember('brands',\Carbon::now()->addDays(2),function(){
       return Brand::whereNotNull('image')->with('products')->get();
     });
     // $brands = Brand::whereNotNull('image')->with('products')->get();
@@ -66,7 +65,7 @@ class HomeController extends Controller implements HomeDataControl
   public function detailProduct(string $url = '' ,string $sku = '',Request $request) {
     $product = $this->getProductDetailByRequest($url,$sku);
     if(!$product) {
-       abort(404);  
+       abort(404);
     }
     $category_bread = ProductCategory::ancestorsAndSelf($product->product_category_id,['id','name','url']);
     $related_id =  $category_bread->pluck('id')->toArray();
@@ -74,7 +73,7 @@ class HomeController extends Controller implements HomeDataControl
     $productRelated = $this->getProductByCategory($request,$related_id,[],null);
     return view('Frontend.page.products.product.detail',
       [
-        'product' => $product , 
+        'product' => $product ,
         'childCategory' => $childCategory,
         'productRelated' => $productRelated
       ]

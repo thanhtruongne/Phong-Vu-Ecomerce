@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class OrderSync extends Controller implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-    
+
     public $order;
     public $data;
     /**
@@ -56,7 +56,7 @@ class OrderSync extends Controller implements ShouldQueue
                     }
                     $check->decrement($count,$cart->qty);
                 }
-               
+
                 $item[] = [
                     'order_id' => $id,
                     'product_id' => $cart->id,
@@ -77,12 +77,12 @@ class OrderSync extends Controller implements ShouldQueue
             \Log::error('Có lỗi tạo order item Mã: '.$this->order->code);
             return response()->json(['message' => $th->getMessage(), 'status' => StatusReponse::ERROR]);
         }
-      
-        
+
+
     }
 
     // private functio
-      
+
 
 
     public function delay()

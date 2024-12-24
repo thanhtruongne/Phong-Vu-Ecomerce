@@ -6,14 +6,13 @@
         <div class="css-gjf6g1">
            <div class="d-flex" style="flex-wrap: wrap">
             {{-- Info --}}
+            @include('Frontend.page.Accounts.components.sidebar')
 
-            @include('Frontend.page.Accounts.components.sidebar',['user' =>$profile])
-
-            @include('Frontend.page.Accounts.components.userInfo',['user' => $profile])
+            @include('Frontend.page.Accounts.components.userInfo')
 
 
-            </div>    
+            </div>
         </div>
     </div>
-  
+
 @endsection

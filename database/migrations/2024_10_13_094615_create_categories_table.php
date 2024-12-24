@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('icon')->nullable();
             $table->string('image')->nullable();
+            $table->string('url')->nullable();
+            $table->string('ikey')->nullable();
             $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
