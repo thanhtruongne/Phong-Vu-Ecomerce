@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\MainUserAddress;
 
 class User extends Authenticatable
 {
@@ -33,10 +33,10 @@ class User extends Authenticatable
         'gender',
         'signing_create_account',
         'content',
-        'province_code',
-        'district_code',
-        'ward_code',
-        'address',
+        // 'province_code',
+        // 'district_code',
+        // 'ward_code',
+        // 'address',
         'phone',
         'avatar',
         'status',
@@ -72,16 +72,20 @@ class User extends Authenticatable
 
 
 
-    public function province() {
-        return $this->belongsTo(Province::class,'province_id','id');
-      }
+    // public function province() {
+    //     return $this->belongsTo(Province::class,'province_code','code');
+    //   }
 
-    public function district() {
-    return $this->belongsTo(District::class,'district_id','id');
-    }
+    // public function district() {
+    //     return $this->belongsTo(District::class,'district_code','code');
+    // }
 
-    public function ward() {
-    return $this->belongsTo(Ward::class,'ward_id','id');
+    // public function ward() {
+    //     return $this->belongsTo(Ward::class,'ward_code','code');
+    // }
+
+    public function user_session_address(){
+        return $this->hasMany(MainUserAddress::class,'user_id','id');
     }
 
     public function isAdmin(){

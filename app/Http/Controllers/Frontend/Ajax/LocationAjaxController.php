@@ -53,7 +53,7 @@ class LocationAjaxController extends Controller
     }
 
     public function renderHTML($data,$title = 'Chọn quận / huyện') {
-        $html = '<option selected value="none">'.$title.'</option>';
+        $html = '<option value="none">'.$title.'</option>';
         foreach($data as $item) {
             $html .= '<option value="'.$item->code.'">'.$item->full_name.'</option>';
         }

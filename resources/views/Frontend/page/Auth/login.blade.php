@@ -97,7 +97,7 @@
 
         $('#btn-login-google').on('click',function(){
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: '{{route('fe.login-sign-callback-google')}}',
                 data: {},
                 dataType: 'json',

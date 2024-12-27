@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      * Register any application services.
      */
     public function register(): void
-    { 
+    {
         // dùng debug các raw sql file query builder
         \Illuminate\Database\Query\Builder::macro('toRawSql', function () {
             return array_reduce($this->getBindings(), function ($sql, $binding) {
@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-   
+
         \Schema::defaultStringLength(191);
         if (explode(':', config('app.url'))[0] == 'https') {
             $this->app['request']->server->set('HTTPS', 'on');
@@ -47,6 +47,7 @@ class AppServiceProvider extends ServiceProvider
         \Validator::extend('string_vertify',function($attribute,$value) {
             return $value === filter_var($value,FILTER_SANITIZE_STRING);
         });
+
 
         //lưu log các câu truy vấn và thời gian thực thi
         if (

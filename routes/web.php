@@ -35,8 +35,8 @@ Route::get('/login',[AuthController::class,'loginForm'])->name('login');
 Route::post('/login',[AuthController::class,'login'])->name('store.login');
 
 
-Route::post('sign-google-login',[AuthController::class,'callBackGoogle'])->name('fe.login-sign-callback-google');
-Route::get('/auth/callback_google',[AuthController::class,'handleLoginCallbackGoogle'])->name('fe.handle-callback-google');
+Route::get('sign-google-login',[AuthController::class,'callBackGoogle'])->name('fe.login-sign-callback-google');
+Route::get('google/callback',[AuthController::class,'handleLoginCallbackGoogle'])->name('fe.handle-callback-google');
 
 
 
@@ -45,18 +45,16 @@ Route::middleware(['auth'])->group(function() {
     //account
     Route::get('/account',[AccountController::class,'account'])->name('account');
     Route::get('/account/infomation',[AccountController::class,'accountInfo'])->name('account.infomation');
-    Route::post('/account/update/{id}',[AccountController::class,'update'])->name('account.update');
+    Route::get('/account/address',[AccountController::class,'accountAddress'])->name('account.address-main');
     Route::get('/account/order',[AccountController::class,'accountOrder'])->name('account.order');
+    Route::post('/account/update/{id}',[AccountController::class,'update'])->name('account.update');
     Route::get('/account/order/{code}',[AccountController::class,'detailOrder'])->name('account.order.detail');
+    Route::post('/account/save/address',[AccountController::class,'saveAddressUserMain'])->name('account.save-main-address-user');
+    Route::post('/account/address/remove',[AccountController::class,'removeAddressMain'])->name('account.remove-main-address-user');
+    Route::get('/account/address/form',[AccountController::class,'formAddressMain'])->name('account.form-main-address-user');
 });
 
-// Route::get('/',[HomeController::class,'home'])->name('fe.home');
-
 // Route::get('/ghtk',[ShippingGHTK::class,'calcShippingByGhtk'])->name('ghtk');
-//guest
-Route::get('/guest/order',[AccountController::class,'guestOrder'])->name('guest.order');
-Route::get('/guest/order/{code}',[AccountController::class,'guestOrderDetail'])->name('guest.order.detail');
-
 
 //Cart
 Route::get('/cart',[CartController::class,'index'])->name('cart');
@@ -75,7 +73,6 @@ Route::get('/checkout',[CartController::class,'checkout'])->name('checkout');
 // // #payment
 // Route::get('/confirm-payment/{code}',[FrontendCartController::class,'confirmPayment'])->name('order.confirm.payment');
 // Route::post('/store/confirm-order/{code}',[FrontendCartController::class,'StoreConfirmOrder'])->name('order.store.confirm.payment');
-
 
 
 //payment
@@ -105,4 +102,5 @@ Route::get('/{url}--{slug}',[HomeController::class,'detailProduct'])
 Route::get('/c/{slug}',[HomeController::class,'productCategory'])->name('home.category')->where('canonical', '[a-zA-Z0-9-]+');
 Route::get('/get-product-by-category-filter',[ProductAjaxController::class,'getProductByCategoryParams'])->name('fe.product.category.filter');
 Route::get('/ajax/load-variant',[ProductAjaxController::class,'getLoadVariantData'])->name('fe.product.load.variant');
+
 

@@ -429,12 +429,6 @@ function SubmitSendData(option) {
     triggerSelect();
 }
 
-function loadProvince()  {
-    if(province_id != '') {
-        $('.provinces').val(province_id).trigger("change");
-    }
-}
-
 function  RenderPriceToTal(){
     let price_orginal = Number($('#price_yet_cart').text().trim().slice(0,-1).replaceAll('.', ''));
     if($('.shipping_attr').length) {
@@ -521,29 +515,33 @@ function AjaxUsingGetMenuAttribute(option , target, subtring = null)  {
 
 
 //select2
-$('.load-provinces').select2({
-    allowClear: true,
-    dropdownAutoWidth : true,
-    width: '100%',
-    placeholder: function(params) {
-        return {
-            id: null,
-            text: params.placeholder,
+
+function load_provinces(){
+    $('.load-provinces').select2({
+        allowClear: true,
+        dropdownAutoWidth : true,
+        width: '100%',
+        placeholder: function(params) {
+            return {
+                id: null,
+                text: params.placeholder,
+            }
+        },
+        ajax: {
+            method: 'GET',
+            url: Server_Frontend +  "ajax/provinces",
+            dataType: 'json',
+            data: function (params) {
+                var query = {
+                    search: $.trim(params.term),
+                    page: params.page,
+                };
+                return query;
+            }
         }
-    },
-    ajax: {
-        method: 'GET',
-        url: Server_Frontend +  "ajax/provinces",
-        dataType: 'json',
-        data: function (params) {
-            var query = {
-                search: $.trim(params.term),
-                page: params.page,
-            };
-            return query;
-        }
-    }
-})
+    })
+}
+load_provinces();
 function triggerSelect(){
     $('.select_district').select2({
         allowClear: true,

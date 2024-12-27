@@ -34,8 +34,8 @@ class Authenticate
         if (\Auth::check()){
             $userId = \auth()->id();
             if (!session()->get('profile')) {
-                // $profile = User::findOrFail($userId);
-                session(['profile' => auth()->user()]);
+                $profile = User::findOrFail($userId);
+                session(['profile' => $profile]);
                 session()->save();
             }
 

@@ -128,7 +128,7 @@ class AuthController extends Controller
                 return redirect(route('login'));
             }
 
-            if(auth()->login($user,true)){
+                \Auth::login($user);
                 $agent = new Agent();
                 LoginHistory::setLoginHistoryNotUseShouldQueue($user,request()->ip());
                 Visits::saveVisits($user->id,$agent,\Request::userAgent());
@@ -145,11 +145,12 @@ class AuthController extends Controller
                     session()->forget('target_url');
                     return redirect($targetUrl);
                 }
-                return redirect()->to('/');
+                return redirect()->route('home');
 
-            }
+
         } catch (\Exception $exception) {
-            return redirect(route('login'));
+            \Log::error('Google Login Error: ' . $exception->getMessage());
+            return redirect()->route('home');
         }
     }
 }
