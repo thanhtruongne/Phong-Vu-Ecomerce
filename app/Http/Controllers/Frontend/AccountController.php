@@ -58,7 +58,7 @@ class AccountController extends Controller implements InterfaceAccountController
 
     public function saveAddressUserMain(Request $request){
          $this->validateRequest([
-            'user_id' => 'required',
+            // 'user_id' => 'required',
             'receiver_name' => 'required|string_vertify',
             'receiver_email' => 'required|email|string_vertify',
             'receiver_phone' => ['required','numeric',new CustomValidatePhone],
@@ -70,7 +70,7 @@ class AccountController extends Controller implements InterfaceAccountController
 
         \DB::beginTransaction();
         try {
-            $user = User::findOrFail($request->user_id);
+            $user = User::findOrFail(profile()->id);
             $user->loadMissing('user_session_address');
 
             if(isset($user->user_session_address) && !empty($user->user_session_address) && $user->user_session_address->count() >= $this->temp_count_address) {

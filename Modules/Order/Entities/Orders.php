@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Orders extends Model
 {
-    use Cachable;   
+    use Cachable;
     protected $table = 'orders';
     protected $primaryKey = 'id';
 
@@ -25,16 +25,17 @@ class Orders extends Model
         'status',
         'delivery_company',
         'delivery_code',
-        'receiver_name',
-        'receiver_phone',
-        'receiver_province',
-        'receiver_district',
-        'receiver_ward',
-        'receiver_address',
+        // 'receiver_name',
+        // 'receiver_phone',
+        // 'receiver_province',
+        // 'receiver_district',
+        // 'receiver_ward',
+        // 'receiver_address',
+        'address_id',
         'confirm_status',
         'delete_status',
         'note',
-        'receiver_email',
+        // 'receiver_email',
         'payment_time',
         'delivery_time',
     ];
@@ -60,13 +61,14 @@ class Orders extends Model
         return [
             'total_amount' => 'Tổng số tiền',
             'freight_amount' => "Số tiền vận chuyển",
-            'receiver_name' => 'Tên người nhận',
-            'receiver_province' => 'Thành phồ / Tỉnh',
-            'receiver_district' => 'Quận / Huyện',
-            'receiver_ward' => 'Phường / Xã',
-            'receiver_phone' => 'Sớ điện thoại',
-            'receiver_address' => 'Địa chỉ người nhận',
-            'receiver_email' => 'Email người nhận',
+            // 'receiver_name' => 'Tên người nhận',
+            // 'receiver_province' => 'Thành phồ / Tỉnh',
+            // 'receiver_district' => 'Quận / Huyện',
+            // 'receiver_ward' => 'Phường / Xã',
+            // 'receiver_phone' => 'Sớ điện thoại',
+            // 'receiver_address' => 'Địa chỉ người nhận',
+            // 'receiver_email' => 'Email người nhận',
+            'id_address_main' => 'Thông tin nhận hàng',
             'method_payment' => 'Phương thức thanh toán',
         ];
     }

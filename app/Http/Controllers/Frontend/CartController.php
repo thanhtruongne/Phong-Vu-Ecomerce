@@ -10,6 +10,7 @@ use App\Http\Requests\Frontend\ConfirmOrder;
 use App\Http\Requests\OrderStore;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;;
+use App\Models\MainUserAddress;
 
 interface InternfaceCartController {
    public function index(Request $request);
@@ -46,12 +47,12 @@ class CartController extends Controller implements InternfaceCartController
    public function checkout() {
 
       $carts = Cart::instance('cart')->content();
-      if(isset($carts) &&  count($carts) == 0){
+      if((isset($carts) && count($carts) == 0) || !auth()->check()){
          abort(404);
       }
       $total = $this->totalCart($carts);
-      // $provinces = json_decode(Redis::get('provinces'),true);
-      return view('Frontend.page.Payments.checkout',compact('carts','total'));
+      $user_address = MainUserAddress::where('user_id',profile()->id)->orderBy('default','DESC')->with(['province','ward','district'])->get();
+      return view('Frontend.page.Payments.checkout',compact('carts','total','user_address'));
    }
 
 

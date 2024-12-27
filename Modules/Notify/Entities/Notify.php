@@ -1,8 +1,6 @@
 <?php
 
 namespace Modules\Notify\Entities;
-
-
 use GeneaLabs\LaravelModelCaching\Traits\Cachable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,11 +12,14 @@ class Notify extends Model
     protected $table_name = "Thông báo user";
     protected $fillable = [
        'user_id',
-       'user_code',
-       'user_name',
-       'number_hits',
-       'ip_address',
-       'user_type',
+       'order_id',
+       'subject',
+       'content',
+       'url',
+       'created_by',
+       'viewed',
+       'error',
+       'status',
     ];
 
     public function user() {

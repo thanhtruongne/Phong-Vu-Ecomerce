@@ -269,15 +269,15 @@
     })
 
 
-        let clear = null;
-        $('input[name="receiver_address"]').on('input',function(){
-            if(clear) clearTimeout(clear);
+    let clear = null;
+    $('input[name="receiver_address"]').on('input',function(){
+        if(clear) clearTimeout(clear);
 
-            clear = setTimeout(() => {
-                return chooseShippingGHTK();
-            }, 1500);
+        clear = setTimeout(() => {
+            return chooseShippingGHTK();
+        }, 1500);
 
-        })
+    })
 
     function chooseShippingGHTK() {
     if($('.provinces').val() && $('.districts').val() && $('input[name="receiver_address"]').val()) {
@@ -294,7 +294,7 @@
           beforeSend: function() {
             // setting a timeout
             $('.shipping_price').html('<i class="fa fa-spinner fa-spin"></i>');
-        },
+          },
           success : function(data) {
 
               if(data.success && data.fee?.delivery != false) {

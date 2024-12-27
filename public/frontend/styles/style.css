@@ -2113,6 +2113,13 @@ input[type="range"]::-webkit-slider-thumb {
     background: white;
     border-radius: 0.5rem;
 }
+.css-17ajfcv.teko-col-6 {
+    display: block;
+    flex: 0 0 50%;
+    max-width: 50%;
+}
+
+
 .css-17ajfcv {
     border-style: none;
     border-width: 1px;
@@ -2473,17 +2480,17 @@ input[type="range"]::-webkit-slider-thumb {
     transition: color 0.3s ease 0s;
     min-height: 16px;
 }
-.css-18wywdr {
+.render_active {
     position: absolute;
     top: 0px;
-    right: 8px;
+    right: 0px;
     width: 0px;
     height: 0px;
     border-style: solid;
     border-width: 0px 36px 36px 0px;
     border-color: transparent rgb(20, 53, 195) transparent transparent;
 }
-.css-64rk53 {
+.none_active_address {
     border-radius: 4px;
     display: inline-block;
     user-select: none;
@@ -2495,7 +2502,27 @@ input[type="range"]::-webkit-slider-thumb {
     cursor: pointer;
     width: 100%;
 }
-.css-1014eaz {
+.fill_address_checkout {
+    opacity: 1;
+    height: 2.5rem;
+    padding: 0rem 1.25rem;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    border: 1px solid rgb(228, 229, 240);
+    position: relative;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    outline: none;
+    min-width: 2.5rem;
+    width: 100%;
+    cursor: pointer;
+    transition-duration: 80ms;
+    transition-property: background-color;
+}
+.active_border_address{
     border-radius: 4px;
     display: inline-block;
     user-select: none;

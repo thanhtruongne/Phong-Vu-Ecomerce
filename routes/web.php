@@ -65,7 +65,7 @@ Route::post('/ajax/updateQuantityCart',[CartAjaxController::class,'updateCartQty
 
 //checkout
 Route::get('/checkout',[CartController::class,'checkout'])->name('checkout');
-// Route::post('/store/order',[CartController::class,'StoreOrder'])->name('order.store');
+Route::post('/store/order',[CartController::class,'StoreOrder'])->name('order.store');
 
 
 
