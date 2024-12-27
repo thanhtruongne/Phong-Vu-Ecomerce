@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('model_id');
             $table->string('short_code')->nullable();
             $table->string('image');
+            $table->tinyInteger('status')->nullable();
             $table->timestamps();
         });
     }

@@ -3,7 +3,7 @@
         const Server_Frontend = '{{env('APP_URL_DEFAULT')}}';
 </script>
 
-<script src="{{ asset('frontend/boosttrap/js/bootstrap.min.js') }}"></script>
+{{-- <script src="{{ asset('frontend/boosttrap/js/bootstrap.min.js') }}"></script> --}}
 <script src="{{ asset('frontend/js/plugins/jquery.js') }}"></script>
 <script src="{{ asset('frontend/boosttrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{asset('frontend/js/plugins/popper.min.js')}}" ></script>
@@ -35,7 +35,7 @@
             toggle: false
         });
         }
-       
+
     })
 </script>
 
@@ -48,7 +48,7 @@
         autoplay: 2000
     })
     glide.mount();
-  
+
     var glide_widget =  new Glide('.glide_widget',{
         type: 'carousel',
         startAt: 0,

@@ -14,7 +14,7 @@ interface InterfaceCart {
     public function updateCartQty(Request $request);
 }
 class CartAjaxController extends Controller implements InterfaceCart
-{  
+{
     public function addToCart(Request $request) {
         try {
             $this->validateRequest([
@@ -39,22 +39,12 @@ class CartAjaxController extends Controller implements InterfaceCart
                     'code' => $request->input('sku_code'),
                 ]
             ];
-            $id_check = $request->input('sku_id') ? $request->input('sku_id') : $request->input('id');
-            $item_check = $id_check.'_'.$request->input('sku_code');
-            if(!session()->has('cart_check')) {
-               session()->put('cart_check',[$item_check]);
-            } 
-            else {
-              $attempt =  session()->get('cart_check');
-              array_push($attempt, $item_check);
-              session()->put('cart_check',$attempt);
-            }
-            Cart::instance('cart')->add($data);
-            return response()->json(['message' => 'Thêm giỏ hàng thành công','status' => StatusReponse::SUCCESS , 'count' => Cart::instance('cart')->count()]);
+            $cart = Cart::instance('cart')->add($data);
+            return response()->json(['message' => 'Thêm giỏ hàng thành công' ,'rowID' => $cart->rowId,'status' => StatusReponse::SUCCESS , 'count' => count(Cart::instance('cart')->content())]);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage(),'status' => StatusReponse::ERROR]);
+            return response()->json(['message' => $th->getMessage(),'line' => $th->getLine() ,'status' => StatusReponse::ERROR]);
         }
-       
+
     }
 
     public function removeItemCart(string $id ) {
@@ -70,7 +60,7 @@ class CartAjaxController extends Controller implements InterfaceCart
         Arr::forget($attempt,$key_code);
         session()->put('cart_check',$attempt);
 
-        
+
         Cart::instance('cart')->remove($id);
 
         if(Cart::content()->count() == 0) {
@@ -83,7 +73,7 @@ class CartAjaxController extends Controller implements InterfaceCart
             'total' =>  $this->totalCart(Cart::instance('cart')->content()),
             'single_remove' => 1
         ]);
-         
+
     }
 
     public function clearAllCart() {
@@ -104,7 +94,7 @@ class CartAjaxController extends Controller implements InterfaceCart
             $item = Cart::instance('cart')->update($request->rowId , ['qty' => $request->quantity]);
             $price = $item->options->price_after_discount ? $item->options->price_after_discount * $item->qty : $item->price * $item->qty;
             $total = $this->totalCart(Cart::instance('cart')->content());
-            
+
             return response()->json([
              'message' => 'Thành công',
              'status' => StatusReponse::SUCCESS ,
@@ -116,6 +106,6 @@ class CartAjaxController extends Controller implements InterfaceCart
         }
     }
 
- 
-  
+
+
 }

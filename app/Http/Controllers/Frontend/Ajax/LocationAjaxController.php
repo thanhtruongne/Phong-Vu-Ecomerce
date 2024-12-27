@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Cache;
 
 class LocationAjaxController extends Controller
 {
-   
+
     public function getProvinces(Request $request) {
         $search = $request->search;
         $query = Province::query();
@@ -25,25 +25,35 @@ class LocationAjaxController extends Controller
             $data['pagination'] = ['more' => true];
         }
         $data['results'] = $result->getCollection();
-        return json_result($data); 
+        return json_result($data);
     }
 
     public function getLocation(Request $request) {
-        $html = '' ; 
+        $data = '';
         if($request->target == 'districts') {
-            $districts = District::where('province_code',$request->data['location_id'])->get(['code','full_name']);
-            $html = $this->renderHTML($districts);
+            $key = 'district_location_'.$request->data['location_id'];
+            $data = \Cache::tags('location_get')->rememberForever($key,function() use($request){
+                $districts = District::where('province_code',$request->data['location_id'])->get(['code','full_name']);
+                $html = $this->renderHTML($districts);
+                return $html;
+            });
+
+
         }
         else if($request->target == 'wards') {
-            $wards = Ward::where('district_code',$request->data['location_id'])->get(['code','full_name']);
-            $html = $this->renderHTML($wards,'Chọn huyện / xã');
+            $key = 'ward_district_location_'.$request->data['location_id'];
+            $data = \Cache::tags('location_get')->rememberForever($key,function() use($request){
+                $wards = Ward::where('district_code',$request->data['location_id'])->get(['code','full_name']);
+                $html = $this->renderHTML($wards,'Chọn huyện / xã');
+                return $html;
+            });
         }
-       
-       return response()->json(['data' => $html]);  
+
+       return response()->json(['data' => $data]);
     }
 
     public function renderHTML($data,$title = 'Chọn quận / huyện') {
-        $html = '<option selected value="none">'.$title.'</option>';
+        $html = '<option value="none">'.$title.'</option>';
         foreach($data as $item) {
             $html .= '<option value="'.$item->code.'">'.$item->full_name.'</option>';
         }

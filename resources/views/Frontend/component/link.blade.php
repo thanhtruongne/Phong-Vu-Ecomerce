@@ -1,13 +1,8 @@
-@php
-    // $system = json_decode($system,true) ?? [];
-    $system = [];
-@endphp
-<meta name="copyright" content="{{ $system['homepage_index_Coypyright'] ?? '' }}"/>
+<meta name="copyright" content=""/>
 <meta http-equiv="refresh" content="1800">
-<link rel="icon" type="image/png" href="{{ $system['homepage_index_Logo'] ?? '' }}" sizes="30x30">
-{{-- Thẻ chỉ mục goole tìm ra kết quả trên thanh tìm kiếm --}}
+<link rel="icon" type="image/png" href="" sizes="30x30">
 <meta name="robots" content="index,follow"/>
-<meta name="author" content="{{ $system['homepage_index_organization'] ?? '' }}">
+<meta name="author" content="">
 {{-- GOOGLE --}}
 <meta property="og:locale" content="vi_VN" />
 {{-- <link rel="stylesheet" href="{{asset('backend2/css/adminlte.css')}}"> --}}

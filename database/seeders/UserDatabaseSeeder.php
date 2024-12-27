@@ -48,5 +48,17 @@ class UserDatabaseSeeder extends Seeder
         $admin->save();
 
 
+        $user = User::firstOrNew(['username' => 'guest123'],[
+            'username' => 'guest',
+            'password' => \Hash::make('123123'),
+            'firstname' => 'người dùng',
+            'lastname' => 'guest',
+            'email' => 'ohmymind@gmail.com',
+            'status'=> 1,
+            'dob' => date('Y-m-d 00:00:00'),
+            'gender'=> 1,
+        ]);
+        $user->save();
+
     }
 }

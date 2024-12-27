@@ -22,7 +22,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         // \App\Http\Middleware\AutoLogout::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
-        // \App\Http\Middleware\XssInput::class,
+        \App\Http\Middleware\XssInput::class,
     ];
 
     /**
@@ -47,7 +47,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-          
+
         ],
     ];
 
@@ -73,6 +73,7 @@ class Kernel extends HttpKernel
         'doNotCacheResponse' => \Spatie\ResponseCache\Middlewares\DoNotCacheResponse::class,
         'cacheResponse' => \Spatie\ResponseCache\Middlewares\CacheResponse::class,
         'isAdmin' => \App\Http\Middleware\AuthorizeAdmin::class,
+        'isNotAdmin' => \App\Http\Middleware\AuthorizeNotAdmin::class,
         'autoLogout' => \App\Http\Middleware\AutoLogout::class
     ];
 }

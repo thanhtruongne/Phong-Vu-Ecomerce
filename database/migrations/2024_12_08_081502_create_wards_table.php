@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name_en', 100)->nullable(); // Tên phường/xã (tiếng Anh)
             $table->string('full_name', 200); // Tên đầy đủ (tiếng Việt)
             $table->string('full_name_en', 200)->nullable(); // Tên đầy đủ (tiếng Anh)
-            $table->string('code_name', 100)->unique(); // Tên mã hóa
+            $table->string('code_name', 100)->nullable(); // Tên mã hóa
             $table->string('district_code', 10); // Mã quận/huyện liên kết
             $table->unsignedBigInteger('administrative_unit_id'); // ID đơn vị hành chính
         });

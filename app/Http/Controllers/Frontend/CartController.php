@@ -19,10 +19,10 @@ interface InternfaceCartController {
    public function StoreOrder(OrderStore $request);
 }
 class CartController extends Controller implements InternfaceCartController
-{  
+{
 
    public function index(Request $request) {
-      $carts = Cart::instance('cart')->content();    
+      $carts = Cart::instance('cart')->content();
       $total = $this->totalCart($carts);
       // dd($carts);
       return view('Frontend.page.Cart.cart',compact( 'carts','total'));
@@ -41,16 +41,17 @@ class CartController extends Controller implements InternfaceCartController
       // $Seo = $this->Seo;
       return view('Frontend.page.Payments.confirmOrder',compact('order','config','Seo'));
    }
-  
+
 
    public function checkout() {
-      $carts = Cart::instance('cart')->content();   
+
+      $carts = Cart::instance('cart')->content();
       if(isset($carts) &&  count($carts) == 0){
          abort(404);
       }
       $total = $this->totalCart($carts);
       // $provinces = json_decode(Redis::get('provinces'),true);
-      return view('Frontend.page.Payments.checkout',compact('carts','total')); 
+      return view('Frontend.page.Payments.checkout',compact('carts','total'));
    }
 
 
@@ -59,13 +60,13 @@ class CartController extends Controller implements InternfaceCartController
       //    Cookie::queue(Cookie::forget('guest_cookie'));
       //    Cookie::queue(Cookie::make('guest_cookie',time().'_'.$request->input('email'),60 * 24 * 7));
       // }
-     
+
       // $order = $this->cartService->createOrder($request);
       // Cart::instance('cart')->destroy();
       // if(!empty($order) && !is_null($order)) {
       //    // handle phần payment nếu success thì redirect thẳng vào detail order;
-      //    $response =  $this->orderPaymentCase($order);   
-         
+      //    $response =  $this->orderPaymentCase($order);
+
       //    if($response['code'] == '00'){
       //       return redirect()->away($response['data']);
       //    }
@@ -83,17 +84,17 @@ class CartController extends Controller implements InternfaceCartController
       //       'code','=',$code
       //    ]],['method' => $request->input('method')]);
       //     //override method order để switch dc case;
-      //    $order->method = $request->input('method');   
-      // } 
-      //  //tránh trường hợp đơn hàng tồn tại    
+      //    $order->method = $request->input('method');
+      // }
+      //  //tránh trường hợp đơn hàng tồn tại
       // // $order->code = "".time()  + rand(200,50000)."";
       // if(!empty($order) && !is_null($order)) {
       //    // handle phần payment nếu success thì redirect thẳng vào detail order;
-      //    $response =  $this->orderPaymentCase($order);   
+      //    $response =  $this->orderPaymentCase($order);
       //    if(empty($response['code'])) {
       //       redirect()->route('order.confirm.payment',$order->code)->with('error','Giao dịch thất bại');
       //    }
-         
+
       //    else if($response['code'] == '00'){
       //       return redirect()->away($response['data']);
       //    }
@@ -111,11 +112,11 @@ class CartController extends Controller implements InternfaceCartController
           case 'vnpay' :
                $response =  $this->vnpay($order);
                 break;
-          case 'momo' : 
+          case 'momo' :
                 $response =  $this->momo($order);
               break;
           case 'cod' :
-              break;       
+              break;
       }
 
       return $response;

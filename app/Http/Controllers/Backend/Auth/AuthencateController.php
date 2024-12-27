@@ -17,21 +17,16 @@ use Jenssegers\Agent\Agent;
 
 class AuthencateController extends Controller
 {
-    public function __construct()
-    {
-    }
-
     public function index(Request $request){
-       
+
         if(Auth::check())  {
             if(Auth::user()->isAdmin())
                 return redirect()->back();
-            
-            else abort(404); 
+            else abort(404);
         }
 
         return view('backends.pages.auth.login');
-    } 
+    }
 
     public function login(Request $request) {
         $this->validateRequest([
@@ -40,7 +35,7 @@ class AuthencateController extends Controller
         ],$request,User::getAttributeName());
         $username = $request->input('username');
         $password = $request->input('password');
-        $user = User::whereUsername($username)->first(['id','username','role','password','email','status']);
+        $user = User::whereUsername($username)->first(['id','username','role','email','status']);
 
         if($user){
            if($user->status != 1){
@@ -56,7 +51,7 @@ class AuthencateController extends Controller
                 //lưu lịch sử đăng nhập
                 LoginHistory::setLoginHistoryNotUseShouldQueue($user,request()->ip());
                 //lưu thông tin đăng nhập
-            
+
                 Visits::saveVisits($user->id,$agent,\Request::userAgent());
                 //lưu thời gian hoạt động
                 UserActivities::createUserActivityDuration($user->id,session()->getId());
@@ -66,14 +61,14 @@ class AuthencateController extends Controller
                     $user->last_login = \Carbon::now();
                     $user->save();
                 }
-            
+
                 // trở lại url khi thao tác bị hết hạn 401
                 if (session()->has('target_url')) {
                     $targetUrl = session()->get('target_url');
                     session()->forget('target_url');
                     return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => $targetUrl]);
                 }
-                
+
                 return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => route('private-system.dashboard')]);
             } else {
                 return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
@@ -81,7 +76,7 @@ class AuthencateController extends Controller
         }
         else {
             return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
-        } 
+        }
     }
     public function logout(Request $request)
     {

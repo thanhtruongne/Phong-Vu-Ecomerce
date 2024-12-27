@@ -27,6 +27,51 @@ header .promotion_media_header {
     height: 42px;
     background-color: #1435c3;
 }
+.css-8mjjgr {
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+    margin-top: 0.75rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: rgb(255, 255, 255);
+    position: relative;
+}
+.css-1qrgscw.teko-row-space-between {
+    justify-content: space-between;
+}
+
+.css-1qrgscw.teko-row {
+    display: flex;
+    flex-flow: wrap;
+}
+.css-1qrgscw {
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+}
+.css-125hckg {
+    opacity: 1;
+    height: 2.5rem;
+    padding: 0rem 1.25rem;
+    border-radius: 0.25rem;
+    background-color: rgb(255, 255, 255);
+    border: 1px solid rgb(20, 53, 195);
+    position: relative;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    outline: none;
+    min-width: 2.5rem;
+    color: rgb(20, 53, 195);
+    cursor: pointer;
+    transition-duration: 80ms;
+    transition-property: background-color;
+}
 span.select2-selection__rendered {
     padding-top: 4px !important;
 }
@@ -382,7 +427,7 @@ header .search-icon  {
     max-width: unset;
     min-width: unset;
     transition: color 0.3s ease 0s;
-    
+
 }
 
 .css-hkiax3 {
@@ -940,13 +985,13 @@ header .search-icon  {
 .dropbtn {
     display: flex; justify-content: center; align-items: center; gap: 0.5rem; min-width: 90px; font-size: 13px; position: relative; cursor: pointer; font-weight: 500; color: #82869E; width: 130px; height: 45px;
   }
-  
+
   /* The container <div> - needed to position the dropdown content */
   .dropdown {
     position: relative;
     display: inline-block;
   }
-  
+
   /* Dropdown Content (Hidden by Default) */
   .dropdown-content {
     display: none;
@@ -957,12 +1002,12 @@ header .search-icon  {
     opacity: 1;
     padding: 4px;
     border-radius: 4px;
-    transition: visibility 0.3s ease 0s;   
+    transition: visibility 0.3s ease 0s;
     background-color: #fff;
     left: -52px;
     z-index: 990999999;
   }
-  
+
   /* Links inside the dropdown */
   .dropdown-content a {
     color: black;
@@ -970,10 +1015,10 @@ header .search-icon  {
     text-decoration: none;
     display: block;
   }
-  
+
   /* Change color of dropdown links on hover */
   .dropdown-content a:hover {background-color: #ddd;}
-  
+
   /* Show the dropdown menu on hover */
   .dropdown:hover .dropdown-content {display: block;}
 
@@ -1220,6 +1265,27 @@ header .search-icon  {
     position: relative;
     padding: 1rem;
 }
+.css-1wblz1b {
+    opacity: 1;
+    height: 2rem;
+    margin-left: 0.5rem;
+    padding: 0rem 1.25rem;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    position: relative;
+    display: flex
+;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    outline: none;
+    min-width: 2rem;
+    cursor: pointer;
+    transition-duration: 80ms;
+    transition-property: background-color;
+    border: 1.5px solid rgb(188, 191, 214);
+}
 .css_hover:hover {
     color: #0d6efd !important;
     font-weight: 700;
@@ -1312,116 +1378,116 @@ header .search-icon  {
     align-items: center;
     border-color: rgb(224, 224, 224);
 }
-.price-input-container { 
-    width: 100%; 
-} 
-  
-.price-input .price-field { 
-    display: flex; 
-    margin-bottom: 22px; 
-} 
-  
-.price-field span { 
-    margin-right: 10px; 
-    margin-top: 6px; 
-    font-size: 17px; 
-} 
-  
-.price-field input { 
-    flex: 1; 
-    height: 35px; 
-    font-size: 15px; 
-    font-family: "DM Sans", sans-serif; 
-    border-radius: 9px; 
-    text-align: center; 
-    border: 0px; 
-    background: #e4e4e4; 
-} 
-  
-.price-input { 
-    width: 100%; 
-    font-size: 19px; 
-    color: #555; 
-} 
-  
+.price-input-container {
+    width: 100%;
+}
+
+.price-input .price-field {
+    display: flex;
+    margin-bottom: 22px;
+}
+
+.price-field span {
+    margin-right: 10px;
+    margin-top: 6px;
+    font-size: 17px;
+}
+
+.price-field input {
+    flex: 1;
+    height: 35px;
+    font-size: 15px;
+    font-family: "DM Sans", sans-serif;
+    border-radius: 9px;
+    text-align: center;
+    border: 0px;
+    background: #e4e4e4;
+}
+
+.price-input {
+    width: 100%;
+    font-size: 19px;
+    color: #555;
+}
+
 /* Remove Arrows/Spinners */
-input::-webkit-outer-spin-button, 
-input::-webkit-inner-spin-button { 
-    -webkit-appearance: none; 
-    margin: 0; 
-} 
-  
-.slider-container { 
-    width: 100%; 
-} 
-  
-.slider-container { 
-    height: 6px; 
-    position: relative; 
-    background: #e4e4e4; 
-    border-radius: 5px; 
-} 
-  
-.slider-container .price-slider { 
-    height: 100%; 
-    left: 25%; 
-    right: 15%; 
-    position: absolute; 
-    border-radius: 5px; 
-    background: #01940b; 
-} 
-  
-.range-input { 
-    position: relative; 
-} 
-  
-.range-input input { 
-    position: absolute; 
-    width: 100%; 
-    height: 5px; 
-    background: none; 
-    top: -5px; 
-    pointer-events: none; 
-    cursor: pointer; 
-    -webkit-appearance: none; 
-} 
-  
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.slider-container {
+    width: 100%;
+}
+
+.slider-container {
+    height: 6px;
+    position: relative;
+    background: #e4e4e4;
+    border-radius: 5px;
+}
+
+.slider-container .price-slider {
+    height: 100%;
+    left: 25%;
+    right: 15%;
+    position: absolute;
+    border-radius: 5px;
+    background: #01940b;
+}
+
+.range-input {
+    position: relative;
+}
+
+.range-input input {
+    position: absolute;
+    width: 100%;
+    height: 5px;
+    background: none;
+    top: -5px;
+    pointer-events: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+}
+
 /* Styles for the range thumb in WebKit browsers */
-input[type="range"]::-webkit-slider-thumb { 
-    height: 18px; 
-    width: 18px; 
-    border-radius: 70%; 
-    background: #555; 
-    pointer-events: auto; 
-    -webkit-appearance: none; 
-} 
-  
-@media screen and (max-width: 768px) { 
-    .main { 
-        width: 80%; 
-        margin-right: 5px; 
-    } 
-  
-    .custom-wrapper { 
-        width: 100%; 
-        left: 0; 
-        padding: 0 10px; 
-    } 
-  
-    .projtitle { 
-        width: 100%; 
-        position: relative; 
-        right: 26px; 
-    } 
-  
-    .price-input { 
-        flex-direction: column; 
-        align-items: center; 
-    } 
-  
-    .price-field { 
-        margin-bottom: 10px; 
-    } 
+input[type="range"]::-webkit-slider-thumb {
+    height: 18px;
+    width: 18px;
+    border-radius: 70%;
+    background: #555;
+    pointer-events: auto;
+    -webkit-appearance: none;
+}
+
+@media screen and (max-width: 768px) {
+    .main {
+        width: 80%;
+        margin-right: 5px;
+    }
+
+    .custom-wrapper {
+        width: 100%;
+        left: 0;
+        padding: 0 10px;
+    }
+
+    .projtitle {
+        width: 100%;
+        position: relative;
+        right: 26px;
+    }
+
+    .price-input {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .price-field {
+        margin-bottom: 10px;
+    }
 }
 .css-1of9xbq {
     border-style: none;
@@ -1922,6 +1988,84 @@ input[type="range"]::-webkit-slider-thumb {
 .teko-row {
     display: flex;
     flex-flow: wrap;
+}
+.css-16zsojs {
+    opacity: 1;
+    display: inline-flex;
+    -webkit-box-align: center;
+    align-items: center;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: unset;
+    background-color: rgb(243, 245, 252);
+}
+.css-1lihu4j {
+    margin: 0.25rem 0px 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+    color: rgb(130, 134, 158);
+    font-weight: 400;
+    text-decoration: unset;
+    font-size: 13px;
+    line-height: 20px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: unset;
+    max-width: unset;
+    min-width: unset;
+    transition: color 0.3s;
+}
+.select2-container {
+    z-index: 99999999 !important;
+}
+.css-1fktfn4 {
+    margin: 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+    color: rgb(18, 48, 176);
+    font-weight: 500;
+    text-decoration: unset;
+    font-size: 10px;
+    line-height: 16px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    max-width: unset;
+    min-width: unset;
+    transition: color 0.3s;
+}
+.css-lzq1g0 {
+    margin: 0px 0.5rem 0px 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+    color: inherit;
+    font-weight: 500;
+    text-decoration: unset;
+    font-size: 15px;
+    line-height: 24px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: unset;
+    max-width: 300px;
+    min-width: unset;
+    transition: color 0.3s;
+}
+.teko-row-start {
+    justify-content: flex-start;
 }
 .css-1u2186j {
     display: inline-flex;
@@ -2681,7 +2825,7 @@ p img {
     border-style: none;
     border-width: 1px;
     border-color: unset;
-    opacity: 1;   
+    opacity: 1;
 }
 .css-19xt07j > :not(:first-child) {
     margin-left: 0.5rem;
@@ -2906,6 +3050,45 @@ p img {
     max-width: unset;
     min-width: unset;
     transition: color 0.3s ease 0s;
+}
+.css-1j6k1oa {
+    opacity: 1;
+    height: 2rem;
+    padding: 0rem 1.25rem;
+    border-radius: 0.25rem;
+    background-color: transparent;
+    position: relative;
+    display: flex;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    outline: none;
+    min-width: 2rem;
+    cursor: pointer;
+    transition-duration: 80ms;
+    transition-property: background-color;
+    border: 1.5px solid rgb(218, 67, 67);
+}
+.css-1sjnqcx {
+    margin: 0px;
+    padding: 0px;
+    border-style: none;
+    border-width: 1px;
+    border-color: unset;
+    opacity: 1;
+    color: rgb(218, 67, 67);
+    font-weight: 500;
+    text-decoration: unset;
+    font-size: 13px;
+    line-height: 20px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: unset;
+    max-width: unset;
+    min-width: unset;
+    transition: color 0.3s;
 }
 .css-zuesqn {
     margin: 0px;

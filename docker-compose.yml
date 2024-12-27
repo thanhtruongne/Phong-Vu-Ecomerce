@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   nginx:
@@ -10,13 +10,13 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html:cached
       - ./docker/logs/nginx_log:/var/log/nginx
       - ./docker/config/nginx/app.conf:/etc/nginx/conf.d/app.conf
     depends_on:
       - php 
       - mysql
-      - redis
+      - redis  
 
   php:
     build:
@@ -25,7 +25,7 @@ services:
     working_dir: /var/www/html
     container_name: real_php
     volumes:
-      - .:/var/www/html
+      - .:/var/www/html:cached 
       - ./docker/logs/php-fpm/php-fpm.log:/var/log/php-fpm.log
       - ./docker/config/php-fpm/custom.ini:/usr/local/etc/php/conf.d/custom.ini
 
@@ -37,9 +37,9 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - ./docker/mysql:/var/lib/mysql
+      - ./docker/mysql:/var/lib/mysql:delegated 
     environment:
-      MYSQL_ROOT_PASSWORD: 2630612z
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
 
   redis:
     image: redis:latest

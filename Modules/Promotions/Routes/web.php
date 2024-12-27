@@ -23,6 +23,6 @@ Route::prefix('private/system/promotions')->as('private-system.')->middleware(['
     Route::get('/edit/{id}',[PromotionsController::class,'form'])->name('promotions.edit')
     ->where('id', '[0-9]+');
 
-    
+
     Route::get('/getDataByPromotions',[PromotionsController::class,'getDataByPromotion'])->name('promotions.getData.promtions');
 });

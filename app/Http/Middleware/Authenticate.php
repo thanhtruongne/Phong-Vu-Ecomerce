@@ -24,24 +24,24 @@ class Authenticate
             }
             if((request()->segment(1) == 'private' && request()->segment(2) == 'system') || request()->segment(1) == 'log-viewer')
                 return redirect(route('private-system.be.login.template'));
-            
+
             else
                 abort(404);
-        
+
         }
 
 
         if (\Auth::check()){
             $userId = \auth()->id();
             if (!session()->get('profile')) {
-                $profile = User::whereId($userId)->disableCache()->first();
+                $profile = User::findOrFail($userId);
                 session(['profile' => $profile]);
                 session()->save();
             }
 
             if(!cache('avatar_'.profile()->user_id)){
-                $avatar = User::whereId(\profile()->user_id)->value('avatar');
-                Cache::forever('avatar_'. \profile()->user_id, $avatar ?? '');
+                $avatar = User::whereId(\profile()->id)->value('avatar');
+                Cache::forever('avatar_'. \profile()->id, $avatar ?? '');
             }
         }
         return $next($request);

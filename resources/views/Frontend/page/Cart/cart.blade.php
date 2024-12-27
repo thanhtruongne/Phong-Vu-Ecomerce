@@ -28,7 +28,7 @@
                         <button class="css-tj2ae3 clear_cart">Xóa tất cả</button>
                     </div>
                     </div>
-    
+
                     <div class="d-flex" style="margin: 0;min-width:0">
                     <div class="css-8x68m">
                         <div class="css-1yvxdyp">
@@ -41,10 +41,10 @@
                                             </div>
                                         </label>
                                     </div>
-    
+
                                     <div class="teko-col css-17ajfcv" style="flex: 0 0 96%;">
                                         <div class="teko-row justify-content-between align-items-center css-1qrgscw">
-                                            
+
                                             <div class="teko-col teko-col-6 css-17ajfcv">
                                                 <div class="css-1j4ksfn">
                                                     <div class="css-4eq9p2">Chi tiết sản phẩm</div>
@@ -59,7 +59,7 @@
                                                 <div class="teko-col teko-col-2 css-14k6732 text-right" style="">
                                                 <div class="css-1dqxh16">Thành tiền</div>
                                                 </div>
-    
+
                                         </div>
                                     </div>
                                 </div>
@@ -74,48 +74,48 @@
                                                         </div>
                                                     </label>
                                                 </div>
-            
+
                                                 <div class="teko-col css-17ajfcv" style="flex: 0 0 96%;">
-                                                    <div class="teko-row justify-content-between align-items-center css-1qrgscw">                               
-                                                        
+                                                    <div class="teko-row justify-content-between align-items-center css-1qrgscw">
+
                                                         @include('Frontend.page.Cart.component.info',['cart' => $cart])
 
                                                         @include('Frontend.page.Cart.component.price',['cart' => $cart])
 
                                                         @include('Frontend.page.Cart.component.minus&plus',['cart' => $cart])
 
-                                                        
+
                                                         <div class="teko-col teko-col-2 css-1g0wtwt">
                                                             <div class="teko-col css-17ajfcv">
                                                             <div class="teko-row justify-content-end align-items-center css-1qrgscw">
-                                                                <span class="css-rmdhxt price_all" style="color : rgba(20,53,195,1)">{{ 
+                                                                <span class="css-rmdhxt price_all" style="color : rgba(20,53,195,1)">{{
                                                                 convert_price(!is_null($cart->options->price_after_discount)
                                                                 ? $cart->options->price_after_discount * $cart->qty
                                                                 : $cart->price * $cart->qty
-                                                                ,true) 
+                                                                ,true)
                                                                 }}đ </span>
                                                             </div>
                                                             </div>
                                                         </div>
-                
+
                                                     </div>
                                                 </div>
                                             </div>
                                     @endforeach
-                                    
-                                
-                                    
+
+
+
                                 </div>
                             </div>
                         </div>
                     </div>
-    
+
                     <div class="css-8xcfft ">
                         <div class="css-1pmyljg">
                             <div class="cart_title">
                                 <h6>Thanh toán</h6>
                             </div>
-    
+
                             <div class="cart_body">
                                 <div class="css-l1po7j">
                                     <div class="teko-row justify-content-between align-items-center css-33wqqr">
@@ -134,9 +134,21 @@
                                         </div>
                                         <div class="footer_cart">
                                             <div class="">
-                                                <a style="text-decoration: none" href="{{route('checkout')}}" class="css-v463h2">
-                                                    TIẾP TỤC
+                                                @if (!auth()->check())
+                                                <a class="" style="text-decoration: none"href="{{route('login')}}">
+                                                   <div class="css-v463h2" style="flex-direction: column;">
+                                                        <div class="text-white mb-1 text-uppercase d-block">
+                                                            Thanh toán
+                                                        </div>
+                                                        <div>Bạn cần đăng nhập để tiếp tục</div>
+                                                    </div>
                                                 </a>
+                                                @else
+                                                    <a style="text-decoration: none" href="{{route('checkout')}}" class="css-v463h2 uppercase">
+                                                        Thanh toán
+                                                    </a>
+                                                @endif
+
                                             </div>
                                         </div>
                                 </div>
@@ -144,14 +156,14 @@
                         </div>
                     </div>
                     </div>
-                </div>    
+                </div>
             @else
                 <div class="css-1bqbden">
                     <div class="">
                         <div class="css-18zym6u">
                             <div class="css-11f6yue w-100">
-                                <img 
-                                src="https://shopfront-cdn.tekoapis.com/static/empty_cart.png" 
+                                <img
+                                src="https://shopfront-cdn.tekoapis.com/static/empty_cart.png"
                                 style="width: 100%;height: 100%;object-fit: inherit;position: absolute;top: 0px;left: 0px;" alt="">
                             </div>
                             <div class="css-1qoenic">Giỏ hàng chưa có sản phẩm nào</div>
@@ -161,13 +173,23 @@
                         </div>
                     </div>
                 </div>
-            @endif 
-          
-         
+            @endif
+
+
 
 
 
         </div>
-    </div>   
-        
+    </div>
+
 @endsection
+
+
+
+@push('scripts')
+  <script>
+       function checkOutPaymentCart(){
+
+       }
+  </script>
+@endpush

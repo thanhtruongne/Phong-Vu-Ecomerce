@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
-use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use App\Models\MainUserAddress;
 
 class User extends Authenticatable
 {
@@ -22,7 +22,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'email',    
+        'email',
         'firstname',
         'username',
         'lastname',
@@ -33,14 +33,15 @@ class User extends Authenticatable
         'gender',
         'signing_create_account',
         'content',
-        'province_code',
-        'district_code',
-        'ward_code',
-        'address',
+        // 'province_code',
+        // 'district_code',
+        // 'ward_code',
+        // 'address',
         'phone',
         'avatar',
         'status',
         'desc',
+        'google_id'
     ];
 
     /**
@@ -62,34 +63,45 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    protected $appends = ['full_name'];
+
+    public function getFullNameAttribute()
+    {
+        return $this->firstname . ' ' . $this->lastname;
+    }
 
 
-    public function province() {
-        return $this->belongsTo(Province::class,'province_id','id');
-      }
-  
-      public function district() {
-        return $this->belongsTo(District::class,'district_id','id');
-      }
-  
-      public function ward() {
-        return $this->belongsTo(Ward::class,'ward_id','id');
-      }
 
-      public function isAdmin(){
-        if (in_array(auth()->user()->username, ['admin', 'superadmin'])) 
-          return true;
-        
+    // public function province() {
+    //     return $this->belongsTo(Province::class,'province_code','code');
+    //   }
+
+    // public function district() {
+    //     return $this->belongsTo(District::class,'district_code','code');
+    // }
+
+    // public function ward() {
+    //     return $this->belongsTo(Ward::class,'ward_code','code');
+    // }
+
+    public function user_session_address(){
+        return $this->hasMany(MainUserAddress::class,'user_id','id');
+    }
+
+    public function isAdmin(){
+        if (in_array(auth()->user()->username, ['admin', 'superadmin']))
+            return true;
+
         return false;
 
-      }
+    }
 
-      public static function getAttributeName() {
-          return [
-            'username' => "Tài khoản",
-            "password" => "Mật khẩu",
-            "email" => "Email"
-          ];
-      }
+    public static function getAttributeName() {
+        return [
+        'username' => "Tài khoản",
+        "password" => "Mật khẩu",
+        "email" => "Email"
+        ];
+    }
 
 }

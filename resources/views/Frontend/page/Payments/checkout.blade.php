@@ -23,45 +23,17 @@
             </div>
             <form action="" id="form-checkout-cart" method="POST" enctype="multipart/form-data">
                 <div class="css-rf24tk">
-                    <div class="teko-row css-zbluka" style="margin:0 -8px">    
+                    <div class="teko-row css-zbluka" style="margin:0 -8px">
                         <div class="teko-col teko-col-8 css-17ajfcv" style="padding: 0 8px">
                             <div class="css-1eks86m">
                                 <div class="css-1557c61">
+                                    @php
+                                        $user = profile();
+                                    @endphp
                                     <div class="css-1ms22as">
-                                        @if (Auth::check())
-                                            @php
-                                                $address =  Auth::user()->address.', '. Auth::user()->ward->full_name.', '. Auth::user()->district->full_name.','. Auth::user()->province->full_name;
-                                            @endphp
-                                        <div class="css-qry4qr">
-                                            <div class="" style="margin-bottom: 0.5rem;font-weight: bold;">
-                                                Thông tin người nhận    
-                                            </div>
-                                            <div class="" style="line-height: 1.7;">
-                                                <div class="mb-2"><strong>Người nhận:</strong> <span>{{ Auth::user()->name }}</span></div>
-                                                <div class="mb-2"><strong>Email:</strong> <span>{{  Auth::user()->email }}</span></div>
-                                                <div class="mb-2">
-                                                    <strong>Địa chỉ: </strong>
-                                                    <span>{!! $address !!}</span>
-                                                </div>
-                                                <div class="mb-2"><strong>Điện thoại: </strong><span>{{ Auth::user()->phone }}</span></div>
-                                            </div>
-                                        </div>
-                                         {{-- <input type="hidden" name="name" value="{{ Auth::user()->name }}">
-                                         <input type="hidden" name="email" value="{{ Auth::user()->email }}">
-                                         <input type="hidden" name="phone" value="{{ Auth::user()->phone }}">
-                                         <input type="hidden" name="address" value="{{ Auth::user()->address }}">
-                                         <input type="hidden" name="province_code" value="{{ Auth::user()->province_code }}">
-                                         <input type="hidden" name="district_code" value="{{ Auth::user()->district_code }}">
-                                         <input type="hidden" name="ward_code" value="{{ Auth::user()->ward_code }}"> --}}
-                                         
-                                        @else
-                                            {{-- address --}}
-                                            @include('Frontend.page.Payments.components.modal')         
-                                         
-                                        @endif
+                                          @include('Frontend.page.Payments.components.modal')
                                           {{-- Shipping --}}
                                           @include('Frontend.page.Payments.components.shipping_rule')
-
                                     </div>
                                 </div>
                             </div>
@@ -83,20 +55,20 @@
                             </div>
                             {{-- price --}}
                             @include('Frontend.page.Payments.components.price',['total' => $total])
-                        </div>    
-                    
+                        </div>
+
                     </div>
                 </div>
             </form>
         </div>
-    </div>   
+    </div>
 @endsection
 
 
 @push('scripts')
    <script>
         $('#form-checkout-cart').submit(function(e){
-           e.preventDefault();   
+           e.preventDefault();
             var formData = $(this).serialize();
             $('#btn_submit_checkout').html('<i class="fa fa-spinner fa-spin"></i>').attr("disabled", true);
             checkOut(formData);
@@ -130,5 +102,5 @@
         });
        }
    </script>
-   
+
 @endpush

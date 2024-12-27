@@ -5,6 +5,7 @@ namespace App\Http\ViewComposers;
 use App\Http\Controllers\Controller;
 use App\Models\Categories;
 use App\Models\Menu;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
 class MenuComposer extends Controller{
@@ -19,33 +20,25 @@ class MenuComposer extends Controller{
      */
     public function compose(View $view)
     {
-        // $this->menu();
-         
-        // $payload = $this->methodPassArgument();
-
-        // $menuCateloge = $this->menuCatelogeRepositories->findCondition(...$payload);
-        // $render = renderMenuDynamicFrontEndChild(renderCombineMenu($menuCateloge->menu ?? [])) ?? [];
-        // $menusParent = renderMenuDynamicFrontEndParent(renderCombineMenu($menuCateloge->menu));
-        // $renderChild = explode('---',$menusChild); array_shift($renderChild);
-        // $renderParent = explode('---', $menusParent);
-        
-        // $view->with('menus',array_merge(['parent' => $renderParent , 'child' => $renderChild]));
         $view->with('menus',$this->menu());
     }
 
     private function menu(){
-       $menus = Categories::whereNotNull('name')->get()->toTree()->toArray();
-       $data = $this->rebuildTree($menus);
-       $render = renderMenuDynamicFrontEndChild($data);
-       $renderChild = explode('---',$render);
-       array_shift($renderChild);
-       $renderParent = renderMenuDynamicFrontEndParent($data);
-       $renderParent = explode('---', $renderParent);
+       $data = Cache::rememberForever('categories',function(){
+            $menus =  Categories::whereNotNull('name')->get()->toTree()->toArray();
+            $sum = $this->rebuildTree($menus);
+            $render = renderMenuDynamicFrontEndChild($sum);
+            $renderChild = explode('---',$render);
+            array_shift($renderChild);
+            $renderParent = renderMenuDynamicFrontEndParent($sum);
+            $renderParent = explode('---', $renderParent);
 
-        $data= [
-            'child' => $renderChild,
-            'parent' => $renderParent
-        ];
+             $temp = [
+                 'child' => $renderChild,
+                 'parent' => $renderParent
+             ];
+            return $temp;
+       });
        $this->menu = $data;
        return $this->menu;
     }

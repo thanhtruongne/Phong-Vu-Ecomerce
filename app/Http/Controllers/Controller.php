@@ -44,7 +44,7 @@ abstract class ControllerAstract {
         }
         return $instance;
     }
-} 
+}
 
 interface ControllerInterfaces{
     public function validateRequest($rules, Request $request, $attributeNames = null);
@@ -59,13 +59,15 @@ class Controller extends ControllerAstract implements ControllerInterfaces
 {
     use AuthorizesRequests, ValidatesRequests;
 
+    public $status_user_check = 1;
+
     public function validateRequest($rules, Request $request, $attributeNames = null)
     {
         $validator = \Validator::make($request->all(), $rules);
         if ($attributeNames) {
             $validator->setAttributeNames($attributeNames);
         }
-         
+
         if ($validator->fails()) {
             json_result(['message' => $validator->errors()->all()[0],'status' => StatusReponse::ERROR]);
         }
@@ -80,7 +82,7 @@ class Controller extends ControllerAstract implements ControllerInterfaces
                     'children' => count($children['children']) > 0 ? $this->rebuildTree($children['children'],$children['id']) : []
                 ];
             }
-             
+
             return  $sum;
         }
     }
@@ -92,7 +94,7 @@ class Controller extends ControllerAstract implements ControllerInterfaces
         $query->from('product as a');
         $query->join('product_category as b','b.id','=','a.product_category_id');
         $query->join('brand as e','e.id','=','a.brand_id');
-        $query->leftJoin('sku_variants as c','c.product_id','=','a.id');    
+        $query->leftJoin('sku_variants as c','c.product_id','=','a.id');
         $query->where('a.status',1);
         // if($type && $type == 'self') {
         //     $id = auth()->check() ? auth()->id() : session()->getId();
@@ -111,7 +113,7 @@ class Controller extends ControllerAstract implements ControllerInterfaces
                 $row->variant_promotion_price = [
                     'promo_id' => $promo_id,
                     'amount' => Promotions::where('id',$promo_id)->value('amount'),
-                ]; 
+                ];
             }
         }
         return $rows;
@@ -128,7 +130,7 @@ class Controller extends ControllerAstract implements ControllerInterfaces
                     $model = $instance::query();
                     $model->from($slug.' as a');
                     $model->select($this->selectQueryDynamic($value['type']));
-                    
+
                     if($instance && $value['type'] == 'product') {
                         $model->join('brand as b','b.id','=','a.brand_id');
                         $model->leftJoin('promotion_product_relation as promo_data','promo_data.product_id','=','a.id');
@@ -138,7 +140,7 @@ class Controller extends ControllerAstract implements ControllerInterfaces
                         $model->leftJoin('promotion_variants_relation as promo_data','promo_data.sku_id','=','a.id');
                     }
                     $model->leftJoin('promotions as promo','promo.id','=','promo_data.promotion_id');
-                    $model->where(function($subquery){           
+                    $model->where(function($subquery){
                          $subquery->whereRaw('(promo.neverEndDate IS NULL AND promo.endDate > ?)',[\Carbon::now()]);
                          $subquery->orWhere('promo.neverEndDate',1);
                          $subquery->where('promo.status',1);
@@ -205,7 +207,7 @@ public function getProductByCategory(Request $request,array $productCategory = [
                     $product->variant_promotion_price = [
                         'promo_id' => $promo_id,
                         'amount' => Promotions::where('id',$promo_id)->value('amount'),
-                    ]; 
+                    ];
                 }
             }
         }
@@ -244,7 +246,7 @@ public function getProductByCategory(Request $request,array $productCategory = [
                 'promo_id' => $promo_id,
                 'amount' => $promo_value->amount,
                 'name' => $promo_value->name,
-            ]; 
+            ];
 
             // variant
             $data = [];
@@ -264,13 +266,13 @@ public function getProductByCategory(Request $request,array $productCategory = [
                 $data[$key_name] = $item;
                 $count++;
             };
-            if($data) 
+            if($data)
                 $product->attribute_variant = $data;
         }
         return $product;
     }
 
-    public function getFilterProductCategory($products){    
+    public function getFilterProductCategory($products){
         if(isset($products) && !empty($products)) {
             $attemp_product = [];$attemp_variant = [];
              foreach($products as $product) {
@@ -303,7 +305,7 @@ public function getProductByCategory(Request $request,array $productCategory = [
                 } else {
                     $result[$key][] = $value;
                 }
-              
+
             }
         }
         if(!empty($result)) {
@@ -330,7 +332,7 @@ public function getProductByCategory(Request $request,array $productCategory = [
             return $filters;
         }
         else return $filters;
-        
+
     }
 
     protected function totalCart($carts) {

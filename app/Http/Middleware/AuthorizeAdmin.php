@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Session;
 
-class AuthorizeAdmin 
+class AuthorizeAdmin
 {
     public function handle(Request $request, Closure $next)
     {
@@ -19,7 +19,6 @@ class AuthorizeAdmin
             return $next($request);
         }
         abort(403);
-    //    return redirect('/');
     }
 }
 

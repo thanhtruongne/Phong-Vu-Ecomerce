@@ -14,5 +14,8 @@
 use Modules\Order\Http\Controllers\OrderController;
 
 // Route::group(function() {
-    Route::post('/store/order',[OrderController::class,'createOrder'])->name('order.store'); 
+// Route::prefix('isNotAdmin')->group(function () {
+    Route::post('/store/order',[OrderController::class,'createOrder'])->name('order.store');
+// });
+
 // });
