@@ -27,6 +27,7 @@
         "nwidart/laravel-modules": "5.0",
         "predis/predis": "^2.2",
         "protonemedia/laravel-xss-protection": "1.5",
+        "pusher/pusher-php-server": "^7.2",
         "spatie/laravel-permission": "6.9",
         "spatie/laravel-responsecache": "^7.4"
     },

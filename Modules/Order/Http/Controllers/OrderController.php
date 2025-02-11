@@ -20,16 +20,18 @@ interface OrderInterface {
 class OrderController extends Controller implements OrderInterface
 {
     public function createOrder(Request $request){
+        dd($request->all());
         $this->validateRequest([
             'total_amount' => 'required',
             'freight_amount' => "required",
-            'receiver_name' => 'required',
-            'receiver_province' => 'required',
-            'receiver_phone' => 'required',
-            'receiver_district' => 'required',
-            'receiver_ward' => 'required',
-            'receiver_email' => 'required|email',
-            'receiver_address' => 'required',
+            'id_address_main' => 'required',
+            // 'receiver_name' => 'required',
+            // 'receiver_province' => 'required',
+            // 'receiver_phone' => 'required',
+            // 'receiver_district' => 'required',
+            // 'receiver_ward' => 'required',
+            // 'receiver_email' => 'required|email',
+            // 'receiver_address' => 'required',
             'method_payment' => 'required'
         ],$request,Orders::getAttributeName());
         $carts = Cart::instance('cart')->content();
