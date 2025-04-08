@@ -18,40 +18,41 @@ use Jenssegers\Agent\Agent;
 
 class AuthController extends Controller
 {
-    public function loginForm(){
-       if(\Auth::check() && !\Auth::user()->isAdmin()){
+    public function loginForm()
+    {
+        if (\Auth::check() && !\Auth::user()->isAdmin()) {
             return redirect(route('home'));
-       }
-       return view('Frontend.page.Auth.login');
+        }
+        return view('Frontend.page.Auth.login');
     }
 
 
     public function login(Request $request)
     {
 
-       $this->validateRequest([
-        'email' => 'required|email|string_vertify',
-        'password' => 'required|string_vertify'
-       ],$request,User::getAttributeName());
-       $email = $request->input('email');
-       $password = $request->input('password');
+        $this->validateRequest([
+            'email' => 'required|email|string_vertify',
+            'password' => 'required|string_vertify'
+        ], $request, User::getAttributeName());
+        $email = $request->input('email');
+        $password = $request->input('password');
 
-       $user = User::where('email',$email)->first(['id','email','status','username','role']);
-       if($user){
-            if($user->status != 1){
-                return response()->json(['status' => StatusReponse::ERROR,'message' => 'Tài khoản của bạn đã bị khóa']);
+        $user = User::where('email', $email)->first(['id', 'email', 'status', 'username', 'role']);
+        if ($user) {
+            if ($user->status != 1) {
+                return response()->json(['status' => StatusReponse::ERROR, 'message' => 'Tài khoản của bạn đã bị khóa']);
             }
-            if(in_array($user->username,['admin','superadmin'])){
-                return response()->json(['status' => StatusReponse::ERRO,'message' => 'Tài khoản không hợp lệ']);
+            if (in_array($user->username, ['admin', 'superadmin'])) {
+                return response()->json(['status' => StatusReponse::ERRO, 'message' => 'Tài khoản không hợp lệ']);
             }
-            if(auth()->attempt(['email' => $email , 'password' => $password])){
+            if (auth()->attempt(['email' => $email, 'password' => $password])) {
                 $agent = new Agent();
-                LoginHistory::setLoginHistoryNotUseShouldQueue($user,request()->ip());
-                Visits::saveVisits($user->id,$agent,\Request::userAgent());
-                UserActivities::createUserActivityDuration($user->id,session()->getId());
-                $targetUrl ='';
+                LoginHistory::setLoginHistoryNotUseShouldQueue($user, request()->ip());
+                Visits::saveVisits($user->id, $agent, \Request::userAgent());
+                UserActivities::createUserActivityDuration($user->id, session()->getId());
+                $targetUrl = '';
                 // lưu lần đầu đăng nhập
-                if(is_null($user->last_login)){
+                if (is_null($user->last_login)) {
                     $user->last_login = \Carbon::now();
                     $user->save();
                 }
@@ -60,15 +61,15 @@ class AuthController extends Controller
                 if (session()->has('target_url')) {
                     $targetUrl = session()->get('target_url');
                     session()->forget('target_url');
-                    return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => $targetUrl]);
+                    return response()->json(['message' =>  trans('auth.success'), 'status' => 'success', 'redirect' => $targetUrl]);
                 }
 
-                return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => route('home')]);
+                return response()->json(['message' =>  trans('auth.success'), 'status' => 'success', 'redirect' => route('home')]);
             } else {
-                return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
+                return response()->json(['status' => 'error', 'message' => 'Email hoặc mật khẩu không đúng']);
             }
         } else {
-            return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
+            return response()->json(['status' => 'error', 'message' => 'Email hoặc mật khẩu không đúng']);
         }
     }
 
@@ -85,9 +86,8 @@ class AuthController extends Controller
         auth()->logout();
         $request->session()->invalidate();
 
-        UserActivities::endUserActivityDuration($id,$sessionId);
+        UserActivities::endUserActivityDuration($id, $sessionId);
         return redirect(route('home'));
-
     }
 
     //callback google
@@ -100,7 +100,7 @@ class AuthController extends Controller
                 'url' => $url,
             ])->setStatusCode(Response::HTTP_OK);
         } catch (\Exception $exception) {
-            return response()->json(['message' => $exception->getMessage(),'status' => StatusReponse::ERROR]);
+            return response()->json(['message' => $exception->getMessage(), 'status' => StatusReponse::ERROR]);
         }
     }
 
@@ -115,39 +115,37 @@ class AuthController extends Controller
                 $user = User::create(
                     [
                         'email' => $googleUser->email,
-                        'username' => 'Google_'.$googleUser->id,
+                        'username' => 'Google_' . $googleUser->id,
                         'firstname' => $googleUser->user['family_name'],
                         'lastname' => $googleUser->user['given_name'],
                         'avatar' => $googleUser->avatar,
-                        'google_id'=> $googleUser->id,
-                        'password'=> \Hash::make('123456'),
+                        'google_id' => $googleUser->id,
+                        'password' => \Hash::make('123456'),
                     ]
                 );
             }
-            if($user->status != $this->status_user_check) {
+            if ($user->status != $this->status_user_check) {
                 return redirect(route('login'));
             }
 
-                \Auth::login($user);
-                $agent = new Agent();
-                LoginHistory::setLoginHistoryNotUseShouldQueue($user,request()->ip());
-                Visits::saveVisits($user->id,$agent,\Request::userAgent());
-                UserActivities::createUserActivityDuration($user->id,session()->getId());
-                $targetUrl ='';
-                // lưu lần đầu đăng nhập
-                if(is_null($user->last_login)){
-                    $user->last_login = \Carbon::now();
-                    $user->save();
-                }
-                // trở lại url khi thao tác bị hết hạn 401
-                if (session()->has('target_url')) {
-                    $targetUrl = session()->get('target_url');
-                    session()->forget('target_url');
-                    return redirect($targetUrl);
-                }
-                return redirect()->route('home');
-
-
+            \Auth::login($user);
+            $agent = new Agent();
+            LoginHistory::setLoginHistoryNotUseShouldQueue($user, request()->ip());
+            Visits::saveVisits($user->id, $agent, \Request::userAgent());
+            UserActivities::createUserActivityDuration($user->id, session()->getId());
+            $targetUrl = '';
+            // lưu lần đầu đăng nhập
+            if (is_null($user->last_login)) {
+                $user->last_login = \Carbon::now();
+                $user->save();
+            }
+            // trở lại url khi thao tác bị hết hạn 401
+            if (session()->has('target_url')) {
+                $targetUrl = session()->get('target_url');
+                session()->forget('target_url');
+                return redirect($targetUrl);
+            }
+            return redirect()->route('home');
         } catch (\Exception $exception) {
             \Log::error('Google Login Error: ' . $exception->getMessage());
             return redirect()->route('home');

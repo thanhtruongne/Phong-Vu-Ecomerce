@@ -30,7 +30,7 @@ $config = array();
 // session_start();
 
 $config['authentication'] = function () {
-    return Session::get('isAdmin');
+    return false;
 };
 
 /*============================ License Key ============================================*/

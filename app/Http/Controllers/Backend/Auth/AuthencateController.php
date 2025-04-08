@@ -17,10 +17,11 @@ use Jenssegers\Agent\Agent;
 
 class AuthencateController extends Controller
 {
-    public function index(Request $request){
+    public function index(Request $request)
+    {
 
-        if(Auth::check())  {
-            if(Auth::user()->isAdmin())
+        if (Auth::check()) {
+            if (Auth::user()->isAdmin())
                 return redirect()->back();
             else abort(404);
         }
@@ -28,36 +29,37 @@ class AuthencateController extends Controller
         return view('backends.pages.auth.login');
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         $this->validateRequest([
             'username' => 'required|string_vertify',
             'password' => 'required|string|string_vertify'
-        ],$request,User::getAttributeName());
+        ], $request, User::getAttributeName());
         $username = $request->input('username');
         $password = $request->input('password');
-        $user = User::whereUsername($username)->first(['id','username','role','email','status']);
+        $user = User::whereUsername($username)->first(['id', 'username', 'role', 'email', 'status']);
 
-        if($user){
-           if($user->status != 1){
-                return response()->json(['status' => 'error','message' => 'Tài khoản của bạn đã bị khóa']);
-           }
-           if(!in_array($user->username,['admin','superadmin'])){
-                return response()->json(['status' => 'error','message' => 'Có lỗi xẩy ra','redirect' => route('private-system.be.login.template')]);
-           }
+        if ($user) {
+            if ($user->status != 1) {
+                return response()->json(['status' => 'error', 'message' => 'Tài khoản của bạn đã bị khóa']);
+            }
+            if (!in_array($user->username, ['admin', 'superadmin'])) {
+                return response()->json(['status' => 'error', 'message' => 'Có lỗi xẩy ra', 'redirect' => route('private-system.be.login.template')]);
+            }
 
-           if(auth()->attempt(['username' => $username , 'password' => $password])){
+            if (auth()->attempt(['username' => $username, 'password' => $password])) {
                 $request->session()->put('login_attempts', 0);
                 $agent = new Agent();
                 //lưu lịch sử đăng nhập
-                LoginHistory::setLoginHistoryNotUseShouldQueue($user,request()->ip());
+                LoginHistory::setLoginHistoryNotUseShouldQueue($user, request()->ip());
                 //lưu thông tin đăng nhập
 
-                Visits::saveVisits($user->id,$agent,\Request::userAgent());
+                Visits::saveVisits($user->id, $agent, \Request::userAgent());
                 //lưu thời gian hoạt động
-                UserActivities::createUserActivityDuration($user->id,session()->getId());
-                $targetUrl ='';
+                UserActivities::createUserActivityDuration($user->id, session()->getId());
+                $targetUrl = '';
                 // lưu lần đầu đăng nhập
-                if(is_null($user->last_login)){
+                if (is_null($user->last_login)) {
                     $user->last_login = \Carbon::now();
                     $user->save();
                 }
@@ -66,16 +68,15 @@ class AuthencateController extends Controller
                 if (session()->has('target_url')) {
                     $targetUrl = session()->get('target_url');
                     session()->forget('target_url');
-                    return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => $targetUrl]);
+                    return response()->json(['message' =>  trans('auth.success'), 'status' => 'success', 'redirect' => $targetUrl]);
                 }
 
-                return response()->json(['message' =>  trans('auth.success'), 'status' => 'success','redirect' => route('private-system.dashboard')]);
+                return response()->json(['message' =>  trans('auth.success'), 'status' => 'success', 'redirect' => route('private-system.product')]);
             } else {
-                return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
+                return response()->json(['status' => 'error', 'message' => 'Email hoặc mật khẩu không đúng']);
             }
-        }
-        else {
-            return response()->json(['status' => 'error','message' => 'Email hoặc mật khẩu không đúng']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Email hoặc mật khẩu không đúng']);
         }
     }
     public function logout(Request $request)
@@ -91,7 +92,7 @@ class AuthencateController extends Controller
         auth()->logout();
         $request->session()->invalidate();
 
-        UserActivities::endUserActivityDuration($id,$sessionId);
+        UserActivities::endUserActivityDuration($id, $sessionId);
         return  redirect(route('private-system.be.login.template'));
     }
 }

@@ -9,11 +9,11 @@
             {{-- Info --}}
             @include('Frontend.page.Accounts.components.sidebar',['user' => Auth::user()])
 
-            @include('Frontend.page.Accounts.components.orderStatus',['orders' => $order])
+            {{-- @include('Frontend.page.Accounts.components.orderStatus',['orders' => $order]) --}}
 
 
-            </div>    
+            </div>
         </div>
     </div>
-  
+
 @endsection

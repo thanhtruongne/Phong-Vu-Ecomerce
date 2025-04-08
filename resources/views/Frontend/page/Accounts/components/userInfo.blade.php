@@ -34,7 +34,7 @@
                             <input type="text" value="{{ $user->phone }}"  class="css-90j4a3" name="phone">
                         </div>
                         <div class="w-100 mt-4">
-                            <button  type="submit" class="css-qpwo5p">
+                            <button disabled  type="submit" class="css-qpwo5p">
                                 <div class="css-zuesqn ">Cập nhật</div>
                             </button>
                         </div>

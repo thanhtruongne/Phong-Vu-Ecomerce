@@ -22,7 +22,7 @@
         @include('backends.layouts.components.breadcrumb',$breadcum)
     </div>
 </div>
-    
+
 @endsection
 
 @section('links')
@@ -35,7 +35,7 @@
 
 @section('content')
   <style>
-    
+
     .ui-slider-handle{
             border-radius: 100% !important;
         }
@@ -60,7 +60,7 @@
         #minute-slider .ui-slider-handle {
             top: -8px !important;
         }
-    
+
   </style>
 
 
@@ -117,15 +117,15 @@
                                                         <img class="ckfinder_3" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
                                                         <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div>
                                                     </div>
-            
+
                                                     <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
-                                                        
+
                                                         @if (isset($model) && !empty($model))
                                                             @php
                                                                 $album =  json_decode($model->album) ?: [];
                                                             @endphp
                                                         @if (!empty($album) && count($album) > 0)
-                                                            @foreach ($album as $item) 
+                                                            @foreach ($album as $item)
                                                             <li class="item_album" style="float:left;margin: 0 12px 12px 12px">
                                                                 <img height="120" src="{{ $item }}" width="150" alt="">
                                                                 <input type="hidden" name="album[]" value="{{ $item }}"/>
@@ -135,7 +135,7 @@
                                                             </li>
                                                             @endforeach
                                                         @endif
-                                                   
+
                                                      @endif
                                                     </div>
                                                 </div>
@@ -170,7 +170,7 @@
                                                 Mã SKU
                                             </label>
                                             <div class="col-md-8">
-                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="sku" value="{{$model->sku_code}}"> 
+                                                <input type="text" {{$model && $model->is_single == 2 ? 'disabled' : ''}} class="form-control integerInput" name="sku" value="{{$model->sku_code}}">
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -191,7 +191,7 @@
                                                 <input  class="form-control number-format" {{$model && $model->is_single == 2 ? 'disabled' : ''}} value="{{$model->price ?: null}}" name="cost" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group">
                                             <label for="" class="col-sm-8 control-label">
                                                Danh mục sản phẩm
@@ -219,7 +219,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="form-group row">
                                             <div class="col-md-8 text-right">
                                                 <div class="dropdown">
@@ -227,25 +227,25 @@
                                                         Thêm attribute
                                                     </button>
                                                     <div class="dropdown-menu toggle_attribute">
-                                                        @php        
-                                                          
-                                                            if($model && $model->id > 0 && is_null($model->is_single)){  
-                                                               $attributes_check = $model->attributes_item->pluck('parent_id')->toArray();         
+                                                        @php
+
+                                                            if($model && $model->id > 0 && is_null($model->is_single)){
+                                                               $attributes_check = $model->attributes_item->pluck('parent_id')->toArray();
                                                             }
                                                        @endphp
-                                                      
+
                                                         @if (isset($attributes))
                                                             @foreach ($attributes as $attribute)
                                                                 <a class="dropdown-item attribute_choose {{isset($attributes_check) && !is_null($attributes_check) &&  in_array($attribute['id'],$attributes_check) ? 'disabled' : ''}}"  data-parent="{{$attribute['id']}}" >{{ $attribute['name'] }}</a>
                                                             @endforeach
-                                                        @endif   
+                                                        @endif
                                                     </div>
                                                   </div>
                                             </div>
                                         </div>
-                                   
+
                                         <div class="render_attribute_parent">
-                                             
+
                                         </div>
                                     </div>
 
@@ -277,7 +277,7 @@
                                                     </div>
                                                     <div class="d-flex justify-content-between">
                                                         <button class="btn toogle_render_variant" type="button">
-                                                            <i class="fa fa-plus"></i> 
+                                                            <i class="fa fa-plus"></i>
                                                             Thêm variants
                                                         </button>
                                                         <button type="button" class="btn" onclick="createVariants()">
@@ -287,7 +287,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div> 
+                                        </div>
                                     </div>
 
                                     {{-- render variant table --}}
@@ -297,14 +297,14 @@
                                             <tbody></tbody>
                                           </table>
                                     </div>
- 
-                             
+
+
                                 </div>
                             </form>
                         </div>
                     </div>
             </div>
-        </div> 
+        </div>
 
 @endsection
 
@@ -370,7 +370,7 @@
 
                 })
             }
-        
+
         }
 
         function onClickCreateAttributeVariant(id,parent_id){
@@ -402,12 +402,12 @@
         function removeVariants(id){
             let _this = $('#remove_variant_'+id);
             let parent =  _this.parents('.wrapper_row_' + id);
-            parent.remove();         
+            parent.remove();
         }
 
 
         $('body').on('click','.toogle_render_variant',function(){
-            let _this = $(this);    
+            let _this = $(this);
             let parent_render = _this.siblings('.render_variant_thourgh');
             if($(parent_render).find('.wrapper_row').length){
                 let last_item = $(parent_render).find('.wrapper_row:last');
@@ -415,11 +415,11 @@
                     show_message('Vui lòng chọn dữ liệu attribute trước khi thêm mới', 'warning');
                     return false;
                 }
-            }   
-            render_variant();   
+            }
+            render_variant();
         })
 
-    
+
 
         function render_variant(){
             let ac_sum = count++;
@@ -443,7 +443,7 @@
                     <div  class="col-md-2">
                         <button type="button" class="btn" id="remove_variant_${ac_sum}" onclick="removeVariants(${ac_sum})"><i class="fas fa-trash"></i></button>
                     </div>
-                 
+
                 </div>`)
             load_select2();
         }
@@ -454,7 +454,7 @@
 
             if(val != 0) {
                 _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(variants_select(val,data_id));
-                getSelect2(val,data_id) 
+                getSelect2(val,data_id)
             }
             else {
                 _this.parents('.wrapper_row_' + data_id).find('.render_child_' + data_id).html(
@@ -512,7 +512,7 @@
                 let attributre_cateloge_name = $(item).find('.get_element select').select2('data');
                 let attribute_variant_ids = $(item).find('select.get_val_attribute').select2('data')
                 let variants = {};
-              
+
                 if(attribute_cateloge_id == ""){
                     show_message('Vui lòng không bỏ trống thuộc tính '+attributre_cateloge_name[0].text+' đã tạo','warning');
                     attributeVariants = [];
@@ -533,20 +533,20 @@
                 let attributeIdVariants = [];
                 let attribute_idx = [];
                 attrCatelogeID.push(attribute_cateloge_id);
-                for(let i = 0 ; i < attribute_variant_ids?.length ; i++ ) {    
+                for(let i = 0 ; i < attribute_variant_ids?.length ; i++ ) {
                     let variants = {};
                     let item = {};
-                    variants[attribute_cateloge_id] = attribute_variant_ids[i].id;  
+                    variants[attribute_cateloge_id] = attribute_variant_ids[i].id;
                     item[attributre_cateloge_name[0].text] = attribute_variant_ids[i].text;
-                    attr.push(item);  
+                    attr.push(item);
                     attributeIdVariants.push(variants);
                     attribute_idx.push(attribute_variant_ids[i].id)
-                }         
+                }
                 attributeTitle.push(attributre_cateloge_name[0].text);
                 attribute.push(attr);
                 attributeVariants.push(attributeIdVariants);
                 attribute_idxs[attribute_cateloge_id] = attribute_idx
-                
+
             });
 
             // //check duplicate attribute_cateloge_id
@@ -558,7 +558,7 @@
                 attributeTitle = []
                 return false;
             }
-            
+
 
             attribute = attribute?.reduce((previous,current) => {
                 return previous.flatMap(item => current.map(val => ({...item , ...val })));
@@ -567,7 +567,7 @@
             attributeVariants =  attributeVariants?.reduce((previous , current) =>  {
                 return previous.flatMap(val => current.map(cur => ({...val ,...cur}) ));
             });
-            
+
             let set_data = []
             attributeVariants?.map(function(temp,index){
                 let keys = Object.keys(temp);
@@ -592,19 +592,19 @@
             createRowTableHead(attributeTitle)
             let trClass = [];
             attribute.forEach((val,index) =>  {
-                let row = '';            
+                let row = '';
                 if($('input[name="id"]').val() && @json($model->id) && @json($model->sku_variant)){
-                     row = createVariantsRow(attributeVariants[index],val,@json($model->sku_variant)[index]);    
+                     row = createVariantsRow(attributeVariants[index],val,@json($model->sku_variant)[index]);
                 }
                 else {
-                     row = createVariantsRow(attributeVariants[index],val);    
+                     row = createVariantsRow(attributeVariants[index],val);
                 }
-                   
+
                 //lặp qua các tr class sau đó push vào mảng
                 let classModify = "tr-variant-" + Object.values(attributeVariants[index]).join(', ').replace(/, /g,'-');
-                
+
                 trClass.push(classModify);
-            
+
                 //trường hợp tránh các row trùng nhau từ variants_id và text
                 if(!$("table.variantsTable tbody tr").hasClass(classModify)) {
                     $('table.variantsTable tbody').append(row);
@@ -639,11 +639,11 @@
             $row.append($('<td>').text('Sku'));
             // $row.append($('<td>').text('Code'));
             $thead.html($row);
-            
+
             return $thead
         }
 
-        function  createVariantsRow(variantsId,arrtributeItem,model = null){  
+        function  createVariantsRow(variantsId,arrtributeItem,model = null){
             let td;
             let attributeString = Object.values(arrtributeItem).join(', ');
             let variantAttribute = Object.values(variantsId).join(', ');
@@ -661,7 +661,7 @@
 
 
             Object.values(arrtributeItem).forEach((val , index) => {
-                td = $('<td>').text(val);   
+                td = $('<td>').text(val);
                 row.append(td);
             })
 
@@ -689,14 +689,14 @@
                 ]
             }
             $.each(option , function(index , value) {
-                let input = $('<input>').attr('type','text').attr('name',value.name)?.addClass(value?.class);   
+                let input = $('<input>').attr('type','text').attr('name',value.name)?.addClass(value?.class);
                 if(value.val) {
                     input?.val(value.val);
                 }
                 td.append(input);
             })
             row.append(td);
-            
+
             row.append($('<td>').addClass('variants-qualnity').text(model?.stock))
                 .append($('<td>').addClass('variants-price').text( model?.price ? toVND(model?.price) : ''))
                 .append($('<td>').addClass('variants-sku').text(model?.sku_code))
@@ -717,7 +717,7 @@
             if($('.check_length_variants').length === 0) {
                 _this.after(dataVariantsDyynamic(variants));
                 // Data.createAlbumVariants();
-                $('#sortable_books').sortable();       
+                $('#sortable_books').sortable();
             }
         })
 
@@ -737,7 +737,7 @@
                 <td colspan="6" style="border: none;padding-top:20px">
                     <div style="display:flex;justify-content: space-between">
                         <div >
-                            <h3 class="text-success">Hình ảnh sản phẩm</h3> 
+                            <h3 class="text-success">Hình ảnh sản phẩm</h3>
                         </div>
                         <div>
                             <button type="button" class="btn remove_variants_data" style="margin-right: 8px">
@@ -749,7 +749,7 @@
                                 Lưu dữ liệu
                             </button>
                         </div>
-                    </div>       
+                    </div>
                     <div class="render_store_data_variants">
                         <div class="updateVariants" style="font-size:16px;margin:2rem 0;">
                             <div class="font_title_album text-center">
@@ -802,7 +802,7 @@
                 }
                 return html;
             }
-    
+
         }
 
         $(document).on('click','.remove_variants_data',function(e) {
@@ -866,13 +866,13 @@
         //             },
         //             cache: true
         //         }
-        //     })         
+        //     })
         // }
 
 
 
         //trường hợp edit
-        if($('input[name="id"]').val()){     
+        if($('input[name="id"]').val()){
             if(@json($model) && @json($model->is_single) == 2){
                 let render = $('.render_variant_thourgh');
                 let attribute_name_title_table = [];
@@ -907,15 +907,17 @@
                     )
                     load_select2();
                     getSelect2(value?.id,ac_sum)
-                    //get tiitle    
+                    //get tiitle
                     attribute_name_title_table.push(value?.name);
                 })
                 createVariants();
-      
+
             }
+            console.log(@json($model->attributes_item))
             if(@json($model->attributes_item)) {
                 let parent = $('.render_attribute_parent')
                 $.each(@json($model->attributes_item),function(index,value) {
+                    console.log(value,index     )
                     parent.append(`
                     <div class="form-group d-flex algin-items-center attribute_item">
                         <div style="width:65%">
@@ -937,7 +939,7 @@
         }
 
 
-   
+
         let attribute_parent = $('.render_attribute_parent')
         let arrIds = [];
         $('body .attribute_choose').on('click',function(){
@@ -961,18 +963,18 @@
                         </label>
                         <div class="">
                             <select name="attribute[]" class="form-control load-attribute-custom" data-parent="${id}" data-placeholder="-- ${name} --">
-                                
+
                             </select>
                         </div>
                     </div>
                     <div style="margin-left:20px;"> <button type="button" class="btn remove_item_attribute"><i class="fas fa-trash" ></i></button></div>
                 </div>`);
                 load_attrbute();
-            }  
+            }
         })
-        
 
- 
+
+
         $('body').on('click','.remove_item_attribute',function(){
             let _this = $(this);
             let id = _this.parents('.attribute_item').find('select').data('parent');
@@ -984,8 +986,8 @@
             })
             _this.parents('.attribute_item').remove();
         })
- 
-        $('body').on('click','.trash_album',function(e) {       
+
+        $('body').on('click','.trash_album',function(e) {
             $(this).parents('.item_album').remove();
             if($('.ul_upload_view_album li.item_album').length == 0) {
                 $('.ul_upload_view_album').prev().removeClass('hidden');
@@ -1017,7 +1019,7 @@
                 $('input[name="cost"]').prop('disabled',true);
                 $('input[name="quantity"]').prop('disabled',true);
                 $('input[name="categories_main_id"]').prop('disabled',true);
-                
+
                 $('.render_attribute_parent').addClass('hidden');
                 $('.render_attribute_parent .attribute_item select').prop('disabled',true);
                 $('body .add_attribute').prop('disabled',true);
@@ -1034,7 +1036,7 @@
                 $('.render_attribute_parent .attribute_item select').prop('disabled',false);
                 $('body .add_attribute').prop('disabled',false);
                 $('input[name="categories_main_id"]').prop('disabled',false);
-                
+
                 $('.variant_child').addClass('hidden')
                 $('.table_action').addClass('hidden')
                 $('body .create_variant').prop('disabled',true)
@@ -1042,7 +1044,7 @@
         })
 
        $('#form-create-product').submit(function(e){
-           e.preventDefault();   
+           e.preventDefault();
            var formData = $(this).serialize();
             // do không lấy được input content, nên thêm mã hóa nội dung để truyền vào
             var content = CKEDITOR.instances['content'].getData();
@@ -1102,7 +1104,7 @@
            let id = _this.data('id');
            let find = $('.item_variant_'+id);
        })
-      
+
        function loadCustom(){
             $('.load-attribute-custom').select2({
                 allowClear: true,
@@ -1133,8 +1135,8 @@
             })
        }
 
-       
 
-     
+
+
 </script>
 @endsection

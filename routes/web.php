@@ -102,5 +102,3 @@ Route::get('/{url}--{slug}',[HomeController::class,'detailProduct'])
 Route::get('/c/{slug}',[HomeController::class,'productCategory'])->name('home.category')->where('canonical', '[a-zA-Z0-9-]+');
 Route::get('/get-product-by-category-filter',[ProductAjaxController::class,'getProductByCategoryParams'])->name('fe.product.category.filter');
 Route::get('/ajax/load-variant',[ProductAjaxController::class,'getLoadVariantData'])->name('fe.product.load.variant');
-
-

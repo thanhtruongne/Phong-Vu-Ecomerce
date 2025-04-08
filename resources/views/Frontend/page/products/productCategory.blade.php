@@ -26,18 +26,19 @@
                     {{-- sidebar --}}
                     @include('Frontend.page.products.components.sidebar',['filters' => $filters])
 
-                    <div class="teko-col teko-col-10 css-17ajfcv" style="padding: 0 8px"> 
+                    <div class="teko-col teko-col-10 css-17ajfcv" style="padding: 0 8px">
                         <div class="css-1of9xbq">
                             <div class="teko-row justify-content-start css-iv0lz5">
-                                <h1 class="7nrxrf"> {{ ucfirst($productCategory->name) }}</h1> 
+                                <h1 class="7nrxrf"> {{ ucfirst($productCategory->name) }}</h1>
                                 <div class="css-18xfrv">(200 sản phẩm)</div>
                             </div>
 
                             {{-- brand --}}
                             <div class="css-mhnea9">
                                 @if (isset($childCatehgory) && !empty($childCatehgory))
+                                {{-- @dd($childCatehgory) --}}
                                     @foreach ($childCatehgory as $descentan)
-                                        <a href="#" data-id="{{ $descentan->id }}" class="css-1h3fn00">
+                                        <a href="{{ env('APP_ENV').'c/'. $descentan->url }}" data-id="{{ $descentan->id }}" class="css-1h3fn00">
                                             <button class="css-uros0k">
                                                 <div class="w-100 h-100">
                                                     <img class="w-100 h-100 object-fit-contain" src="{{$descentan->icon}}" alt="">
@@ -46,16 +47,16 @@
                                         </a>
                                     @endforeach
                                 @endif
-                               
+
                             </div>
 
                             {{-- nhu cầu --}}
                             {{-- <div class="" style="border-style: none;border-width: 1px;border-color: unset;opacity: 1;margin-top: 0.75rem;margin-bottom: 0.25rem">
                                 <h2 class="css-1xw9vei">Chọn theo nhu cầu</h2>
-                                <div class="css-9hrw0v" style="overflow: hidden"> 
+                                <div class="css-9hrw0v" style="overflow: hidden">
                                     <a href="" class="css-1h3fn00">
                                         <div class="css-1kkr1rl">
-                                        
+
                                             <div class="" style="position: relative;display: inline-block;overflow: hidden;height: 90px;width: 90px;">
                                                 <img class="w-100 object-fit-contain" height="90"  src="https://lh3.googleusercontent.com/qB66Bo3zMseXCcuk_VTXoLuj4J7a-hBm5G0sa5cgHWnsPb3SnZdNxadBlQhHum8fl9fFHh82BDbh6yt254908rZr30Metr1t=rw" alt="">
                                             </div>
@@ -91,7 +92,7 @@
         //gọi data khi click vào data
         renderProductCategoryFirstTime();
    </script>
-   
+
 @endpush
 
 @endsection
