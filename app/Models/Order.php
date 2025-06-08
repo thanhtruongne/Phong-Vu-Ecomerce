@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
     use HasFactory,SoftDeletes,QueryScopes;
-    
+
     protected $table = 'order';
     protected $fillable = [
         'address',
@@ -39,13 +39,6 @@ class Order extends Model
       'shipping_options' => 'json'
     ];
 
-
-    // public function Order_products() {
-    //    return $this->belongsToMany(Product::class,'order_product','order_id','product_id')->withPivot([
-    //      'uuid','name','qty','price','priceSale','option','promotion'
-    //    ])->withTimestamps();
-    // }
-
     public function order_transport_fee() {
       return $this->hasOne(OrderTransport::class,'order_id','id');
     }
@@ -61,8 +54,7 @@ class Order extends Model
     public function district() {
       return $this->belongsTo(District::class,'district_code','code');
     }
-
-
+    
     public function ward() {
       return $this->belongsTo(Ward::class,'ward_code','code');
     }

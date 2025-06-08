@@ -25,18 +25,15 @@ class Visits extends Model
         'device_cate',
     ];
 
- 
-    public static function saveVisits($user_id, Agent $agent, $userAgent )
+
+    public static function saveVisits($user_id, Agent $agent, $userAgent)
     {
-//        $agent = new Agent();
-//        \Log::info($agent->browser());
         $visits = new Visits();
         $visits->method = \Request::getMethod();
         $visits->url = \Request::fullUrl();
         $visits->referer = $_SERVER['HTTP_REFERER'] ?? null;
         $visits->useragent = $userAgent ?? '';
         $visits->device = $agent->device();
-        // $visits->device_type = $agent->deviceType();
         $visits->device_cate = self::getDeviceCate($agent);
         $visits->platform = $agent->platform();
         $visits->browser = $agent->browser();
@@ -45,15 +42,14 @@ class Visits extends Model
         $visits->save();
     }
 
-    private static function getDeviceCate($agent){
-//        $agent = new Agent();
-        if($agent->isTablet())
+    private static function getDeviceCate($agent)
+    {
+        if ($agent->isTablet())
             return 'tablet';
-        elseif($agent->isMobile())
+        elseif ($agent->isMobile())
             return 'mobile';
-        elseif($agent->isDesktop())
+        elseif ($agent->isDesktop())
             return 'desktop';
         return 'desktop';
     }
-
 }
