@@ -19,7 +19,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="{{ asset('backend/library/library.js') }}"></script>
-  
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="text/javascript">
     $.ajaxSetup({
@@ -63,7 +63,7 @@
             [gd(2012, 1, 13), 4], [gd(2012, 1, 14), 5], [gd(2012, 1, 15), 11], [gd(2012, 1, 16), 8],
             [gd(2012, 1, 17), 8], [gd(2012, 1, 18), 11], [gd(2012, 1, 19), 11], [gd(2012, 1, 20), 6],
             [gd(2012, 1, 21), 6], [gd(2012, 1, 22), 8], [gd(2012, 1, 23), 11], [gd(2012, 1, 24), 13],
-            [gd(2012, 1, 25), 7], [gd(2012, 1, 26), 9], [gd(2012, 1, 27), 9], [gd(2012, 1, 28), 8],
+            [gd(2012, 1, 25), 7], [gd(2012, 1, 26), 9], [gd(2012, 1, 27), 9], [gd(2012, 1,sc 28), 8],
             [gd(2012, 1, 29), 5], [gd(2012, 1, 30), 8], [gd(2012, 1, 31), 25]
         ];
 
@@ -199,14 +199,14 @@
                 }]
             },
         });
-   
+
     });
     // $.fn.datepicker.defaults.format = "dd/mm/yyyy";
-  
+
         $('.select2').select2();
     $('#sortable_books').sortable();
     $('.niceSelect').niceSelect();
-   
+
 </script>
 
 <script type="text/javascript">
@@ -214,5 +214,5 @@
     elems.forEach(function(html) {
         var switchery = new Switchery(html);
     });
-</script>   
+</script>
 

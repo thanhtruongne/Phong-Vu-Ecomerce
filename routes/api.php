@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Frontend\Api\AuthController as ApiAuthController;
-use App\Http\Controllers\Frontend\Auth\AuthController;
-use App\Http\Controllers\Frontend\Payments\ZaloPayController;
-use App\Http\Controllers\testController;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GeneralController;
+use App\Http\Controllers\Frontend\HomeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,9 +17,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-Route::post('/pay',[ZaloPayController::class,'pay'])->name('pay');
+Route::group([
+    'middleware' => ['auth:sanctum'],
+    'controller' => AuthController::class
+], function () {
+    Route::get('/user', 'getCurrentUser');
 
-Route::post('/callback',[ZaloPayController::class,'callback'])->name('callback');
+    //address
+    Route::post('/user/save-address', 'saveAddress');
+    Route::get('/address/edit/{id}', 'getAddressCurrent');
+    Route::post('/user/save-user-info', 'saveUserInfo');
+    Route::delete('/remove-address/{address}', 'removeAddress');
+    Route::get('/get-address-code', 'getAddressCode');
+    Route::get('/get-address-detail-code/{address}', 'getCodeDetailAddress');
+    Route::get('/get-district-code', 'getDistrictCode');
+});
+
+
+
+Route::get('/get-data-layout', [GeneralController::class, 'getDataLayout'])->name('home');
+Route::get('/refresh-csrf', function () {
+    return response()->json(['csrf_token' => csrf_token()]);
+});
+
+
+Route::get('/sign-google-login', [GeneralController::class, 'callBackGoogle'])->name('fe.login-sign-callback-google');
+Route::get('/google/callback', [GeneralController::class, 'handleLoginCallbackGoogle'])->name('fe.handle-callback-google');
+
+
+// Route::post('/pay',[ZaloPayController::class,'pay'])->name('pay');
+
+// Route::post('/callback',[ZaloPayController::class,'callback'])->name('callback');

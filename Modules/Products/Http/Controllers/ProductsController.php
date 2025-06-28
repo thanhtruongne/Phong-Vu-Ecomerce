@@ -26,6 +26,35 @@ class ProductsController extends Controller
         return view('products::products.index', ['attributes' => $attribute, 'productCateloge' => $ProductCategory]);
     }
 
+    public function changeStatus(Request $request)
+    {
+        $this->validateRequest([
+            'ids' => 'required',
+            'status' => 'required|in:0,1',
+        ], $request, [
+            'ids' => 'Trường dữ liệu chon không được trống',
+            'status' => 'Trạng thái tróng !'
+        ]);
+        $id = $request->input('id');
+        $ids = $request->input('ids', null);
+        $status = $request->input('status') ?? 0;
+        if (is_array($ids)) {
+            foreach ($ids as $id) {
+                Products::whereIn('id', $ids)->update([
+                    'status' => $status
+                ]);
+            }
+            return response()->json(['status' => 'success', 'message' => 'Thay đổi trạng thái thành công']);
+        } elseif (isset($id) && !empty($id)) {
+            $model = Products::find($id);
+            $model->status = $status;
+            $model->save();
+            return response()->json(['status' => 'success', 'message' => 'Thay đổi trạng thái thành công']);
+        }
+
+        return response()->json(['status' => 'error', 'message' => 'Có1 lỗi xảy ra']);
+    }
+
     public function getData(Request $request)
     {
         $search = $request->search;

@@ -18,6 +18,9 @@ use Jenssegers\Agent\Agent;
 
 class AuthController extends Controller
 {
+    private string $driverGoogle = 'google';
+
+
     public function loginForm()
     {
         if (\Auth::check() && !\Auth::user()->isAdmin()) {
@@ -36,6 +39,7 @@ class AuthController extends Controller
         ], $request, User::getAttributeName());
         $email = $request->input('email');
         $password = $request->input('password');
+
 
         $user = User::where('email', $email)->first(['id', 'email', 'status', 'username', 'role']);
         if ($user) {
@@ -91,61 +95,45 @@ class AuthController extends Controller
     }
 
     //callback google
-    public function callBackGoogle()
+    public function callbackGoogle()
     {
-        try {
-            $url = Socialite::driver('google')->stateless()
-                ->redirect()->getTargetUrl();
-            return response()->json([
-                'url' => $url,
-            ])->setStatusCode(Response::HTTP_OK);
-        } catch (\Exception $exception) {
-            return response()->json(['message' => $exception->getMessage(), 'status' => StatusReponse::ERROR]);
-        }
+        $data = [
+            'url_google' => Socialite::driver($this->driverGoogle)->redirect()->getTargetUrl(),
+        ];
+        return $this->sendApiResponse($data, 'Get driver login success');
     }
 
-    public function handleLoginCallbackGoogle(Request $request)
+    public function handleLoginCallbackGoogle()
     {
         try {
-            $state = $request->input('state');
-            parse_str($state, $result);
-            $googleUser = Socialite::driver('google')->stateless()->user();
-            $user = User::where('email', $googleUser->email)->first();
+            $google_user = Socialite::driver($this->driverGoogle)->user();
+            $user = User::where('google_id', $google_user->id)->first();
             if (!$user) {
                 $user = User::create(
                     [
-                        'email' => $googleUser->email,
-                        'username' => 'Google_' . $googleUser->id,
-                        'firstname' => $googleUser->user['family_name'],
-                        'lastname' => $googleUser->user['given_name'],
-                        'avatar' => $googleUser->avatar,
-                        'google_id' => $googleUser->id,
+                        'email' => $google_user->email,
+                        'username' => 'Google_' . $google_user->id,
+                        'firstname' => $google_user->user['family_name'],
+                        'lastname' => $google_user->user['given_name'],
+                        'avatar' => $google_user->avatar,
+                        'google_id' => $google_user->id,
                         'password' => \Hash::make('123456'),
                     ]
                 );
             }
-            if ($user->status != $this->status_user_check) {
-                return redirect(route('login'));
-            }
 
-            \Auth::login($user);
-            $agent = new Agent();
-            LoginHistory::setLoginHistoryNotUseShouldQueue($user, request()->ip());
-            Visits::saveVisits($user->id, $agent, \Request::userAgent());
-            UserActivities::createUserActivityDuration($user->id, session()->getId());
-            $targetUrl = '';
-            // lưu lần đầu đăng nhập
-            if (is_null($user->last_login)) {
-                $user->last_login = \Carbon::now();
-                $user->save();
-            }
-            // trở lại url khi thao tác bị hết hạn 401
-            if (session()->has('target_url')) {
-                $targetUrl = session()->get('target_url');
-                session()->forget('target_url');
-                return redirect($targetUrl);
-            }
-            return redirect()->route('home');
+
+            // $agent = new Agent();
+            // LoginHistory::setLoginHistoryNotUseShouldQueue($user, request()->ip());
+            // Visits::saveVisits($user->id, $agent, \Request::userAgent());
+            // UserActivities::createUserActivityDuration($user->id, session()->getId());
+            $data = [
+                'token' => $user->createToken('accessToken', ['*'], \Carbon\Carbon::now()->addDays(7))->plainTextToken,
+                'refreshToken' => $user->createToken('refreshToken', ['*'], \Carbon\Carbon::now()->addMonths())->plainTextToken,
+                'status' => true,
+                'email' => $user->email
+            ];
+            return $this->sendApiResponse($data, 'Login succesfully');
         } catch (\Exception $exception) {
             \Log::error('Google Login Error: ' . $exception->getMessage());
             return redirect()->route('home');

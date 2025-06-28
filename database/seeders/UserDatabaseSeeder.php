@@ -18,47 +18,17 @@ class UserDatabaseSeeder extends Seeder
     public function run(): void
     {
         \DB::table('user')->truncate();
-        $faker = Factory::create();
         /***** superadmin *******/
-        $superadmin = User::firstOrNew(['username' => 'superadmin'],[
+        $superadmin = User::firstOrNew(['username' => 'superadmin'], [
             'username' => 'superadmin',
             'password' => \Hash::make('123123'),
             'firstname' => 'Super',
             'lastname' => 'Admin',
             'email' => 'superadmin@gmail.com',
-            'status'=> 1,
+            'status' => 1,
             'dob' => date('Y-m-d 00:00:00'),
-            // 'date_range' => date('Y-m-d H:i:s'),
-            // 'contract_signing_date'=> date('Y-m-d H:i:s'),
-            'gender'=> 1,
+            'gender' => 1,
         ]);
         $superadmin->save();
-        $admin = User::firstOrNew(['username' => 'admin'],[
-            'username' => 'admin',
-            'password' => \Hash::make('123123'),
-            'firstname' => 'admin',
-            'lastname' => 'admin',
-            'email' => 'admin@gmail.com',
-            'status'=> 1,
-            'dob' => date('Y-m-d 00:00:00'),
-            // 'date_range' => date('Y-m-d H:i:s'),
-            // 'contract_signing_date'=> date('Y-m-d H:i:s'),
-            'gender'=> 1,
-        ]);
-        $admin->save();
-
-
-        $user = User::firstOrNew(['username' => 'guest123'],[
-            'username' => 'guest',
-            'password' => \Hash::make('123123'),
-            'firstname' => 'người dùng',
-            'lastname' => 'guest',
-            'email' => 'ohmymind@gmail.com',
-            'status'=> 1,
-            'dob' => date('Y-m-d 00:00:00'),
-            'gender'=> 1,
-        ]);
-        $user->save();
-
     }
 }

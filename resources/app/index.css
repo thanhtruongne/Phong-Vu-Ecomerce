@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @layer components {
+    .btn-primary {
+        @apply text-white bg-primary border-solid text-center px-3 py-1
+    }
+} */

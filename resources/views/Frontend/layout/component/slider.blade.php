@@ -8,13 +8,13 @@
                        @foreach ($slider->item as $key =>  $slider_item)
                             <li class="glide__slide" >
                                 <div style="height:566px" class="w-100 position-relative css-10ys7nl">
-                                    <img src="{{ $slider_item['image'] }}" 
+                                    <img src="https://lh3.googleusercontent.com/BOn_mZdzhM-vDnaoLQbP-hoBeN6E5loAYQnuQcGsTX10-7ESeVF35VZeMAuWSctdf8lCXTTlzUPGhqCwb-66ElrRNa3Ma1ieYA=w1920-rw"
                                     alt="" style="width: 100%;height: 566px;object-fit: cover;">
                                 </div>
-                            </li>   
+                            </li>
                        @endforeach
                    @endif
-                
+
                </ul>
            </div>
 
@@ -34,9 +34,8 @@
                <button class="glide__bullet" data-glide-dir="=3"></button>
                <button class="glide__bullet" data-glide-dir="=4"></button>
            </div>
-       </div>         
+       </div>
     </div>
-   
+
 </div>
 
-  

@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use GeneaLabs\LaravelModelCaching\Traits\Cachable;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Cache;
 use Spatie\Permission\Traits\HasRoles;
 use App\Models\MainUserAddress;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use Notifiable,HasRoles,Cachable;
+    use Notifiable, HasRoles, HasApiTokens;
 
     protected $table = 'user';
     /**
@@ -33,10 +30,6 @@ class User extends Authenticatable
         'gender',
         'signing_create_account',
         'content',
-        // 'province_code',
-        // 'district_code',
-        // 'ward_code',
-        // 'address',
         'phone',
         'avatar',
         'status',
@@ -63,7 +56,13 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-    protected $appends = ['full_name'];
+    protected $appends = ['full_name', 'address_default_split'];
+
+    public function getAddressDefaultSplitAttribute()
+    {
+        return $this->usersAddress->where('default', 1)->first()?->address_split;
+    }
+
 
     public function getFullNameAttribute()
     {
@@ -71,37 +70,25 @@ class User extends Authenticatable
     }
 
 
-
-    // public function province() {
-    //     return $this->belongsTo(Province::class,'province_code','code');
-    //   }
-
-    // public function district() {
-    //     return $this->belongsTo(District::class,'district_code','code');
-    // }
-
-    // public function ward() {
-    //     return $this->belongsTo(Ward::class,'ward_code','code');
-    // }
-
-    public function user_session_address(){
-        return $this->hasMany(MainUserAddress::class,'user_id','id');
+    public function usersAddress()
+    {
+        return $this->hasMany(MainUserAddress::class, 'user_id', 'id')->orderBy('default', 'desc');
     }
 
-    public function isAdmin(){
+    public function isAdmin()
+    {
         if (in_array(auth()->user()->username, ['admin', 'superadmin']))
             return true;
 
         return false;
-
     }
 
-    public static function getAttributeName() {
+    public static function getAttributeName()
+    {
         return [
-        'username' => "Tài khoản",
-        "password" => "Mật khẩu",
-        "email" => "Email"
+            'username' => "Tài khoản",
+            "password" => "Mật khẩu",
+            "email" => "Email"
         ];
     }
-
 }

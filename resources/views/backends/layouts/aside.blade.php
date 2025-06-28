@@ -1,34 +1,13 @@
-
-                {{-- @foreach ($leftMenuBackend as $key =>  $item)
-                <li class="nav-item menu-open" data-id="{{$item['id']}}" data-key="{{$key}}">
-                     <a href="{{ $item['url'] ?? '#' }}" class="nav-link active">
-                        {!! $item['icon'] !!}
-                        <p>
-                            {{ $item['name'] }}
-                            <i class="nav-arrow bi bi-chevron-right"></i>
-                        </p>
-                    </a>
-                    @if (isset($item['item_childs']) && !empty($item['item_childs']))
-                       <ul class="nav nav-treeview">
-                            @foreach ($item['item_childs'] as $child)
-                                <li class="nav-item"> 
-                                    {!! $child['icon'] !!}
-                                    <a href="{{$child['url'] ?: ''}}" class="nav-link active"> 
-                                        <p>{{ $child['name'] }}</p>
-                                    </a>
-                                </li>
-                            @endforeach    
-                        </ul>
-                    @endif
-                </li>
-                @endforeach --}}
+             @php
+                $profile = auth()->user();
+             @endphp
                 <aside class="main-sidebar sidebar-dark-primary elevation-4">
                     <!-- Brand Logo -->
                     <a href="#" class="brand-link">
-                      <span class="brand-text font-weight-light">Xin chào, {{ profile()->firstname}} {{profile()->lastname}}</span>
-                    </a>     
+                      <span class="brand-text font-weight-light">Xin chào, {{ $profile->firstname}} {{$profile->lastname}}</span>
+                    </a>
                     <!-- Sidebar -->
-                    <div class="sidebar">    
+                    <div class="sidebar">
                       <!-- Sidebar Menu -->
                       <nav class="mt-2">
                         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
@@ -44,14 +23,14 @@
                                           @if (isset($item['item_childs']) && !empty($item['item_childs']))
                                             <i class="fas fa-angle-left right"></i>
                                           @endif
-                                         
+
                                       </p>
                                   </a>
                                   @if (isset($item['item_childs']) && !empty($item['item_childs']))
                                     <ul class="nav nav-treeview">
                                         @foreach ($item['item_childs'] as $child)
-                                            <li class="nav-item pl-3"> 
-                                              <a href="{{$child['url'] ?: ''}}" class="nav-link {{$child['url_name'] == $tab ? 'active' : ''}}"> 
+                                            <li class="nav-item pl-3">
+                                              <a href="{{$child['url'] ?: ''}}" class="nav-link {{$child['url_name'] == $tab ? 'active' : ''}}">
                                                   {!! $child['icon'] !!}
                                                     <p>{{ $child['name'] }}</p>
                                                     @if (isset($child['item_childs']) && !empty($child['item_childs']))
@@ -65,11 +44,11 @@
                                                          $tab4 =  request()->segment(4) == 'categories' ?  request()->segment(3).'/'.'categories' : '';
                                                     @endphp
                                                     @foreach ($child['item_childs'] as $tree)
-                                                        <li class="nav-item pl-3"> 
-                                                          <a href="{{$tree['url'] ?: ''}}" class="nav-link {{$tree['url_name'] == $tab3 ||$tree['url_name'] == $tab4  ? 'active' : ''}}"> 
+                                                        <li class="nav-item pl-3">
+                                                          <a href="{{$tree['url'] ?: ''}}" class="nav-link {{$tree['url_name'] == $tab3 ||$tree['url_name'] == $tab4  ? 'active' : ''}}">
                                                               {!! $tree['icon'] !!}
                                                                 <p>{{ $tree['name'] }}</p>
-                                                          </a> 
+                                                          </a>
                                                           @if (isset($tree['item_childs']) && !empty($tree['item_childs']))
                                                               <ul class="nav nav-treeview">
                                                                 @php
@@ -77,21 +56,21 @@
                                                                     $tab4 =  request()->segment(4) == 'categories' ?  request()->segment(3).'/'.'categories' : '';
                                                                 @endphp
                                                                 @foreach ($tree['item_childs'] as $treeChild)
-                                                                    <li class="nav-item pl-3"> 
-                                                                      <a href="{{$treeChild['url'] ?: ''}}" class="nav-link {{$treeChild['url_name'] == $tab3 ||$treeChild['url_name'] == $tab4  ? 'active' : ''}}"> 
+                                                                    <li class="nav-item pl-3">
+                                                                      <a href="{{$treeChild['url'] ?: ''}}" class="nav-link {{$treeChild['url_name'] == $tab3 ||$treeChild['url_name'] == $tab4  ? 'active' : ''}}">
                                                                           {!! $treeChild['icon'] !!}
                                                                             <p>{{ $treeChild['name'] }}</p>
-                                                                      </a> 
+                                                                      </a>
                                                                     </li>
-                                                                @endforeach    
+                                                                @endforeach
                                                             </ul>
                                                           @endif
                                                         </li>
-                                                    @endforeach    
+                                                    @endforeach
                                                 </ul>
                                               @endif
                                             </li>
-                                        @endforeach    
+                                        @endforeach
                                     </ul>
                                   @endif
                               </li>
@@ -352,13 +331,12 @@
                               </li>
                             </ul>
                           </li> --}}
-                         
+
                         </ul>
                       </nav>
                       <!-- /.sidebar-menu -->
                     </div>
                     <!-- /.sidebar -->
-                  </aside>               
+                  </aside>
 
 
-                

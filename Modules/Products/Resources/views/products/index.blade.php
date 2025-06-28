@@ -22,11 +22,10 @@
         @include('backends.layouts.components.breadcrumb',$breadcum)
     </div>
 </div>
-    
+
 @endsection
 
 @section('links')
-{{-- <link href="{{asset('css/iconIconic.css')}}" rel="stylesheet" type="text/css"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.css" rel="stylesheet" type="text/css"/>
     <link rel="stylesheet" href="{{asset('backend2/css/cusomTreeCategory.css')}}">
     <link rel="stylesheet" href="{{asset('backend2/css/treeSelect.min.css')}}">
@@ -83,27 +82,27 @@
                                     </button>
                                     <div class="dropdown-menu" aria-labelledby="dropdownAddNew" x-placement="bottom-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(3px, 32px, 0px);">
                                         <a href="{{route('private-system.product.create',['type' => 'laptop'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
+                                            <i class="fa fa-plus"></i>
                                              Laptop
                                         </a>
                                         <a href="{{route('private-system.product.create',['type' =>'electric'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
+                                            <i class="fa fa-plus"></i>
                                              Điện máy
                                         </a>
                                         <a href="{{route('private-system.product.create',['type' => 'accessory'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
+                                            <i class="fa fa-plus"></i>
                                              Phụ kiện
                                         </a>
                                         <a href="{{route('private-system.product.create',['type' => 'phone'])}}" class="dropdown-item" href="#">
-                                            <i class="fa fa-plus"></i> 
+                                            <i class="fa fa-plus"></i>
                                              Điện thoại
                                         </a>
                                     </div>
                                 </div>
-                              
+
 
                                 <button class="btn" id="delete-item" disabled>
-                                    <i class="fa fa-trash"></i> 
+                                    <i class="fa fa-trash"></i>
                                     Xóa
                                 </button>
                             </div>
@@ -112,13 +111,13 @@
                 </div>
                 <br>
 
-                <table class="tDefault table table-bordered bootstrap-table" 
+                <table class="tDefault table table-bordered bootstrap-table"
                     data-detail-view="true"
                     data-detail-formatter="detailFormatter"
                 >
                     <thead>
-                        <tr>    
-                          <th data-field="index" data-align="center" data-width="5%" data-formatter="index_formatter">#</th> 
+                        <tr>
+                          <th data-field="index" data-align="center" data-width="5%" data-formatter="index_formatter">#</th>
                             <th data-field="check" data-checkbox="true" data-width="4%"></th>
                             <th data-field="image" data-width="10%" data-formatter="image_formatted">Hình ảnh</th>
                             <th data-field="name" data-width="50%" data-formatter="name_formatter">Tên sản phẩm</th>
@@ -128,14 +127,14 @@
                             <th data-field="brand_name">Thương hiệu</th>
                             <th data-field="category_name">Danh mục</th>
                             {{-- <th data-field="type" data-align="center" data-width="10%">Loại</th> --}}
-                            <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>    
+                            <th data-field="status" data-align="center" data-width="12%" data-formatter="status_formatter">Trạng thái</th>
                         </tr>
                     </thead>
                 </table>
-        
+
             </div>
         </div>
-    </div> 
+    </div>
     <div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -222,15 +221,15 @@
         function name_formatter(value,row,index){
             return `<div>
                         <a class="" href="${row.edit_url}">${row.name}</a>
-                        ${row.sku_code  ? 
+                        ${row.sku_code  ?
                         `<div>
                              <span class="fw-bold">Sku: ${row.sku_code}</span>
                         </div>` : '' }
-                        ${row.attribute_name ? 
+                        ${row.attribute_name ?
                         `<div>
                              <span class="">Attribute: <span class="text-red">${row.attribute_name}</span></span>
                         </div>`  : ''}
-                        
+
                     </div>`;
         }
 
@@ -297,7 +296,7 @@
                 }
             }).done(function(data) {
                 $(table.table).bootstrapTable('refresh');
-                return false;   
+                return false;
             }).fail(function(data) {
                 show_message('Lỗi hệ thống', 'error');
                 return false;
@@ -306,7 +305,7 @@
 
          function changeStatus(status,type) {
             var ids = $("input[name=btSelectItem]:checked").map(function(){return $(this).val();}).get();
-         
+
             let _this = $('#'+type);
             let html = _this.html();
             _this.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang xử lý...');
@@ -315,16 +314,13 @@
                 return false;
             }
             $.ajax({
-                url: '{{route('private-system.product-attribute.change.status')}}',
+                url: '{{route('private-system.product.change-status')}}',
                 type: 'post',
                 data: {
                     ids: ids,
                     status: status
                 }
             }).done(function(data) {
-                // if (id == 0) {
-                //     show_message(data.message, data.status);
-                // }
                 _this.prop('disabled', false).html(html);
                 $(table.table).bootstrapTable('refresh');
                 return false;
@@ -347,8 +343,8 @@
 
         }
 
-            
-          
+
+
 
             function save(){
                 let item = $('.save');

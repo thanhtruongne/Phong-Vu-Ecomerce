@@ -56,6 +56,8 @@ interface ControllerInterfaces
     public function getWidgetData($widgets);
     public function getFilterProductCategory($products);
     public function getProductDetailByRequest(string $url, string $slug);
+    public function sendApiResponse($data, string $message, $status, $httpCode);
+    public function sendApiServerErrorResponse($message, $data);
 }
 
 class Controller extends ControllerAstract implements ControllerInterfaces
@@ -399,5 +401,20 @@ class Controller extends ControllerAstract implements ControllerInterfaces
             $total +=  +$price * $item->qty;
         }
         return $total;
+    }
+
+
+    public function sendApiResponse($data = null, $message = 'success', $status = 200, $httpCode = 200)
+    {
+        return response()->json(compact('status', 'message', 'data'), $httpCode);
+    }
+
+    public function sendApiServerErrorResponse($message = "Internal Server Error", $data = null)
+    {
+        return response()->json([
+            'status' => 500,
+            'message' => __($message),
+            'data' => $data
+        ], 500);
     }
 }

@@ -5,20 +5,23 @@ namespace App\Http\Middleware;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Closure;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class Authenticate
 {
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, $guard = null)
     {
-        if (!\Auth::check()) {
-            if ($request->ajax()) {
+
+        if (!Auth::guard($guard)->check()) {
+            if ($request->ajax() || $request->bearerToken()) {
                 if (!session()->has('target_url')) {
                     $refererUrl = $request->header('Referer');
                     session()->put('target_url', $refererUrl);
                 }
 
-                return response()->json(["message", "Authentication Required!"], 401);
+                return response()->json(["message" => "Authentication failed!"], 401);
             }
             if (!session()->has('target_url')) {
                 session()->put('target_url', $request->fullUrl());
@@ -31,18 +34,13 @@ class Authenticate
         }
 
 
-        if (\Auth::check()) {
-            $userId = \auth()->id();
-            if (!session()->get('profile')) {
-                $profile = User::findOrFail($userId);
-                session(['profile' => $profile]);
-                session()->save();
+        if (Auth::guard($guard)->check()) {
+            $userId = Auth::guard($guard)->id();
+            if (!cache('avatar_' . $userId)) {
+                $avatar = User::whereId($userId)->value('avatar');
+                Cache::forever('avatar_' . $userId, $avatar ?? '');
             }
-
-            if (!cache('avatar_' . profile()->user_id)) {
-                $avatar = User::whereId(\profile()->id)->value('avatar');
-                Cache::forever('avatar_' . \profile()->id, $avatar ?? '');
-            }
+            Auth::setUser(Auth::guard($guard)->user());
         }
         return $next($request);
     }

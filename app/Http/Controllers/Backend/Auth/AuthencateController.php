@@ -39,6 +39,8 @@ class AuthencateController extends Controller
         $password = $request->input('password');
         $user = User::whereUsername($username)->first(['id', 'username', 'role', 'email', 'status']);
 
+
+
         if ($user) {
             if ($user->status != 1) {
                 return response()->json(['status' => 'error', 'message' => 'Tài khoản của bạn đã bị khóa']);
@@ -46,6 +48,7 @@ class AuthencateController extends Controller
             if (!in_array($user->username, ['admin', 'superadmin'])) {
                 return response()->json(['status' => 'error', 'message' => 'Có lỗi xẩy ra', 'redirect' => route('private-system.be.login.template')]);
             }
+            // dd(auth()->attempt(['username' => $username, 'password' => $password]));
 
             if (auth()->attempt(['username' => $username, 'password' => $password])) {
                 $request->session()->put('login_attempts', 0);

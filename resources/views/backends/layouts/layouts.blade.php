@@ -30,11 +30,11 @@
               </div><!-- /.container-fluid -->
             </div>
             <!-- /.breadcrumb -->
-        
+
             <!-- Main content -->
             <section class="content">
               <div class="container-fluid">
-                @yield('content') 
+                @yield('content')
                 {{-- theo row --}}
               </div>
             </section>
@@ -44,7 +44,7 @@
         {{-- footer --}}
         @include('backends.layouts.footer')
 
-         
+
     </div>
     @include('backends.layouts.components.scirpts')
     <script>
@@ -62,15 +62,14 @@
                 }
             });
             $('.sortable').sortable();
-
                 var scrollTrigger = 60,
                 backToTop = function() {
                 };
-        
+
                 $('.bootstrap-table').removeClass('table-bordered');
                 $(window).on('scroll', function() {
                     backToTop();
-                });    
+                });
 
                 // $('.editor').each(function() {
                 //     let editor = $(this);
@@ -98,16 +97,16 @@
                                     <button type="button" class="trash_album btn bg-red" >
                                         <i class="fas fa-trash text-white" ></i>
                                     </button >
-                                </li> 
+                                </li>
                                 `
                             });
-                            
-                    
+
+
                             if(element.parents('.check_hidden_image_album').hasClass('hidden')){
                                 element.parents('.check_hidden_image_album').removeClass('hidden')
                             }
                             else element.parents('.check_hidden_image_album').addClass('hidden');
-                            render.html(html);               
+                            render.html(html);
                         });
 
                         finder.on( 'file:choose:resizedImage', function( evt ) {
@@ -119,7 +118,7 @@
                     // CKFinder.popup({
                     // chooseFiles: true,
                     // onInit : function(finder) {
-                    //     finder.on( 'files:choose', function( evt ) {   
+                    //     finder.on( 'files:choose', function( evt ) {
 
                     //             var files = evt.data.files;
                     //             var html = '';
@@ -131,13 +130,13 @@
                     //                     <button type="button" class="trash_album btn bg-red" >
                     //                         <i class="fas fa-trash text-white" ></i>
                     //                     </button >
-                    //                 </li> 
+                    //                 </li>
                     //                 `
                     //             });
-                                
+
                     //             element.parents('.check_hidden_image_album').addClass('hidden');
-                    //             render.html(html);              
-                        
+                    //             render.html(html);
+
                     //     } );
                     //     finder.on( 'file:choose:resizedImage', function( evt ) {
                     //         // document.getElementById( 'url' ).value = evt.data.resizedUrl;
@@ -147,8 +146,8 @@
                 })
 
             $('body').on('click','.ckfinder_12',function() {
-                let input = $(this).find('input');   
-                let img = $(this).find('img');   
+                let input = $(this).find('input');
+                let img = $(this).find('img');
                 let render = $(this).parents('.check_hidden_image_album').next('.ul_upload_view_album');
                 selectFileWithCKFinder(input ,img,render);
             })
@@ -174,11 +173,11 @@
                                     <button type="button" class="trash_album btn bg-red" >
                                         <i class="fas fa-trash text-white" ></i>
                                     </button >
-                                </li> 
+                                </li>
                                 `
                             });
                             element.parents('.check_hidden_image_album').addClass('hidden');
-                            render.html(html);          
+                            render.html(html);
                         });
 
                         finder.on( 'file:choose:resizedImage', function( evt ) {
@@ -189,7 +188,7 @@
                 });
             })
 
-  
+
 
             function selectFileWithCKFinder( input , img = null ,render = null, type = 'single' ) {
                 CKFinder.modal({
@@ -202,9 +201,9 @@
                             input.val(file.getUrl());
                             img.removeAttr('width').addClass('w-100 object-fit-cover')
                             img.attr('src',file.getUrl());
-                            
-                            
-                            // output.value = 
+
+
+                            // output.value =
                         } );
 
                         finder.on( 'file:choose:resizedImage', function( evt ) {
@@ -229,7 +228,7 @@
         }
     </script>
 
-    
+
 
     @yield('scripts')
 </body>

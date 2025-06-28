@@ -3,7 +3,7 @@
     Trang chủ
 @endsection
 
-@section('content') 
+@section('content')
      {{-- banner --}}
      @include('Frontend.layout.container.banner',['slider' => $slider])
 
@@ -13,14 +13,14 @@
 
         {{-- Outstanding category --}}
         @include('Frontend.layout.component.categoryOutstanding',['data' => $productCategory])
-        
+
         {{-- Product Category by Widget --}}
-        @include('Frontend.layout.container.widgets.product',['widgets' => $widgets])
+        {{-- @include('Frontend.layout.container.widgets.product',['widgets' => $widgets]) --}}
         {{-- brand --}}
         @include('Frontend.layout.component.brand',['brands' => $brands])
 
         {{-- ProductOutstanding --}}
         @include('frontend.layout.component.productOutStanding',['products' => $products])
     </div>
-     
+
 @endsection

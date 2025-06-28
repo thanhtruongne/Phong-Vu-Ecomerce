@@ -12,6 +12,7 @@ class AjaxLoaderController extends Controller
 {
     public function load_ajax($func, Request $request)
     {
+
         if (method_exists($this, $func)) {
             $this->{$func}($request);
             exit();
@@ -19,27 +20,31 @@ class AjaxLoaderController extends Controller
         return response()->json(['message' => 'Có lỗi xảy ra'], 404);
     }
 
-    private function loadProductBrand(Request $request)
+    public function loadProductBrand(Request $request)
     {
-        $search = $request->search;
-        $query = Brand::query();
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
+        try {
+            $search = $request->search;
+            $query = Brand::query();
+            if ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            }
+
+
+            $query->orderBy('id', 'desc');
+            $paginate = $query->paginate(10);
+            $data['results'] = $query->select('id', 'name AS text')->get();
+            if ($paginate->nextPageUrl()) {
+                $data['pagination'] = ['more' => true];
+            }
+
+            return json_result($data);
+        } catch (\Throwable $th) {
+            return json_result($th->getMessage());
         }
-
-
-        $query->orderBy('id', 'desc');
-        $paginate = $query->paginate(10);
-        $data['results'] = $query->select('id', 'name AS text')->get();
-        if ($paginate->nextPageUrl()) {
-            $data['pagination'] = ['more' => true];
-        }
-
-        return json_result($data);
     }
 
 
-    private function loadProductCategiresByCode(Request $request)
+    public function loadProductCategiresByCode(Request $request)
     {
         $search = $request->search;
         $query = Categories::query();
@@ -58,7 +63,7 @@ class AjaxLoaderController extends Controller
         return json_result($data);
     }
 
-    private function loadAttribute(Request $request)
+    public function loadAttribute(Request $request)
     {
 
         $search = $request->search;
@@ -83,7 +88,7 @@ class AjaxLoaderController extends Controller
         return json_result($data);
     }
 
-    private function loadAttributeByType(Request $request)
+    public function loadAttributeByType(Request $request)
     {
         $search = $request->search;
         $type = $request->type;

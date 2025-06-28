@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('receiver_email')->index();
             $table->string('receiver_phone')->index();
             $table->string('province_code')->nullable();
-            $table->string('district_code')->nullable();
+            // $table->string('district_code')->nullable();
             $table->string('ward_code')->nullable();
             $table->string('address')->nullable();
-            $table->tinyInteger('default')->nullable()->comment('1');
+            $table->tinyInteger('default')->default(0)->comment('1');
             $table->timestamps();
         });
     }

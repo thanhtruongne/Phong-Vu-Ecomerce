@@ -9,8 +9,8 @@
 </script>
 
 <script type="text/javascript">
-  var base_url = '{{ config('app.env') }}' + 'private/system';
-  window._app_env_ = '{{ config('app.env') }}';
+  var base_url = '{{ config('app.url') }}' + '/private/system';
+//   window._app_env_ = '{{ config('app.env') }}';
 </script>
 
 <!-- Bootstrap 4 -->
@@ -68,7 +68,7 @@
 <script src="{{asset('js/ckfinder/ckfinder.js')}}"></script>
 {{-- <script>CKFinder.config( { connectorPath: '/ckfinder/connector' } );</script> --}}
 <script src="{{asset('js/run_prettify.js')}}"></script>
-<script>CKFinder.config( { connectorPath: @json(route('ckfinder_connector')) } )</script>
+{{-- <script>CKFinder.config( { connectorPath: @json(route('ckfinder_connector')) } )</script> --}}
 
 
 

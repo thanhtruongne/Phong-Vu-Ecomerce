@@ -4,6 +4,10 @@ namespace App\Providers;
 
 use App\Helpers\Tracking;
 use Illuminate\Support\ServiceProvider;
+use Cloudinary\Configuration\Configuration;
+use Laravel\Sanctum\PersonalAccessToken;
+use Laravel\Sanctum\Sanctum;
+
 class AppServiceProvider extends ServiceProvider
 {
 
@@ -36,18 +40,22 @@ class AppServiceProvider extends ServiceProvider
             \URL::forceScheme('https');
         }
 
-        view()->composer('backends.layouts.aside','App\Http\ViewComposers\LeftMenuComposer');
-        view()->composer('Frontend.layout.component.mainMenu','App\Http\ViewComposers\MenuComposer');
+        view()->composer('backends.layouts.aside', 'App\Http\ViewComposers\LeftMenuComposer');
+        view()->composer('Frontend.layout.component.mainMenu', 'App\Http\ViewComposers\MenuComposer');
 
-        $modules =\Module::all();
+        $modules = \Module::all();
         foreach ($modules as $module) {
             $this->loadMigrationsFrom([$module->getPath() . '/Database/Migrations']);
+            $this->loadRoutesFrom($module->getPath() . '/Routes/web.php');
         }
 
-        \Validator::extend('string_vertify',function($attribute,$value) {
-            return $value === filter_var($value,FILTER_SANITIZE_STRING);
+
+        \Validator::extend('string_vertify', function ($attribute, $value) {
+            return $value === filter_var($value, FILTER_SANITIZE_STRING);
         });
 
+        // config cloudinary
+        Configuration::instance(env('CLOUDINARY_URL', null));
 
         //lưu log các câu truy vấn và thời gian thực thi
         if (
@@ -67,6 +75,5 @@ class AppServiceProvider extends ServiceProvider
 
                 Tracking::put((object) ['sql' => $rawQuery, 'time' => $query->time], 'db', false);
             });
-
     }
 }

@@ -14,7 +14,7 @@ use Modules\Widget\Entities\Widget;
 
 interface HomeDataControl
 {
-    public function home(Request $request);
+    public function getDataLayout(Request $request);
 
     public function productCategory(string $slug = '', Request $request);
 
@@ -24,20 +24,32 @@ interface HomeDataControl
 class HomeController extends Controller implements HomeDataControl
 {
 
-    public function home(Request $request)
+    public function getDataLayout(Request $request)
     {
-        $widgets = Widget::whereNotNull('name')->where('status', 1)->get();
-        $data_widget = $this->getWidgetData($widgets);
+
+        // $widgets = Widget::whereNotNull('name')->where('status', 1)->get();
+        // $data_widget = $this->getWidgetData($widgets);
         $slider = \Cache::tags(['slider', 'brand'])->remember('sliders', \Carbon::now()->addDays(2), function () {
-            return Slider::whereKeyword('slider-home')->first();
+            return Slider::whereKeyword('slider-home')->whereNotNull('content')->first();
         });
-        $brands = \Cache::tags(['slider', 'brands'])->remember('brands', \Carbon::now()->addDays(2), function () {
-            return Brand::whereNotNull('image')->with('products')->get();
+
+        $productCategory = \Cache::remember('categories', \Carbon\Carbon::now()->addDays(7), function () {
+            return ProductCategory::get(['id', 'name', '_lft', '_rgt', 'parent_id', 'url', 'icon'])->toTree();
         });
+
+        $data = [
+            'slider' => $slider->item,
+            'dataCategories' => $productCategory
+        ];
+        return $this->sendApiResponse($data, 'Get data layout success');
+
+        // $brands = \Cache::tags(['slider', 'brands'])->remember('brands', \Carbon::now()->addDays(2), function () {
+        //     return Brand::whereNotNull('image')->with('products')->get();
+        // });
         // $brands = Brand::whereNotNull('image')->with('products')->get();
-        $productCategory = ProductCategory::whereNull('parent_id')->get();
-        $products = $this->getProductsHome();
-        return view('Frontend.page.home', ['slider' => $slider, 'productCategory' => $productCategory, 'widgets' => $data_widget, 'brands' => $brands, 'products' => $products]);
+
+        // $products = $this->getProductsHome();
+        // return view('Frontend.page.home', ['slider' => $slider, 'productCategory' => $productCategory, 'widgets' => $data_widget, 'brands' => $brands, 'products' => $products]);
     }
 
 

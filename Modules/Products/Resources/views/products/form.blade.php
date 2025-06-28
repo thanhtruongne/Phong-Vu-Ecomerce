@@ -62,8 +62,6 @@
         }
 
   </style>
-
-
     <div class="row bg-white backend-container pt-3" style="margin-left: -15px;margin-right:-15px">
         <div class="col-md-12 pb-3">
             <div class="">
@@ -112,14 +110,15 @@
                                                Galley Image
                                             </label>
                                             <div class="col-md-8">
-                                                <div class="text-center" style="border: 1px solid #ccc">
+                                                <div class="text-center" >
                                                     <div class="check_hidden_image_album {{ isset($model->album) && !empty($model->album) && $model->album != 'null' ? 'hidden' : '' }}">
-                                                        <img class="ckfinder_3" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
-                                                        <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div>
+                                                        <input class="form-control" name="album[]" type="file"  multiple>
+                                                        {{-- <img class="ckfinder_3" width="120" src="https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" alt="">
+                                                        <div style="font-size:12px"><strong>Nhấn vào để chọn ảnh phiêm bản </strong><br></div> --}}
                                                     </div>
 
-                                                    <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
 
+                                                    <div class="ul_upload_view_album clearfix py-2 sortable" style="list-style-type: none">
                                                         @if (isset($model) && !empty($model))
                                                             @php
                                                                 $album =  json_decode($model->album) ?: [];
@@ -157,9 +156,11 @@
                                             Hình ảnh
                                             </label>
                                             <div class="col-md-7">
-                                                <div class="ckfinder_12" style="border: 1px solid #ccc;cursor: pointer;" data-type="image">
-                                                    <input type="hidden" name="image"  value="{{$model->image}}">
-                                                    <img class="image" style="width:100%" src={{ $model->image ?? "https://res.cloudinary.com/dcbsaugq3/image/upload/v1710723724/ogyz2vbqsnizetsr3vbm.jpg" }} alt="">
+                                                <div class="ckfinder_12"  data-type="image">
+                                                    <input type="file" name="image form-control" value="{{$model->image}}">
+                                                    @if (isset($model->image) && !empty($model->image))
+                                                        <img class="image" style="width:100%" src={{ $model->image}} alt="">
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
